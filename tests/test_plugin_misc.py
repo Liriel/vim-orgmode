@@ -26,7 +26,6 @@ class MiscTestCase(unittest.TestCase):
                 'exists("g:org_todo_keywords")': '1',
                 'g:org_todo_keywords': ['TODO', '|', 'DONE'],
                 'exists("g:org_debug")': '0',
-                'exists("g:org_debug")': '0',
                 'exists("*repeat#set()")': '0',
                 "v:count": '0',
                 'b:changedtick': '%d' % counter,

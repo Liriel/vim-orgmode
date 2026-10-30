@@ -25,10 +25,8 @@ def flatten_list(lst):
         if isinstance(item, str) or isinstance(item, bytes):
             yield item
         elif isinstance(item, Iterable):
-            # yield from would be so nice... but c'est la vie
             for val in item:
-                for final in gen_lst(val):
-                    yield final
+                yield from gen_lst(val)
         else:
             yield item
     return [i for i in gen_lst(lst)]
@@ -119,7 +117,7 @@ class MultiPurposeList(UserList):
         self._changed()
 
 
-def get_domobj_range(content=[], position=0, direction=Direction.FORWARD, identify_fun=None):
+def get_domobj_range(content=(), position=0, direction=Direction.FORWARD, identify_fun=None):
     """
     Get the start and end line number of the dom obj lines from content.
 

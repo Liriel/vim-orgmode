@@ -63,10 +63,10 @@ class EditStructure:
             below = cursor[1] != 0 or end_of_last_child
 
         # insert newly created heading
-        l = current_heading.get_parent_list()
+        parent_list = current_heading.get_parent_list()
         idx = current_heading.get_index_in_parent_list()
-        if l is not None and idx is not None:
-            l.insert(idx + (1 if below else 0), heading)
+        if parent_list is not None and idx is not None:
+            parent_list.insert(idx + (1 if below else 0), heading)
         else:
             raise HeadingDomError('Current heading is not properly linked in DOM')
 
@@ -176,7 +176,6 @@ class EditStructure:
         c = vim.current.window.cursor[:]
 
         # indent the promoted/demoted heading
-        indent_end_vim = current_heading.end_of_last_child_vim if including_children else current_heading.end_vim
         indent(current_heading, including_children)
 
         # when changing the level of a heading, its position in the DOM
@@ -286,8 +285,8 @@ class EditStructure:
             return None
 
         cursor_offset = vim.current.window.cursor[0] - (current_heading._orig_start + 1)
-        l = current_heading.get_parent_list()
-        if l is None:
+        parent_list = current_heading.get_parent_list()
+        if parent_list is None:
             raise HeadingDomError('Current heading is not properly linked in DOM')
 
         if not including_children:
@@ -304,7 +303,7 @@ class EditStructure:
             else:
                 # if the current heading doesn't have a parent, its children
                 # must be added as top level headings to the document
-                npl = l
+                npl = parent_list
                 for child in current_heading.children[::-1]:
                     npl.insert(0, child, taint=False)
             current_heading.children.remove_slice(0, len(current_heading.children), taint=False)
@@ -314,8 +313,8 @@ class EditStructure:
             raise HeadingDomError('Current heading is not properly linked in DOM')
 
         offset = 1 if direction == Direction.FORWARD else -1
-        del l[idx]
-        l.insert(idx + offset, current_heading)
+        del parent_list[idx]
+        parent_list.insert(idx + offset, current_heading)
 
         d.write()
 

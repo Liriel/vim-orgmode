@@ -104,9 +104,9 @@ class DomObj:
         :returns:    Index value or None if dom obj doesn't have a
                     parent/document or is not in the list of dom objs
         """
-        l = self.get_parent_list()
-        if l:
-            return l.index(self)
+        parent_list = self.get_parent_list()
+        if parent_list:
+            return parent_list.index(self)
 
     def get_parent_list(self):
         """ Retrieve the parents list of dom objs. This works also for top

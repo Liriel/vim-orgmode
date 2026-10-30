@@ -33,7 +33,7 @@ def split_access_key(t, sub=None):
         >>> split_access_key('WANT', sub='(hi)')
         >>> ('WANT', '(hi)')
     """
-    if type(t) != str:
+    if type(t) is not str:
         echom("String must be unicode")
         return (None, None)
 
@@ -267,7 +267,7 @@ class Todo:
             vim.command('bw')
             echom('No todo states available for buffer %s' % vim.current.buffer.name)
 
-        for idx, state in enumerate(all_states):
+        for state in all_states:
             pairs = [split_access_key(x, sub=' ') for x in it.chain(*state)]
             line = '\t'.join(''.join(('[%s] ' % x[1], x[0])) for x in pairs)
             vim.current.buffer.append(line)

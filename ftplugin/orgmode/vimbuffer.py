@@ -109,7 +109,7 @@ class VimBuffer(Document):
                 r = []
                 for i in s:
                     _i = i
-                    if type(_i) == str and _i:
+                    if type(_i) is str and _i:
                         if strip_access_key and '(' in _i:
                             _i = _i[:_i.index('(')]
                             if _i:

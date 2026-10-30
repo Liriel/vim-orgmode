@@ -58,8 +58,6 @@ class TagsProperties:
 
         ignorecase = bool(int(settings.get('org_tag_completion_ignorecase', int(vim.eval('&ignorecase')))))
         possible_tags = []
-        # TODO current tags never used...
-        current_tags = heading.tags
         for t in all_tags:
             if ignorecase:
                 if t.lower().startswith(current_tag.lower()):

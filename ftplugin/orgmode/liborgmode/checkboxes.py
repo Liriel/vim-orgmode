@@ -133,7 +133,7 @@ class Checkbox(DomObj):
         count = "%d/%d" % (on, total)
         self.title = REGEX_SUBTASK.sub("[%s]" % (count), self.title)
         self.title = REGEX_SUBTASK_PERCENT.sub("[%d%%]" % (percent), self.title)
-        d = self._heading.document.write_checkbox(self, including_children=False)
+        self._heading.document.write_checkbox(self, including_children=False)
 
     @classmethod
     def identify_checkbox(cls, line):
@@ -173,9 +173,9 @@ class Checkbox(DomObj):
         if self.parent:
             return super().get_index_in_parent_list()
         elif self.document:
-            l = self.get_parent_list()
-            if l:
-                return l.index(self)
+            parent_list = self.get_parent_list()
+            if parent_list:
+                return parent_list.index(self)
 
     def get_parent_list(self):
         """ Retrieve the parents' list of headings. This works also for top
@@ -255,8 +255,7 @@ class Checkbox(DomObj):
         c = self.first_checkbox
         while c:
             yield c
-            for d in c.all_children():
-                yield d
+            yield from c.all_children()
             c = c.next_sibling
 
         return

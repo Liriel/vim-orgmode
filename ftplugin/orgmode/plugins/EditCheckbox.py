@@ -59,10 +59,10 @@ class EditCheckbox:
         if c is None:
             h.checkboxes.append(nc)
         else:
-            l = c.get_parent_list()
+            parent_list = c.get_parent_list()
             idx = c.get_index_in_parent_list()
-            if l is not None and idx is not None:
-                l.insert(idx + (1 if below else 0), nc)
+            if parent_list is not None and idx is not None:
+                parent_list.insert(idx + (1 if below else 0), nc)
                 # workaround for broken associations, Issue #165
                 nc._parent = c.parent
                 if below:

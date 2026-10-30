@@ -138,7 +138,7 @@ def get_user_input(message):
         vim.command("let user_input = input('" + message + ": ')")
         vim.command('call inputrestore()')
         return vim.eval('user_input')
-    except:
+    except Exception:
         return None
 
 

@@ -76,12 +76,12 @@ class CheckboxTestCase(unittest.TestCase):
         self.assertTrue(c.is_child_one(Checkbox.STATUS_OFF))
         self.assertFalse(c.are_siblings_all(Checkbox.STATUS_ON))
 
-        for child in c.all_children():
+        for _child in c.all_children():
             pass
-        for sibling in c.all_siblings():
+        for _sibling in c.all_siblings():
             pass
         c = h.current_checkbox(position=3)
-        new_checkbox = c.copy()
+        c.copy()
         self.assertEqual(str(c), self.c1[3])
         c.get_parent_list()
         c.get_index_in_parent_list()

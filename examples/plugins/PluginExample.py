@@ -1,6 +1,6 @@
 
-from orgmode import ORGMODE
-from orgmode.keybinding import Command, Keybinding, Plug
+from orgmode._vim import ORGMODE
+from orgmode.keybinding import VIM_PY_CALL, Command, Keybinding, Plug
 from orgmode.menu import ActionEntry, Submenu
 
 
@@ -42,7 +42,7 @@ class Example:
         """
         # an Action menu entry which binds "keybinding" to action ":action"
         self.commands.append(Command('OrgActionCommand',
-                ':py ORGMODE.plugins["Example"].action()'))
+                '%s ORGMODE.plugins["Example"].action()' % VIM_PY_CALL))
         self.keybindings.append(Keybinding('keybinding',
                 Plug('OrgAction', self.commands[-1])))
         self.menu + ActionEntry('&Action', self.keybindings[-1])

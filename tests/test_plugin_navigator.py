@@ -42,7 +42,6 @@ class NavigatorTestCase(unittest.TestCase):
                 'exists("g:org_todo_keywords")': '1',
                 'g:org_todo_keywords': ['TODO', '|', 'DONE'],
                 'exists("g:org_debug")': '0',
-                'exists("g:org_debug")': '0',
                 'exists("*repeat#set()")': '0',
                 'b:changedtick': '%d' % counter,
                 "v:count": '0',

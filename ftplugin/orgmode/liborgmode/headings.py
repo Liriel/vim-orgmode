@@ -373,7 +373,9 @@ class Heading(DomObj):
 
         :returns:    The newly created heading
         """
-        test_not_empty = lambda x: x != ''
+        def test_not_empty(x):
+            return x != ''
+
 
         def parse_title(heading_line):
             # WARNING this regular expression fails if there is just one or no
@@ -485,9 +487,9 @@ class Heading(DomObj):
         if self.parent:
             return super().get_index_in_parent_list()
         elif self.document:
-            l = self.get_parent_list()
-            if l:
-                return l.index(self)
+            parent_list = self.get_parent_list()
+            if parent_list:
+                return parent_list.index(self)
 
     def get_parent_list(self):
         """ Retrieve the parents' list of headings. This works also for top

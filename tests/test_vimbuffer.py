@@ -22,7 +22,6 @@ class VimBufferTestCase(unittest.TestCase):
                 'g:org_todo_keywords': ['TODO',
                                        'DONE', '|'],
                 'exists("g:org_debug")': '0',
-                'exists("g:org_debug")': '0',
                 'exists("*repeat#set()")': '0',
                 'b:changedtick': '%d' % counter,
                 '&ts': '8',
@@ -63,7 +62,7 @@ Bla Bla bla bla
 
         # sanity check
         d = VimBuffer().init_dom()
-        h2 = self.document.find_heading()
+        self.document.find_heading()
         self.assertEqual(d.headings[0].title, 'Überschrift 1')
         self.assertEqual(len(d.headings[0].tags), 2)
         self.assertEqual(d.headings[0].tags[0], 'test')
@@ -81,7 +80,7 @@ Bla Bla bla bla
 
         # sanity check
         d = VimBuffer().init_dom()
-        h2 = self.document.find_heading()
+        self.document.find_heading()
         self.assertEqual(len(d.headings[0].body), 4)
         self.assertEqual(d.headings[0]._orig_start, 2)
         self.assertEqual(d.headings[0].children[0]._orig_start, 7)
@@ -959,7 +958,6 @@ class VimBufferTagsTestCase(unittest.TestCase):
                 'g:org_todo_keywords': ['TODO',
                                        'DONE', '|'],
                 'exists("g:org_debug")': '0',
-                'exists("g:org_debug")': '0',
                 'exists("*repeat#set()")': '0',
                 'b:changedtick': '0',
                 '&ts': '8',
@@ -1118,7 +1116,6 @@ class VimBufferTodoTestCase(unittest.TestCase):
                         'DONß', 'DONÉ', \
                         'DÖNE', 'WAITING', \
                         'DONE', '|'],
-                'exists("g:org_debug")': '0',
                 'exists("g:org_debug")': '0',
                 'exists("*repeat#set()")': '0',
                 'b:changedtick': '0',

@@ -46,7 +46,7 @@ class Date:
                 vim.command(':1SpeedDatingFormat %Y-%m-%d %a %H:%M')
             else:
                 echom('Speeddating plugin not installed. Please install it.')
-        except:
+        except Exception:
             echom('Speeddating plugin not installed. Please install it.')
 
     @classmethod
@@ -141,7 +141,7 @@ class Date:
             try:
                 op = groups[0]
                 days = int(groups[1])
-            except:
+            except Exception:
                 op = groups[2]
                 days = int(groups[3])
             newdate = ops[op](startdate, timedelta(days=days))
@@ -206,7 +206,7 @@ class Date:
         if match:
             try:
                 startdate = newdate
-            except:
+            except Exception:
                 pass
             return datetime(
                 startdate.year, startdate.month, startdate.day,
@@ -214,7 +214,7 @@ class Date:
 
         try:
             return newdate
-        except:
+        except Exception:
             return startdate
 
     @classmethod

@@ -125,7 +125,7 @@ class Agenda:
         row, _ = vim.current.window.cursor
         try:
             bufname, bufnr, destrow = cls.line2doc[row]
-        except:
+        except Exception:
             return
 
         # reload source file if it is not loaded
@@ -181,7 +181,7 @@ class Agenda:
         # format text for agenda
         last_date = None
         final_agenda = ['Week Agenda:']
-        for i, h in enumerate(raw_agenda):
+        for h in raw_agenda:
             # insert date information for every new date (not datetime)
             active_date_no_time = h.active_date.date()
             if active_date_no_time != last_date:
@@ -222,7 +222,7 @@ class Agenda:
         # try to jump to the position of today
         try:
             vim.command('normal! %sgg<CR>' % today_row)
-        except:
+        except Exception:
             pass
 
     @classmethod
@@ -250,7 +250,7 @@ class Agenda:
 
         # format text of agenda
         final_agenda = []
-        for i, h in enumerate(raw_agenda):
+        for h in raw_agenda:
             tmp = "%s %s" % (h.todo, h.title)
             final_agenda.append(tmp)
             cls.line2doc[len(final_agenda)] = (get_bufname(h.document.bufnr), h.document.bufnr, h.start)
@@ -275,7 +275,7 @@ class Agenda:
         cls.line2doc = {}
         # format text of agenda
         final_agenda = []
-        for i, h in enumerate(raw_agenda):
+        for h in raw_agenda:
             tmp = fmt.format('{} {}', h.todo, h.title).lstrip().rstrip()
             final_agenda.append(tmp)
             cls.line2doc[len(final_agenda)] = (get_bufname(h.document.bufnr), h.document.bufnr, h.start)
