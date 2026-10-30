@@ -49,9 +49,11 @@ class Document(object):
         self.todo_states = ['TODO', 'DONE']
 
     def __str__(self):
-        if self.meta_information is None:
-            return '\n'.join(self.all_headings())
-        return '\n'.join(self.meta_information) + '\n' + '\n'.join(['\n'.join([str(i)] + i.body) for i in self.all_headings()])
+        lines = list(self.meta_information)
+        for heading in self.all_headings():
+            lines.append(str(heading))
+            lines.extend(heading.body)
+        return '\n'.join(lines)
 
     def get_all_todo_states(self):
         """ Convenience function that returns all todo and done states and
