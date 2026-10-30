@@ -6,7 +6,7 @@
 " @Revision     : 0.4
 " vi: ft=vim:tw=80:sw=4:ts=4:fdm=marker
 
-if v:version < 802 || !has('python3')
+if (!has('nvim') && v:version < 802) || !has('python3')
 	echoerr "Unable to start orgmode. Orgmode depends on Vim >= 8.2 with Python 3 support (+python3) compiled in."
 	finish
 endif

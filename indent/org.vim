@@ -1,4 +1,4 @@
-if v:version < 802 || !has('python3')
+if (!has('nvim') && v:version < 802) || !has('python3')
 	" ftplugin/org.vim reports the missing requirements
 	finish
 endif
