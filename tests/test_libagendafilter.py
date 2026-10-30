@@ -163,6 +163,18 @@ class AgendaFilterTestCase(unittest.TestCase):
         self.assertEqual(len(filtered), 3)
         self.assertEqual(filtered, [headings[0], headings[2], headings[4]])
 
+    def test_agenda_sorting_key_undated_heading_sorts_last(self):
+        u"""
+        Undated headings (e.g. a plain TODO in the todo view) must be sortable
+        together with dated ones instead of raising TypeError.
+        """
+        from orgmode.liborgmode.agenda import agenda_sorting_key
+        undated = Heading.parse_heading_from_data([u"* TODO undated"], [u'TODO'])
+        d1 = Heading.parse_heading_from_data([u"* TODO a <2011-08-25 Thu>"], [u'TODO'])
+        d2 = Heading.parse_heading_from_data([u"* TODO b <2011-08-20 Sat 10:00>"], [u'TODO'])
+        result = sorted([undated, d1, d2], key=agenda_sorting_key)
+        self.assertEqual(result, [d2, d1, undated])
+
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(AgendaFilterTestCase)
