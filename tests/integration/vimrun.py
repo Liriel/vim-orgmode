@@ -57,7 +57,15 @@ class VimRun:
         return self.result[key]
 
 
-def run_vim(tmp_path, org_text, probe, vim_cmds=(), pre_cmds=(), name="test.org"):
+def run_vim(
+    tmp_path,
+    org_text,
+    probe,
+    vim_cmds=(),
+    pre_cmds=(),
+    name="test.org",
+    filetype_cmd="filetype plugin indent on",
+):
     """Open ``org_text`` as an org file in headless Vim and run ``probe``.
 
     ``probe`` is the body of a Python snippet executed with ``py3file`` after
@@ -89,7 +97,7 @@ def run_vim(tmp_path, org_text, probe, vim_cmds=(), pre_cmds=(), name="test.org"
         "--cmd",
         "set rtp^=%s" % REPO,
         "--cmd",
-        "filetype plugin indent on",
+        filetype_cmd,
     ]
     for c in pre_cmds:
         cmd += ["--cmd", c]

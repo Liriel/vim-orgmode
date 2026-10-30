@@ -28,6 +28,9 @@
       detached its headings from the document; slices now return plain lists
       as on Python 2. =VimBuffer.write()= also refuses to write headings
       without a start position.
+    - Folding works without =filetype indent on=. It was set up in
+      =indent/org.vim=, so =<Tab>= raised =E490: No fold found= with a vimrc
+      that only has =filetype plugin on=.
     - Crash when deleting headings that had not been written yet.
     - Agenda crash from comparing =OrgDate= with =datetime= (seen on Python
       3.14) and when sorting TODOs without a date together with dated ones;

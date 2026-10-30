@@ -8,7 +8,7 @@ found (or fail instead if REQUIRE_VIM is set).
 from datetime import date, timedelta
 
 import pytest
-from vimrun import run_vim
+from vimrun import REPO, run_vim
 
 NESTED = "* A\nbody a\n** B\nbody b\n* C\nbody c\n"
 
@@ -119,6 +119,43 @@ def test_fold_levels(tmp_path):
     )
     assert r["method"] == "expr"
     assert r["levels"] == [1, 1, 2, 2, 1, 1]
+
+
+@pytest.mark.parametrize(
+    "pre_cmds",
+    [
+        pytest.param((), id="plugin-first"),
+        # Vim's own ftplugin/org.vim runs first and sets b:did_ftplugin
+        pytest.param(
+            ("set rtp-=%s" % REPO, "set rtp+=%s" % REPO), id="vim-runtime-first"
+        ),
+    ],
+)
+def test_folding_without_filetype_indent(tmp_path, pre_cmds):
+    # regression: folding was set up in indent/org.vim, so <Tab> raised
+    # E490 with a vimrc that only has "filetype plugin on"
+    r = run_vim(
+        tmp_path,
+        NESTED,
+        """
+        from orgmode._vim import ORGMODE
+        result['method'] = vim.eval('&foldmethod')
+        result['levels'] = [int(vim.eval('foldlevel(%d)' % i))
+                            for i in range(1, 7)]
+        vim.command('normal! zR')
+        vim.current.window.cursor = (1, 0)
+        ORGMODE.plugins['ShowHide'].toggle_folding()
+        result['closed'] = int(vim.eval('foldclosed(1)'))
+        result['fillchars'] = vim.eval('&fillchars').split(',')
+    """,
+        vim_cmds=["normal! zx"],
+        pre_cmds=pre_cmds,
+        filetype_cmd="filetype plugin on",
+    )
+    assert r["method"] == "expr"
+    assert r["levels"] == [1, 1, 2, 2, 1, 1]
+    assert r["closed"] == 1
+    assert "fold: " in r["fillchars"]
 
 
 def _dated(delta_days, with_time):
