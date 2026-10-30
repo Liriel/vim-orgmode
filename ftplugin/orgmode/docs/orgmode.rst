@@ -8,7 +8,6 @@ Subpackages
 
     orgmode.liborgmode
     orgmode.plugins
-    orgmode.py3compat
 
 Submodules
 ----------

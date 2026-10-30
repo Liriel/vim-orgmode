@@ -13,22 +13,18 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
-import mock
+import sys
+from unittest import mock
 
-# Mock vim
-MOCK_MODULES = ['vim']
-for m in MOCK_MODULES:
-    sys.modules[m] = mock.Mock()
-
-import vim
-vim.eval = mock.MagicMock(return_value=1)
+# The plugin imports the `vim` module, which only exists inside Vim, and calls
+# vim.eval() while it is imported. autodoc_mock_imports is not enough for that,
+# as the evaluated values are used (int(vim.eval(...))).
+sys.modules['vim'] = mock.MagicMock(eval=mock.MagicMock(return_value='0'))
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration ------------------------------------------------
@@ -151,7 +147,7 @@ html_theme = 'alabaster'
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
-html_title = 'orgmode v0.5'
+html_title = 'orgmode'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None

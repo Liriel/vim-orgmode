@@ -307,6 +307,7 @@ def orgdate_to_datetime(orgtime, now=None):
 
     OrgDate cannot be compared with datetime-based values, so a date is
     converted in such a way that:
+
     * an OrgDate of _today_ is placed after today's passed events and before
       today's upcoming scheduled events.
     * an OrgDate of a past day is placed after all other items of the same day.
