@@ -187,8 +187,8 @@ class TagsProperties(object):
         self.commands.append(cmd)
 
         # workaround to align tags when user is leaving insert mode
-        vim.command("function Org_complete_tags(ArgLead, CmdLine, CursorPos)\n"
-+ sys.executable.split('/')[-1] + """ << EOF
+        vim.command("""function Org_complete_tags(ArgLead, CmdLine, CursorPos)
+python3 << EOF
 ORGMODE.plugins[u'TagsProperties'].complete_tags()
 EOF
 if exists('b:org_complete_tags')

@@ -156,3 +156,14 @@ def test_vimbuffercontent_writes_through_to_real_buffer(tmp_path):
     assert r['popped'] == 'last'
     assert r['item'] == '* Überschrift'
     assert r['slice'] == ['first', '* Überschrift']
+
+
+def test_tag_completion_function(tmp_path):
+    # Org_complete_tags is a Vim function wrapping a ``python3 << EOF`` block;
+    # it used to be built from sys.executable, which in embedded Vim is not
+    # necessarily python3 (simulated here by pointing it at vim).
+    r = run_vim(tmp_path, '* A :work:home:\n* B :wonder:\n* C\n', '''
+        vim.current.window.cursor = (3, 0)
+        result['completions'] = vim.eval("Org_complete_tags('wo', 'wo', 2)")
+    ''', pre_cmds=['py3 import sys; sys.executable = "/usr/bin/vim"'])
+    assert sorted(r['completions']) == ['wonder:', 'work:']
