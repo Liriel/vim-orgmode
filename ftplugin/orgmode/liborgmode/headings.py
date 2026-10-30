@@ -7,6 +7,7 @@
     TODO: explain this :)
 """
 
+import datetime
 import re
 
 import vim
@@ -111,81 +112,48 @@ class Heading(DomObj):
         # 1 is for the heading's title
         return 1 + len(self.body)
 
+    def _compare_dates(self, other):
+        u""" Compare headings by active date: negative, zero or positive.
+
+        Headings without an active date are placed after all headings with
+        one. Dates are compared by day. Only when both are datetimes is the
+        time of day compared as well; a plain date is treated as equal to any
+        datetime of the same day (OrgDate and OrgDateTime cannot be compared
+        directly, as datetime is not orderable against date). """
+        def day_and_time(heading):
+            d = heading.active_date
+            if isinstance(d, OrgTimeRange):
+                d = d.start
+            if d is None:
+                return None, None
+            if isinstance(d, datetime.datetime):
+                return d.date(), d.time()
+            return d, None
+
+        (day_a, time_a), (day_b, time_b) = day_and_time(self), day_and_time(other)
+        if day_a is None or day_b is None:
+            return (day_a is None) - (day_b is None)
+        if day_a != day_b:
+            return -1 if day_a < day_b else 1
+        if time_a is None or time_b is None:
+            return 0
+        return (time_a > time_b) - (time_a < time_b)
+
+    # __eq__ is deliberately not defined (so functools.total_ordering is not
+    # used): equality and hashing stay based on identity, which the DOM lists
+    # rely on for `in`, index() and remove(). The four orderings are defined
+    # explicitly from _compare_dates instead.
     def __lt__(self, other):
-        """
-        Headings can be sorted by date.
-        """
-        try:
-            if self.active_date < other.active_date:
-                return True
-            elif self.active_date == other.active_date:
-                return False
-            elif self.active_date > other.active_date:
-                return False
-        except:
-            if self.active_date and not other.active_date:
-                return True
-            elif not self.active_date and other.active_date:
-                return False
-            elif not self.active_date and not other.active_date:
-                return False
+        return self._compare_dates(other) < 0
 
     def __le__(self, other):
-        """
-        Headings can be sorted by date.
-        """
-        try:
-            if self.active_date < other.active_date:
-                return True
-            elif self.active_date == other.active_date:
-                return True
-            elif self.active_date > other.active_date:
-                return False
-        except:
-            if self.active_date and not other.active_date:
-                return True
-            elif not self.active_date and other.active_date:
-                return False
-            elif not self.active_date and not other.active:
-                return True
+        return self._compare_dates(other) <= 0
 
     def __ge__(self, other):
-        """
-        Headings can be sorted by date.
-        """
-        try:
-            if self.active_date > other.active_date:
-                return True
-            elif self.active_date == other.active_date:
-                return True
-            elif self.active_date < other.active_date:
-                return False
-        except:
-            if not self.active_date and other.active_date:
-                return True
-            elif self.active_date and not other.active_date:
-                return False
-            elif not self.active_date and not other.active:
-                return True
+        return self._compare_dates(other) >= 0
 
     def __gt__(self, other):
-        """
-        Headings can be sorted by date.
-        """
-        try:
-            if self.active_date > other.active_date:
-                return True
-            elif self.active_date == other.active_date:
-                return False
-            elif self.active_date < other.active_date:
-                return False
-        except:
-            if not self.active_date and other.active_date:
-                return True
-            elif self.active_date and not other.active_date:
-                return False
-            elif not self.active_date and not other.active:
-                return False
+        return self._compare_dates(other) > 0
 
     def copy(self, including_children=True, parent=None):
         u"""

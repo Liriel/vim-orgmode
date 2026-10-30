@@ -123,6 +123,24 @@ class TestHeadingRecognizeDatesInHeading(unittest.TestCase):
         self.assertTrue(self.h_no_date >= self.h2)
         self.assertTrue(self.h2 >= self.h2_datetime)
 
+    def test_comparing_date_with_datetime_returns_bool(self):
+        # Regression: comparisons used to return None for OrgDate vs
+        # OrgDateTime because the TypeError was swallowed
+        for op in (lambda a, b: a < b, lambda a, b: a <= b,
+                lambda a, b: a > b, lambda a, b: a >= b):
+            for a in (self.h1, self.h2, self.h2_datetime, self.h_no_date):
+                for b in (self.h1, self.h2, self.h2_datetime, self.h_no_date):
+                    self.assertTrue(op(a, b) in (True, False))
+        self.assertTrue(self.h2_datetime < self.h3)
+        self.assertTrue(self.h1 < self.h2_datetime)
+        self.assertFalse(self.h2_datetime < self.h1)
+
+    def test_headings_keep_identity_equality(self):
+        copy = self.h1.copy()
+        self.assertFalse(self.h1 == copy)
+        self.assertTrue(self.h1 in [self.h1])
+        self.assertFalse(copy in [self.h1])
+
     def test_sorting_of_headings(self):
         """Headings should be sortable."""
         self.assertEqual([self.h1, self.h2], sorted([self.h2, self.h1]))
