@@ -1,4 +1,3 @@
-
 import locale
 import threading
 import unittest
@@ -11,6 +10,7 @@ class OrgDateUtf8TestCase(unittest.TestCase):
     """
     Tests OrgDate with utf-8 enabled locales
     """
+
     LOCALE_LOCK = threading.Lock()
     UTF8_LOCALE = "fr_FR.utf-8"
 
@@ -22,7 +22,7 @@ class OrgDateUtf8TestCase(unittest.TestCase):
                 try:
                     new = locale.setlocale(locale.LC_ALL, name)
                 except locale.Error:
-                    self.skipTest('locale %s is not available' % name)
+                    self.skipTest("locale %s is not available" % name)
                 yield new
             finally:
                 locale.setlocale(locale.LC_ALL, saved)
@@ -31,8 +31,8 @@ class OrgDateUtf8TestCase(unittest.TestCase):
         self.year = 2016
         self.month = 5
         self.day = 7
-        self.text = '<2016-05-07 sam.>'
-        self.textinactive = '[2016-05-07 sam.]'
+        self.text = "<2016-05-07 sam.>"
+        self.textinactive = "[2016-05-07 sam.]"
 
     def test_OrdDate_str_unicode_active(self):
         with self.setlocale(self.UTF8_LOCALE):

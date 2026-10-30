@@ -12,6 +12,8 @@ START = True
 END = False
 
 counter = 0
+
+
 class MiscTestCase(unittest.TestCase):
     def setUp(self):
         global counter
@@ -20,17 +22,20 @@ class MiscTestCase(unittest.TestCase):
         vim.CMDRESULTS = {}
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
-                # no org_todo_keywords for b
-                'exists("b:org_todo_keywords")': '0',
-                # global values for org_todo_keywords
-                'exists("g:org_todo_keywords")': '1',
-                'g:org_todo_keywords': ['TODO', '|', 'DONE'],
-                'exists("g:org_debug")': '0',
-                'exists("*repeat#set()")': '0',
-                "v:count": '0',
-                'b:changedtick': '%d' % counter,
-                "v:lnum": '0'}
-        vim.current.buffer[:] = [ i for i in """
+            # no org_todo_keywords for b
+            'exists("b:org_todo_keywords")': "0",
+            # global values for org_todo_keywords
+            'exists("g:org_todo_keywords")': "1",
+            "g:org_todo_keywords": ["TODO", "|", "DONE"],
+            'exists("g:org_debug")': "0",
+            'exists("*repeat#set()")': "0",
+            "v:count": "0",
+            "b:changedtick": "%d" % counter,
+            "v:lnum": "0",
+        }
+        vim.current.buffer[:] = [
+            i
+            for i in """
 * Überschrift 1
 Text 1
 
@@ -49,50 +54,51 @@ Bla Bla bla bla
 * Überschrift 2
 * Überschrift 3
   asdf sdf
-""".split('\n') ]
+""".split("\n")
+        ]
 
     def test_indent_noheading(self):
         # test first heading
         vim.current.window.cursor = (1, 0)
-        vim.EVALRESULTS['v:lnum'] = '1'
+        vim.EVALRESULTS["v:lnum"] = "1"
         indent_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 0)
 
     def test_indent_heading(self):
         # test first heading
         vim.current.window.cursor = (2, 0)
-        vim.EVALRESULTS['v:lnum'] = '2'
+        vim.EVALRESULTS["v:lnum"] = "2"
         indent_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 0)
 
     def test_indent_heading_middle(self):
         # test first heading
         vim.current.window.cursor = (3, 0)
-        vim.EVALRESULTS['v:lnum'] = '3'
+        vim.EVALRESULTS["v:lnum"] = "3"
         indent_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
-        self.assertEqual(vim.CMDHISTORY[-1], 'let b:indent_level = 2')
+        self.assertEqual(vim.CMDHISTORY[-1], "let b:indent_level = 2")
 
     def test_indent_heading_middle2(self):
         # test first heading
         vim.current.window.cursor = (4, 0)
-        vim.EVALRESULTS['v:lnum'] = '4'
+        vim.EVALRESULTS["v:lnum"] = "4"
         indent_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
-        self.assertEqual(vim.CMDHISTORY[-1], 'let b:indent_level = 2')
+        self.assertEqual(vim.CMDHISTORY[-1], "let b:indent_level = 2")
 
     def test_indent_heading_end(self):
         # test first heading
         vim.current.window.cursor = (5, 0)
-        vim.EVALRESULTS['v:lnum'] = '5'
+        vim.EVALRESULTS["v:lnum"] = "5"
         indent_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
-        self.assertEqual(vim.CMDHISTORY[-1], 'let b:indent_level = 2')
+        self.assertEqual(vim.CMDHISTORY[-1], "let b:indent_level = 2")
 
     def test_fold_heading_start(self):
         # test first heading
         vim.current.window.cursor = (2, 0)
-        vim.EVALRESULTS['v:lnum'] = '2'
+        vim.EVALRESULTS["v:lnum"] = "2"
         fold_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
         self.assertEqual(vim.CMDHISTORY[-1], 'let b:fold_expr = ">1"')
@@ -100,23 +106,23 @@ Bla Bla bla bla
     def test_fold_heading_middle(self):
         # test first heading
         vim.current.window.cursor = (3, 0)
-        vim.EVALRESULTS['v:lnum'] = '3'
+        vim.EVALRESULTS["v:lnum"] = "3"
         fold_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
-        self.assertEqual(vim.CMDHISTORY[-1], 'let b:fold_expr = 1')
+        self.assertEqual(vim.CMDHISTORY[-1], "let b:fold_expr = 1")
 
     def test_fold_heading_end(self):
         # test first heading
         vim.current.window.cursor = (5, 0)
-        vim.EVALRESULTS['v:lnum'] = '5'
+        vim.EVALRESULTS["v:lnum"] = "5"
         fold_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
-        self.assertEqual(vim.CMDHISTORY[-1], 'let b:fold_expr = 1')
+        self.assertEqual(vim.CMDHISTORY[-1], "let b:fold_expr = 1")
 
     def test_fold_heading_end_of_last_child(self):
         # test first heading
         vim.current.window.cursor = (16, 0)
-        vim.EVALRESULTS['v:lnum'] = '16'
+        vim.EVALRESULTS["v:lnum"] = "16"
         fold_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
         # which is also end of the parent heading <1
@@ -125,7 +131,7 @@ Bla Bla bla bla
     def test_fold_heading_end_of_last_child_next_heading(self):
         # test first heading
         vim.current.window.cursor = (17, 0)
-        vim.EVALRESULTS['v:lnum'] = '17'
+        vim.EVALRESULTS["v:lnum"] = "17"
         fold_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
         self.assertEqual(vim.CMDHISTORY[-1], 'let b:fold_expr = ">1"')
@@ -133,7 +139,7 @@ Bla Bla bla bla
     def test_fold_middle_subheading(self):
         # test first heading
         vim.current.window.cursor = (13, 0)
-        vim.EVALRESULTS['v:lnum'] = '13'
+        vim.EVALRESULTS["v:lnum"] = "13"
         fold_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
         self.assertEqual(vim.CMDHISTORY[-1], 'let b:fold_expr = ">4"')
@@ -141,15 +147,15 @@ Bla Bla bla bla
     def test_fold_middle_subheading2(self):
         # test first heading
         vim.current.window.cursor = (14, 0)
-        vim.EVALRESULTS['v:lnum'] = '14'
+        vim.EVALRESULTS["v:lnum"] = "14"
         fold_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
-        self.assertEqual(vim.CMDHISTORY[-1], 'let b:fold_expr = 4')
+        self.assertEqual(vim.CMDHISTORY[-1], "let b:fold_expr = 4")
 
     def test_fold_middle_subheading3(self):
         # test first heading
         vim.current.window.cursor = (15, 0)
-        vim.EVALRESULTS['v:lnum'] = '15'
+        vim.EVALRESULTS["v:lnum"] = "15"
         fold_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
-        self.assertEqual(vim.CMDHISTORY[-1], 'let b:fold_expr = 4')
+        self.assertEqual(vim.CMDHISTORY[-1], "let b:fold_expr = 4")

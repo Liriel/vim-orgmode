@@ -1,5 +1,3 @@
-
-
 import unittest
 from datetime import date
 
@@ -16,8 +14,8 @@ class OrgDateTestCase(unittest.TestCase):
         self.year = 2011
         self.month = 8
         self.day = 29
-        self.text = '<2011-08-29 Mon>'
-        self.textinactive = '[2011-08-29 Mon]'
+        self.text = "<2011-08-29 Mon>"
+        self.textinactive = "[2011-08-29 Mon]"
 
     def test_OrgDate_ctor_active(self):
         """OrdDate should be created."""

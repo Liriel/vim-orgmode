@@ -1,4 +1,3 @@
-﻿
 import unittest
 
 from orgmode.liborgmode.headings import Heading
@@ -6,7 +5,6 @@ from orgmode.liborgmode.orgdate import OrgDate, OrgDateTime
 
 
 class TestHeadingRecognizeDatesInHeading(unittest.TestCase):
-
     def setUp(self):
         self.allowed_todo_states = ["TODO"]
 
@@ -17,17 +15,18 @@ class TestHeadingRecognizeDatesInHeading(unittest.TestCase):
         self.h2 = Heading.parse_heading_from_data(tmp, self.allowed_todo_states)
 
         tmp = ["* This heading is later <2011-08-25 Thu 10:20>"]
-        self.h2_datetime = Heading.parse_heading_from_data(tmp, self.allowed_todo_states)
+        self.h2_datetime = Heading.parse_heading_from_data(
+            tmp, self.allowed_todo_states
+        )
 
         tmp = ["* This heading is later <2011-08-26 Fri 10:20>"]
         self.h3 = Heading.parse_heading_from_data(tmp, self.allowed_todo_states)
 
         tmp = ["* This heading has no date and should be later than the rest"]
-        self.h_no_date = Heading.parse_heading_from_data(tmp,
-                self.allowed_todo_states)
+        self.h_no_date = Heading.parse_heading_from_data(tmp, self.allowed_todo_states)
 
     def test_heading_parsing_no_date(self):
-        """""
+        """ ""
         'text' doesn't contain any valid date.
         """
         text = ["* TODO This is a test :hallo:"]
@@ -47,7 +46,7 @@ class TestHeadingRecognizeDatesInHeading(unittest.TestCase):
         self.assertEqual(None, h.active_date)
 
     def test_heading_parsing_with_date(self):
-        """""
+        """ ""
         'text' does contain valid dates.
         """
         # orgdate
@@ -63,27 +62,33 @@ class TestHeadingRecognizeDatesInHeading(unittest.TestCase):
         self.assertEqual(odate, h.active_date)
 
     def test_heading_parsing_with_date_and_body(self):
-        """""
+        """ ""
         'text' contains valid dates (in the body).
         """
         # orgdatetime
-        text = ["* TODO This is a test <2011-08-25 Thu 10:10> :hallo:",
-                "some body text",
-                "some body text"]
+        text = [
+            "* TODO This is a test <2011-08-25 Thu 10:10> :hallo:",
+            "some body text",
+            "some body text",
+        ]
         h = Heading.parse_heading_from_data(text, self.allowed_todo_states)
         self.assertTrue(isinstance(h.active_date, OrgDateTime))
         self.assertEqual("<2011-08-25 Thu 10:10>", str(h.active_date))
 
-        text = ["* TODO This is a test  :hallo:",
-                "some body text",
-                "some body text<2011-08-25 Thu 10:10>"]
+        text = [
+            "* TODO This is a test  :hallo:",
+            "some body text",
+            "some body text<2011-08-25 Thu 10:10>",
+        ]
         h = Heading.parse_heading_from_data(text, self.allowed_todo_states)
         self.assertTrue(isinstance(h.active_date, OrgDateTime))
         self.assertEqual("<2011-08-25 Thu 10:10>", str(h.active_date))
 
-        text = ["* TODO This is a test  :hallo:",
-                "some body text <2011-08-24 Wed>",
-                "some body text<2011-08-25 Thu 10:10>"]
+        text = [
+            "* TODO This is a test  :hallo:",
+            "some body text <2011-08-24 Wed>",
+            "some body text<2011-08-25 Thu 10:10>",
+        ]
         h = Heading.parse_heading_from_data(text, self.allowed_todo_states)
         odate = OrgDate(True, 2011, 8, 24)
         self.assertEqual(odate, h.active_date)
@@ -122,8 +127,12 @@ class TestHeadingRecognizeDatesInHeading(unittest.TestCase):
     def test_comparing_date_with_datetime_returns_bool(self):
         # Regression: comparisons used to return None for OrgDate vs
         # OrgDateTime because the TypeError was swallowed
-        for op in (lambda a, b: a < b, lambda a, b: a <= b,
-                lambda a, b: a > b, lambda a, b: a >= b):
+        for op in (
+            lambda a, b: a < b,
+            lambda a, b: a <= b,
+            lambda a, b: a > b,
+            lambda a, b: a >= b,
+        ):
             for a in (self.h1, self.h2, self.h2_datetime, self.h_no_date):
                 for b in (self.h1, self.h2, self.h2_datetime, self.h_no_date):
                     self.assertTrue(op(a, b) in (True, False))
@@ -141,40 +150,42 @@ class TestHeadingRecognizeDatesInHeading(unittest.TestCase):
         """Headings should be sortable."""
         self.assertEqual([self.h1, self.h2], sorted([self.h2, self.h1]))
 
-        self.assertEqual([self.h1, self.h2_datetime],
-                sorted([self.h2_datetime, self.h1]))
+        self.assertEqual(
+            [self.h1, self.h2_datetime], sorted([self.h2_datetime, self.h1])
+        )
 
-        self.assertEqual([self.h2_datetime, self.h2],
-                sorted([self.h2_datetime, self.h2]))
+        self.assertEqual(
+            [self.h2_datetime, self.h2], sorted([self.h2_datetime, self.h2])
+        )
 
         self.assertEqual([self.h1, self.h2], sorted([self.h1, self.h2]))
 
-        self.assertEqual([self.h1, self.h_no_date],
-                sorted([self.h1, self.h_no_date]))
+        self.assertEqual([self.h1, self.h_no_date], sorted([self.h1, self.h_no_date]))
 
-        self.assertEqual([self.h1, self.h_no_date],
-                sorted([self.h_no_date, self.h1]))
-
-        self.assertEqual([self.h1, self.h2, self.h_no_date],
-                sorted([self.h2, self.h_no_date, self.h1]))
+        self.assertEqual([self.h1, self.h_no_date], sorted([self.h_no_date, self.h1]))
 
         self.assertEqual(
-                [self.h1, self.h2_datetime, self.h2, self.h3, self.h_no_date],
-                sorted([self.h2_datetime, self.h3, self.h2, self.h_no_date, self.h1]))
+            [self.h1, self.h2, self.h_no_date],
+            sorted([self.h2, self.h_no_date, self.h1]),
+        )
+
+        self.assertEqual(
+            [self.h1, self.h2_datetime, self.h2, self.h3, self.h_no_date],
+            sorted([self.h2_datetime, self.h3, self.h2, self.h_no_date, self.h1]),
+        )
 
 
 class TestHeadingChildrenSlicing(unittest.TestCase):
     def test_slicing_children_does_not_detach_them(self):
-        parent = Heading(level=1, title='parent')
-        child1 = Heading(level=2, title='child1')
-        child2 = Heading(level=2, title='child2')
+        parent = Heading(level=1, title="parent")
+        child1 = Heading(level=2, title="child1")
+        child2 = Heading(level=2, title="child2")
         parent.children.append(child1)
         parent.children.append(child2)
         child1._orig_start = 3
         child2._orig_start = 5
 
-        for sliced in (parent.children[:], parent.children[::-1],
-                parent.children[0:1]):
+        for sliced in (parent.children[:], parent.children[::-1], parent.children[0:1]):
             self.assertEqual(type(sliced), list)
 
         self.assertEqual(child1._orig_start, 3)

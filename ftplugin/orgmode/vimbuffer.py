@@ -1,20 +1,19 @@
-
 """
-    vimbuffer
-    ~~~~~~~~~~
+vimbuffer
+~~~~~~~~~~
 
-    VimBuffer and VimBufferContent are the interface between liborgmode and
-    vim.
+VimBuffer and VimBufferContent are the interface between liborgmode and
+vim.
 
-    VimBuffer extends the liborgmode.document.Document().
-    Document() is just a general implementation for loading an org file. It
-    has no interface to an actual file or vim buffer. This is the task of
-    vimbuffer.VimBuffer(). It is the interfaces to vim. The main tasks for
-    VimBuffer are to provide read and write access to a real vim buffer.
+VimBuffer extends the liborgmode.document.Document().
+Document() is just a general implementation for loading an org file. It
+has no interface to an actual file or vim buffer. This is the task of
+vimbuffer.VimBuffer(). It is the interfaces to vim. The main tasks for
+VimBuffer are to provide read and write access to a real vim buffer.
 
-    VimBufferContent is a helper class for VimBuffer. Basically, it hides the
-    details of encoding - everything read from or written to VimBufferContent
-    is UTF-8.
+VimBufferContent is a helper class for VimBuffer. Basically, it hides the
+details of encoding - everything read from or written to VimBufferContent
+is UTF-8.
 """
 
 from collections import UserList
@@ -33,8 +32,8 @@ class VimBuffer(Document):
         :bufnr:        0: current buffer, every other number refers to another buffer
         """
         Document.__init__(self)
-        self._bufnr          = vim.current.buffer.number if bufnr == 0 else bufnr
-        self._changedtick    = -1
+        self._bufnr = vim.current.buffer.number if bufnr == 0 else bufnr
+        self._changedtick = -1
         self._cached_heading = None
         if self._bufnr == vim.current.buffer.number:
             self._content = VimBufferContent(vim.current.buffer)
@@ -46,7 +45,7 @@ class VimBuffer(Document):
                     break
 
             if not _buffer:
-                raise BufferNotFound('Unable to locate buffer number #%d' % self._bufnr)
+                raise BufferNotFound("Unable to locate buffer number #%d" % self._bufnr)
             self._content = VimBufferContent(_buffer)
 
         self.update_changedtick()
@@ -54,11 +53,11 @@ class VimBuffer(Document):
 
     @property
     def tabstop(self):
-        return int(vim.eval('&ts'))
+        return int(vim.eval("&ts"))
 
     @property
     def tag_column(self):
-        return int(settings.get('org_tag_column', '77'))
+        return int(settings.get("org_tag_column", "77"))
 
     @property
     def is_insync(self):
@@ -75,7 +74,7 @@ class VimBuffer(Document):
 
     @property
     def changedtick(self):
-        """ Number of changes in vimbuffer """
+        """Number of changes in vimbuffer"""
         return self._changedtick
 
     @changedtick.setter
@@ -83,13 +82,13 @@ class VimBuffer(Document):
         self._changedtick = value
 
     def get_todo_states(self, strip_access_key=True):
-        """ Returns a list containing a tuple of two lists of allowed todo
+        """Returns a list containing a tuple of two lists of allowed todo
         states split by todo and done states. Multiple todo-done state
         sequences can be defined.
 
         :returns:    [([todo states], [done states]), ..]
         """
-        states = settings.get('org_todo_keywords', [])
+        states = settings.get("org_todo_keywords", [])
         # TODO this function gets called too many times when change of state of
         # one todo is triggered, check with:
         # print(states)
@@ -110,23 +109,23 @@ class VimBuffer(Document):
                 for i in s:
                     _i = i
                     if type(_i) is str and _i:
-                        if strip_access_key and '(' in _i:
-                            _i = _i[:_i.index('(')]
+                        if strip_access_key and "(" in _i:
+                            _i = _i[: _i.index("(")]
                             if _i:
                                 r.append(_i)
                         else:
                             r.append(_i)
-                if '|' not in r:
+                if "|" not in r:
                     if not stop:
                         res.append((r[:-1], [r[-1]]))
                     else:
                         res = (r[:-1], [r[-1]])
                 else:
-                    seperator_pos = r.index('|')
+                    seperator_pos = r.index("|")
                     if not stop:
-                        res.append((r[0:seperator_pos], r[seperator_pos + 1:]))
+                        res.append((r[0:seperator_pos], r[seperator_pos + 1 :]))
                     else:
-                        res = (r[0:seperator_pos], r[seperator_pos + 1:])
+                        res = (r[0:seperator_pos], r[seperator_pos + 1 :])
             elif type(s) in (list, tuple) and not stop:
                 for i in s:
                     r = parse_states(i, stop=1)
@@ -138,17 +137,23 @@ class VimBuffer(Document):
 
     def update_changedtick(self):
         if self.bufnr == vim.current.buffer.number:
-            self._changedtick = int(vim.eval('b:changedtick'))
+            self._changedtick = int(vim.eval("b:changedtick"))
         else:
-            vim.command('unlet! g:org_changedtick | let g:org_lz = &lz | let g:org_hidden = &hidden | set lz hidden')
+            vim.command(
+                "unlet! g:org_changedtick | let g:org_lz = &lz | let g:org_hidden = &hidden | set lz hidden"
+            )
             # TODO is this likely to fail? maybe some error hangling should be added
-            vim.command('keepalt buffer %d | let g:org_changedtick = b:changedtick | buffer %d' % \
-                    (self.bufnr, vim.current.buffer.number))
-            vim.command('let &lz = g:org_lz | let &hidden = g:org_hidden | unlet! g:org_lz g:org_hidden | redraw')
-            self._changedtick = int(vim.eval('g:org_changedtick'))
+            vim.command(
+                "keepalt buffer %d | let g:org_changedtick = b:changedtick | buffer %d"
+                % (self.bufnr, vim.current.buffer.number)
+            )
+            vim.command(
+                "let &lz = g:org_lz | let &hidden = g:org_hidden | unlet! g:org_lz g:org_hidden | redraw"
+            )
+            self._changedtick = int(vim.eval("g:org_changedtick"))
 
     def write(self):
-        """ write the changes to the vim buffer
+        """write the changes to the vim buffer
 
         :returns:    True if something was written, otherwise False
         """
@@ -157,30 +162,38 @@ class VimBuffer(Document):
 
         self.update_changedtick()
         if not self.is_insync:
-            raise BufferNotInSync('Buffer is not in sync with vim!')
+            raise BufferNotInSync("Buffer is not in sync with vim!")
 
         # A start of None would turn the slice assignments below into
         # [None:None], replacing the whole buffer. Check before touching it.
         for h in self.all_headings():
             if h.is_dirty and h.start is None:
                 raise ValueError(
-                    'Heading has no start position, refusing to write: %s' % h)
+                    "Heading has no start position, refusing to write: %s" % h
+                )
 
         # write meta information
         if self.is_dirty_meta_information:
-            meta_end = 0 if self._orig_meta_information_len is None else self._orig_meta_information_len
+            meta_end = (
+                0
+                if self._orig_meta_information_len is None
+                else self._orig_meta_information_len
+            )
             self._content[:meta_end] = self.meta_information
             self._orig_meta_information_len = len(self.meta_information)
 
         # remove deleted headings
         already_deleted = []
         # headings without _orig_start never existed in the buffer
-        for h in sorted((x for x in self._deleted_headings if x._orig_start is not None),
-                        key=lambda x: x._orig_start, reverse=True):
+        for h in sorted(
+            (x for x in self._deleted_headings if x._orig_start is not None),
+            key=lambda x: x._orig_start,
+            reverse=True,
+        ):
             if h._orig_start not in already_deleted:
                 # this is a heading that actually exists on the buffer and it
                 # needs to be removed
-                del self._content[h._orig_start:h._orig_start + h._orig_len]
+                del self._content[h._orig_start : h._orig_start + h._orig_len]
                 already_deleted.append(h._orig_start)
         del self._deleted_headings[:]
         del already_deleted
@@ -188,18 +201,18 @@ class VimBuffer(Document):
         # update changed headings and add new headings
         for h in self.all_headings():
             if h.is_dirty:
-                vim.current.buffer.append("") # workaround for neovim bug
+                vim.current.buffer.append("")  # workaround for neovim bug
                 if h._orig_start is not None:
                     # this is a heading that existed before and was changed. It
                     # needs to be replaced
                     if h.is_dirty_heading:
-                        self._content[h.start:h.start + 1] = [str(h)]
+                        self._content[h.start : h.start + 1] = [str(h)]
                     if h.is_dirty_body:
-                        self._content[h.start + 1:h.start + h._orig_len] = h.body
+                        self._content[h.start + 1 : h.start + h._orig_len] = h.body
                 else:
                     # this is a new heading. It needs to be inserted
-                    self._content[h.start:h.start] = [str(h)] + h.body
-                del vim.current.buffer[-1] # restore workaround for neovim bug
+                    self._content[h.start : h.start] = [str(h)] + h.body
+                del vim.current.buffer[-1]  # restore workaround for neovim bug
                 h._dirty_heading = False
                 h._dirty_body = False
             # for all headings the length and start offset needs to be updated
@@ -214,7 +227,7 @@ class VimBuffer(Document):
         return True
 
     def write_heading(self, heading, including_children=True):
-        """ WARNING: use this function only when you know what you are doing!
+        """WARNING: use this function only when you know what you are doing!
         This function writes a heading to the vim buffer. It offers performance
         advantages over the regular write() function. This advantage is
         combined with no sanity checks! Whenever you use this function, make
@@ -247,12 +260,19 @@ class VimBuffer(Document):
                 # this is a heading that existed before and was changed. It
                 # needs to be replaced
                 if heading.is_dirty_heading:
-                    self._content[heading._orig_start:heading._orig_start + 1] = [str(heading)]
+                    self._content[heading._orig_start : heading._orig_start + 1] = [
+                        str(heading)
+                    ]
                 if heading.is_dirty_body:
-                    self._content[heading._orig_start + 1:heading._orig_start + heading._orig_len] = heading.body
+                    self._content[
+                        heading._orig_start + 1 : heading._orig_start
+                        + heading._orig_len
+                    ] = heading.body
             else:
                 # this is a new heading. It needs to be inserted
-                raise ValueError('Heading must contain the attribute _orig_start! %s' % heading)
+                raise ValueError(
+                    "Heading must contain the attribute _orig_start! %s" % heading
+                )
             heading._dirty_heading = False
             heading._dirty_body = False
         # for all headings the length offset needs to be updated
@@ -272,12 +292,19 @@ class VimBuffer(Document):
                 # print "checkbox is dirty? " + str(checkbox.is_dirty_checkbox)
                 # print checkbox
                 if checkbox.is_dirty_checkbox:
-                    self._content[checkbox._orig_start:checkbox._orig_start + 1] = [str(checkbox)]
+                    self._content[checkbox._orig_start : checkbox._orig_start + 1] = [
+                        str(checkbox)
+                    ]
                 if checkbox.is_dirty_body:
-                    self._content[checkbox._orig_start + 1:checkbox._orig_start + checkbox._orig_len] = checkbox.body
+                    self._content[
+                        checkbox._orig_start + 1 : checkbox._orig_start
+                        + checkbox._orig_len
+                    ] = checkbox.body
             else:
                 # this is a new checkbox. It needs to be inserted
-                raise ValueError('Checkbox must contain the attribute _orig_start! %s' % checkbox)
+                raise ValueError(
+                    "Checkbox must contain the attribute _orig_start! %s" % checkbox
+                )
             checkbox._dirty_checkbox = False
             checkbox._dirty_body = False
         # for all headings the length offset needs to be updated
@@ -289,7 +316,7 @@ class VimBuffer(Document):
         pass
 
     def previous_heading(self, position=None):
-        """ Find the next heading (search forward) and return the related object
+        """Find the next heading (search forward) and return the related object
         :returns:    Heading object or None
         """
         h = self.current_heading(position=position)
@@ -297,7 +324,7 @@ class VimBuffer(Document):
             return h.previous_heading
 
     def current_heading(self, position=None):
-        """ Find the current heading (search backward) and return the related object
+        """Find the current heading (search backward) and return the related object
         :returns:    Heading object or None
         """
         if position is None:
@@ -310,7 +337,7 @@ class VimBuffer(Document):
             hi = len(self.headings)
             lo = 0
             while lo < hi:
-                mid = (lo+hi)//2
+                mid = (lo + hi) // 2
                 h = self.headings[mid]
                 if h.end_of_last_child < position:
                     lo = mid + 1
@@ -326,7 +353,7 @@ class VimBuffer(Document):
             hi = len(heading.children)
             lo = 0
             while lo < hi:
-                mid = (lo+hi)//2
+                mid = (lo + hi) // 2
                 h = heading.children[mid]
                 if h.end_of_last_child < position:
                     lo = mid + 1
@@ -338,8 +365,7 @@ class VimBuffer(Document):
         # look at the cache to find the heading
         h_tmp = self._cached_heading
         if h_tmp is not None:
-            if h_tmp.end_of_last_child > position and \
-                    h_tmp.start < position:
+            if h_tmp.end_of_last_child > position and h_tmp.start < position:
                 if h_tmp.end < position:
                     self._cached_heading = binaryFindHeading(h_tmp)
                 return self._cached_heading
@@ -348,7 +374,7 @@ class VimBuffer(Document):
         return self._cached_heading
 
     def next_heading(self, position=None):
-        """ Find the next heading (search forward) and return the related object
+        """Find the next heading (search forward) and return the related object
         :returns:    Heading object or None
         """
         h = self.current_heading(position=position)
@@ -356,7 +382,7 @@ class VimBuffer(Document):
             return h.next_heading
 
     def find_current_heading(self, position=None, heading=Heading):
-        """ Find the next heading backwards from the position of the cursor.
+        """Find the next heading backwards from the position of the cursor.
         The difference to the function current_heading is that the returned
         object is not built into the DOM. In case the DOM doesn't exist or is
         out of sync this function is much faster in fetching the current
@@ -368,14 +394,16 @@ class VimBuffer(Document):
 
         :returns:    Heading object or None
         """
-        return self.find_heading(vim.current.window.cursor[0] - 1 \
-                if position is None else position, \
-                direction=Direction.BACKWARD, heading=heading, \
-                connect_with_document=False)
+        return self.find_heading(
+            vim.current.window.cursor[0] - 1 if position is None else position,
+            direction=Direction.BACKWARD,
+            heading=heading,
+            connect_with_document=False,
+        )
 
 
 class VimBufferContent(MultiPurposeList):
-    """ Vim Buffer Content wraps a vim buffer in a MultiPurposeList so that
+    """Vim Buffer Content wraps a vim buffer in a MultiPurposeList so that
     changes made through it are written to the real buffer and trigger the
     on_change hook.
     """

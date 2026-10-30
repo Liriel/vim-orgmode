@@ -1,14 +1,13 @@
-
 """
-    Agenda
-    ~~~~~~~~~~~~~~~~~~
+Agenda
+~~~~~~~~~~~~~~~~~~
 
-    The agenda is one of the main concepts of orgmode. It allows to
-    collect TODO items from multiple org documents in an agenda view.
+The agenda is one of the main concepts of orgmode. It allows to
+collect TODO items from multiple org documents in an agenda view.
 
-    Features:
-    * filtering
-    * sorting
+Features:
+* filtering
+* sorting
 """
 
 from datetime import datetime
@@ -30,8 +29,10 @@ def agenda_sorting_key(heading):
         return (1, datetime.max)
     return (0, active)
 
+
 class AgendaManager:
     """Simple parsing of Documents to create an agenda."""
+
     # TODO Move filters in this file, they do the same thing
 
     def __init__(self):
@@ -44,8 +45,9 @@ class AgendaManager:
         filtered = []
         for document in iter(documents):
             # filter and return headings
-            filtered.extend(filter_items(document.all_headings(),
-                                [contains_active_todo]))
+            filtered.extend(
+                filter_items(document.all_headings(), [contains_active_todo])
+            )
         return sorted(filtered, key=agenda_sorting_key)
 
     def get_next_week_and_active_todo(self, documents):
@@ -56,8 +58,9 @@ class AgendaManager:
         filtered = []
         for document in iter(documents):
             # filter and return headings
-            filtered.extend(filter_items(document.all_headings(),
-                                [is_within_week_and_active_todo]))
+            filtered.extend(
+                filter_items(document.all_headings(), [is_within_week_and_active_todo])
+            )
         return sorted(filtered, key=agenda_sorting_key)
 
     def get_timestamped_items(self, documents):
@@ -68,6 +71,7 @@ class AgendaManager:
         filtered = []
         for document in iter(documents):
             # filter and return headings
-            filtered.extend(filter_items(document.all_headings(),
-                                [contains_active_date]))
+            filtered.extend(
+                filter_items(document.all_headings(), [contains_active_date])
+            )
         return sorted(filtered, key=agenda_sorting_key)

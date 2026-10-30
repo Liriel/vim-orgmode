@@ -1,25 +1,25 @@
-
 """
-    agendafilter
-    ~~~~~~~~~~~~~~~~
+agendafilter
+~~~~~~~~~~~~~~~~
 
-    AgendaFilter contains all the filters that can be applied to create the
-    agenda.
+AgendaFilter contains all the filters that can be applied to create the
+agenda.
 
 
-    All functions except filter_items() in the module are filters. Given a
-    heading they return if the heading meets the criteria of the filter.
+All functions except filter_items() in the module are filters. Given a
+heading they return if the heading meets the criteria of the filter.
 
-    The function filter_items() can combine different filters and only returns
-    the filtered headings.
+The function filter_items() can combine different filters and only returns
+the filtered headings.
 """
+
 from datetime import datetime, timedelta
 
 from orgmode.liborgmode.orgdate import orgdate_to_datetime
 
 
 def filter_items(headings, filters):
-    """ Filter the given headings.
+    """Filter the given headings.
 
     Args:
         headings (list): Contains headings
@@ -40,7 +40,7 @@ def filter_items(headings, filters):
 
 
 def is_within_week(heading):
-    """ Test if headings date is within a week
+    """Test if headings date is within a week
 
     Returns:
         bool: True if the date in the deading is within a week in the future (or
@@ -71,6 +71,7 @@ def contains_active_todo(heading):
     # function
     # TODO why is this import failing at top level? circular dependency...
     from orgmode._vim import ORGMODE
+
     active = []
     for act in ORGMODE.get_document().get_todo_states():
         active.extend(act[0])

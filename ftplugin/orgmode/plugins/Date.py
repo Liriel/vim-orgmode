@@ -21,15 +21,25 @@ class Date:
     datetime_regex = r"[A-Z]\w\w \d\d\d\d-\d\d-\d\d \d\d:\d\d>"
 
     month_mapping = {
-        'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5,
-        'jun': 6, 'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11,
-        'dec': 12}
+        "jan": 1,
+        "feb": 2,
+        "mar": 3,
+        "apr": 4,
+        "may": 5,
+        "jun": 6,
+        "jul": 7,
+        "aug": 8,
+        "sep": 9,
+        "oct": 10,
+        "nov": 11,
+        "dec": 12,
+    }
 
     def __init__(self):
-        """ Initialize plugin """
+        """Initialize plugin"""
         object.__init__(self)
         # menu entries this plugin should create
-        self.menu = ORGMODE.orgmenu + Submenu('Dates and Scheduling')
+        self.menu = ORGMODE.orgmenu + Submenu("Dates and Scheduling")
 
         # key bindings for this plugin
         # key bindings are also registered through the menu so only additional
@@ -42,12 +52,12 @@ class Date:
         # set speeddating format that is compatible with orgmode
         try:
             if int(vim.eval('exists(":SpeedDatingFormat")')) == 2:
-                vim.command(':1SpeedDatingFormat %Y-%m-%d %a')
-                vim.command(':1SpeedDatingFormat %Y-%m-%d %a %H:%M')
+                vim.command(":1SpeedDatingFormat %Y-%m-%d %a")
+                vim.command(":1SpeedDatingFormat %Y-%m-%d %a %H:%M")
             else:
-                echom('Speeddating plugin not installed. Please install it.')
+                echom("Speeddating plugin not installed. Please install it.")
         except Exception:
-            echom('Speeddating plugin not installed. Please install it.')
+            echom("Speeddating plugin not installed. Please install it.")
 
     @classmethod
     def _modify_time(cls, startdate, modifier):
@@ -56,13 +66,13 @@ class Date:
 
         See http://orgmode.org/manual/The-date_002ftime-prompt.html
         """
-        if modifier is None or modifier == '' or modifier == '.':
+        if modifier is None or modifier == "" or modifier == ".":
             return startdate
 
         # rm crap from modifier
         modifier = modifier.strip()
 
-        ops = {'-': operator.sub, '+': operator.add}
+        ops = {"-": operator.sub, "+": operator.add}
 
         # check real date
         date_regex = r"(\d\d\d\d)-(\d\d)-(\d\d)"
@@ -105,7 +115,7 @@ class Date:
         date_regex = "^(\\d{1,2})$"
         match = re.search(date_regex, modifier)
         if match:
-            newday, = match.groups()
+            (newday,) = match.groups()
             newday = int(newday)
             if newday > startdate.day:
                 newdate = date(startdate.year, startdate.month, newday)
@@ -117,11 +127,17 @@ class Date:
 
         # check for full days: Mon, Tue, Wed, Thu, Fri, Sat, Sun
         modifier_lc = modifier.lower()
-        match = re.search('mon|tue|wed|thu|fri|sat|sun', modifier_lc)
+        match = re.search("mon|tue|wed|thu|fri|sat|sun", modifier_lc)
         if match:
             weekday_mapping = {
-                'mon': 0, 'tue': 1, 'wed': 2, 'thu': 3,
-                'fri': 4, 'sat': 5, 'sun': 6}
+                "mon": 0,
+                "tue": 1,
+                "wed": 2,
+                "thu": 3,
+                "fri": 4,
+                "sat": 5,
+                "sun": 6,
+            }
             diff = (weekday_mapping[modifier_lc] - startdate.weekday()) % 7
             # use next weeks weekday if current weekday is the same as modifier
             if diff == 0:
@@ -129,13 +145,13 @@ class Date:
             newdate = startdate + timedelta(days=diff)
 
         # check for days modifier with appended d
-        match = re.search('^(\\+|-)(\\d*)d', modifier)
+        match = re.search("^(\\+|-)(\\d*)d", modifier)
         if match:
             op, days = match.groups()
             newdate = ops[op](startdate, timedelta(days=int(days)))
 
         # check for days modifier without appended d
-        match = re.search('^(\\+|-)(\\d*) |^(\\+|-)(\\d*)$', modifier)
+        match = re.search("^(\\+|-)(\\d*) |^(\\+|-)(\\d*)$", modifier)
         if match:
             groups = match.groups()
             try:
@@ -147,29 +163,32 @@ class Date:
             newdate = ops[op](startdate, timedelta(days=days))
 
         # check for week modifier
-        match = re.search('^(\\+|-)(\\d+)w', modifier)
+        match = re.search("^(\\+|-)(\\d+)w", modifier)
         if match:
             op, weeks = match.groups()
             newdate = ops[op](startdate, timedelta(weeks=int(weeks)))
 
         # check for month modifier
-        match = re.search('^(\\+|-)(\\d+)m', modifier)
+        match = re.search("^(\\+|-)(\\d+)m", modifier)
         if match:
             op, months = match.groups()
-            newdate = date(startdate.year, ops[op](startdate.month, int(months)),
-                    startdate.day)
+            newdate = date(
+                startdate.year, ops[op](startdate.month, int(months)), startdate.day
+            )
 
         # check for year modifier
-        match = re.search('^(\\+|-)(\\d*)y', modifier)
+        match = re.search("^(\\+|-)(\\d*)y", modifier)
         if match:
             op, years = match.groups()
-            newdate = date(ops[op](startdate.year, int(years)), startdate.month,
-                    startdate.day)
+            newdate = date(
+                ops[op](startdate.year, int(years)), startdate.month, startdate.day
+            )
 
         # check for month day
         match = re.search(
-            '(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec) (\\d{1,2})',
-            modifier.lower())
+            "(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec) (\\d{1,2})",
+            modifier.lower(),
+        )
         if match:
             month = cls.month_mapping[match.groups()[0]]
             day = int(match.groups()[1])
@@ -189,8 +208,9 @@ class Date:
         # check for month day year
         # sep 12 2011
         match = re.search(
-            '(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec) (\\d{1,2}) (\\d{1,4})',
-            modifier.lower())
+            "(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec) (\\d{1,2}) (\\d{1,4})",
+            modifier.lower(),
+        )
         if match:
             month = int(cls.month_mapping[match.groups()[0]])
             day = int(match.groups()[1])
@@ -202,15 +222,19 @@ class Date:
 
         # check for time: HH:MM
         # '12:45' --> datetime(2006, 06, 13, 12, 45))
-        match = re.search('(\\d{1,2}):(\\d\\d)$', modifier)
+        match = re.search("(\\d{1,2}):(\\d\\d)$", modifier)
         if match:
             try:
                 startdate = newdate
             except Exception:
                 pass
             return datetime(
-                startdate.year, startdate.month, startdate.day,
-                int(match.groups()[0]), int(match.groups()[1]))
+                startdate.year,
+                startdate.month,
+                startdate.day,
+                int(match.groups()[0]),
+                int(match.groups()[1]),
+            )
 
         try:
             return newdate
@@ -226,10 +250,9 @@ class Date:
         TODO: add all modifier of orgmode.
         """
         today = date.today()
-        msg = ''.join([
-            'Inserting ',
-            str(today.strftime('%Y-%m-%d %a')),
-            ' | Modify date'])
+        msg = "".join(
+            ["Inserting ", str(today.strftime("%Y-%m-%d %a")), " | Modify date"]
+        )
         modifier = get_user_input(msg)
 
         # abort if the user canceled the input prompt
@@ -240,12 +263,10 @@ class Date:
 
         # format
         if isinstance(newdate, datetime):
-            newdate = newdate.strftime(
-                '%Y-%m-%d %a %H:%M')
+            newdate = newdate.strftime("%Y-%m-%d %a %H:%M")
         else:
-            newdate = newdate.strftime(
-                '%Y-%m-%d %a')
-        timestamp = '<%s>' % newdate if active else '[%s]' % newdate
+            newdate = newdate.strftime("%Y-%m-%d %a")
+        timestamp = "<%s>" % newdate if active else "[%s]" % newdate
 
         insert_at_cursor(timestamp)
 
@@ -266,7 +287,7 @@ class Date:
         vim.command("let g:org_calendar_action_backup = '" + calendar_action + "'")
         vim.command("let g:calendar_action = 'CalendarAction'")
 
-        timestamp_template = '<%s>' if active else '[%s]'
+        timestamp_template = "<%s>" if active else "[%s]"
         # timestamp template
         vim.command("let g:org_timestamp_template = '" + timestamp_template + "'")
 
@@ -278,33 +299,35 @@ class Date:
         """
         add_cmd_mapping_menu(
             self,
-            name='OrgDateInsertTimestampActiveCmdLine',
-            key_mapping='<localleader>sa',
+            name="OrgDateInsertTimestampActiveCmdLine",
+            key_mapping="<localleader>sa",
             function='%s ORGMODE.plugins["Date"].insert_timestamp()' % VIM_PY_CALL,
-            menu_desrc='Timest&amp'
+            menu_desrc="Timest&amp",
         )
         add_cmd_mapping_menu(
             self,
-            name='OrgDateInsertTimestampInactiveCmdLine',
-            key_mapping='<localleader>si',
+            name="OrgDateInsertTimestampInactiveCmdLine",
+            key_mapping="<localleader>si",
             function='%s ORGMODE.plugins["Date"].insert_timestamp(False)' % VIM_PY_CALL,
-            menu_desrc='Timestamp (&inactive)'
+            menu_desrc="Timestamp (&inactive)",
         )
         add_cmd_mapping_menu(
             self,
-            name='OrgDateInsertTimestampActiveWithCalendar',
-            key_mapping='<localleader>pa',
-            function='%s ORGMODE.plugins["Date"].insert_timestamp_with_calendar()' % VIM_PY_CALL,
-            menu_desrc='Timestamp with Calendar'
+            name="OrgDateInsertTimestampActiveWithCalendar",
+            key_mapping="<localleader>pa",
+            function='%s ORGMODE.plugins["Date"].insert_timestamp_with_calendar()'
+            % VIM_PY_CALL,
+            menu_desrc="Timestamp with Calendar",
         )
         add_cmd_mapping_menu(
             self,
-            name='OrgDateInsertTimestampInactiveWithCalendar',
-            key_mapping='<localleader>pi',
-            function='%s ORGMODE.plugins["Date"].insert_timestamp_with_calendar(False)' % VIM_PY_CALL,
-            menu_desrc='Timestamp with Calendar(inactive)'
+            name="OrgDateInsertTimestampInactiveWithCalendar",
+            key_mapping="<localleader>pi",
+            function='%s ORGMODE.plugins["Date"].insert_timestamp_with_calendar(False)'
+            % VIM_PY_CALL,
+            menu_desrc="Timestamp with Calendar(inactive)",
         )
 
-        submenu = self.menu + Submenu('Change &Date')
-        submenu + ActionEntry('Day &Earlier', '<C-x>', '<C-x>')
-        submenu + ActionEntry('Day &Later', '<C-a>', '<C-a>')
+        submenu = self.menu + Submenu("Change &Date")
+        submenu + ActionEntry("Day &Earlier", "<C-x>", "<C-x>")
+        submenu + ActionEntry("Day &Later", "<C-a>", "<C-a>")

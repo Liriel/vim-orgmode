@@ -7,6 +7,7 @@ sys.path and use the fake ``vim`` module from tests/vim.py.
 The integration tests in tests/integration start a real Vim in a subprocess
 and are not affected by any of this.
 """
+
 import copy
 import os
 import sys
@@ -14,7 +15,7 @@ import sys
 import pytest
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
-FTPLUGIN_DIR = os.path.join(os.path.dirname(TESTS_DIR), 'ftplugin')
+FTPLUGIN_DIR = os.path.join(os.path.dirname(TESTS_DIR), "ftplugin")
 
 # tests/ first so that ``import vim`` finds the fake
 for path in (FTPLUGIN_DIR, TESTS_DIR):
@@ -41,7 +42,7 @@ def reset_fake_vim():
     vim.CMDRESULTS = {}
     vim.current = vim.VimTest()
 
-    orgmode_vim = sys.modules.get('orgmode._vim')
+    orgmode_vim = sys.modules.get("orgmode._vim")
     if orgmode_vim is not None:
         orgmode_vim.ORGMODE._documents.clear()
     yield

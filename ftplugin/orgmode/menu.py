@@ -1,4 +1,3 @@
-
 import vim
 
 from orgmode.keybinding import (
@@ -15,18 +14,23 @@ from orgmode.keybinding import (
 def register_menu(f):
     def r(*args, **kwargs):
         p = f(*args, **kwargs)
+
         def create(entry):
-            if isinstance(entry, Submenu) or isinstance(entry, Separator) \
-                    or isinstance(entry, ActionEntry):
+            if (
+                isinstance(entry, Submenu)
+                or isinstance(entry, Separator)
+                or isinstance(entry, ActionEntry)
+            ):
                 entry.create()
 
-        if hasattr(p, 'menu'):
+        if hasattr(p, "menu"):
             if isinstance(p.menu, list) or isinstance(p.menu, tuple):
                 for e in p.menu:
                     create(e)
             else:
                 create(p.menu)
         return p
+
     return r
 
 
@@ -50,7 +54,7 @@ def add_cmd_mapping_menu(plugin, name, function, key_mapping, menu_desrc):
 
 
 class Submenu:
-    """ Submenu entry """
+    """Submenu entry"""
 
     def __init__(self, name, parent=None):
         object.__init__(self)
@@ -74,9 +78,9 @@ class Submenu:
         return self._children[:]
 
     def get_menu(self):
-        n = self.name.replace(' ', '\\ ')
+        n = self.name.replace(" ", "\\ ")
         if self.parent:
-            return '%s.%s' % (self.parent.get_menu(), n)
+            return "%s.%s" % (self.parent.get_menu(), n)
         return n
 
     def create(self):
@@ -89,23 +93,25 @@ class Submenu:
             res += str(c)
         return res
 
+
 class Separator:
-    """ Menu entry for a Separator """
+    """Menu entry for a Separator"""
 
     def __init__(self, parent=None):
         object.__init__(self)
         self.parent = parent
 
     def __str__(self):
-        return '-----'
+        return "-----"
 
     def create(self):
         if self.parent:
             menu = self.parent.get_menu()
-            vim.command('menu %s.-%s- :' % (menu, id(self)))
+            vim.command("menu %s.-%s- :" % (menu, id(self)))
+
 
 class ActionEntry:
-    """ ActionEntry entry """
+    """ActionEntry entry"""
 
     def __init__(self, lname, action, rname=None, mode=MODE_NORMAL, parent=None):
         """
@@ -122,16 +128,18 @@ class ActionEntry:
         self._action = action
         self._rname = rname
         if mode not in (MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT):
-            raise ValueError('Parameter mode not in MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT')
+            raise ValueError(
+                "Parameter mode not in MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT"
+            )
         self._mode = mode
         self.parent = parent
 
     def __str__(self):
-        return '%s\t%s' % (self.lname, self.rname)
+        return "%s\t%s" % (self.lname, self.rname)
 
     @property
     def lname(self):
-        return self._lname.replace(' ', '\\ ')
+        return self._lname.replace(" ", "\\ ")
 
     @property
     def action(self):
@@ -142,7 +150,7 @@ class ActionEntry:
     @property
     def rname(self):
         if isinstance(self._action, Keybinding):
-            return self._action.key.replace('<Tab>', 'Tab')
+            return self._action.key.replace("<Tab>", "Tab")
         return self._rname
 
     @property
@@ -152,21 +160,21 @@ class ActionEntry:
         return self._mode
 
     def create(self):
-        menucmd = ':%smenu ' % self.mode
-        menu = ''
-        cmd = ''
+        menucmd = ":%smenu " % self.mode
+        menu = ""
+        cmd = ""
 
         if self.parent:
             menu = self.parent.get_menu()
-        menu += '.%s' % self.lname
+        menu += ".%s" % self.lname
 
         if self.rname:
-            cmd = '%s %s<Tab>%s %s' % (menucmd, menu, self.rname, self.action)
+            cmd = "%s %s<Tab>%s %s" % (menucmd, menu, self.rname, self.action)
         else:
-            cmd = '%s %s %s' % (menucmd, menu, self.action)
+            cmd = "%s %s %s" % (menucmd, menu, self.action)
 
         vim.command(cmd)
 
         # keybindings should be stored in the plugin.keybindings property and be registered by the appropriate keybinding registrar
-        #if isinstance(self._action, Keybinding):
+        # if isinstance(self._action, Keybinding):
         #    self._action.create()

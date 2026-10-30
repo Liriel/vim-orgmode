@@ -1,4 +1,3 @@
-
 import vim
 
 from orgmode._vim import ORGMODE, apply_count
@@ -8,13 +7,13 @@ from orgmode.menu import ActionEntry, Submenu
 
 
 class ShowHide:
-    """ Show Hide plugin """
+    """Show Hide plugin"""
 
     def __init__(self):
-        """ Initialize plugin """
+        """Initialize plugin"""
         object.__init__(self)
         # menu entries this plugin should create
-        self.menu = ORGMODE.orgmenu + Submenu('&Show Hide')
+        self.menu = ORGMODE.orgmenu + Submenu("&Show Hide")
 
         # key bindings for this plugin
         # key bindings are also registered through the menu so only additional
@@ -23,7 +22,7 @@ class ShowHide:
 
     @classmethod
     def _fold_depth(cls, h):
-        """ Find the deepest level of open folds
+        """Find the deepest level of open folds
 
         :h:            Heading
         :returns:    Tuple (int - level of open folds, boolean - found fold) or None if h is not a Heading
@@ -31,7 +30,7 @@ class ShowHide:
         if not isinstance(h, Heading):
             return
 
-        if int(vim.eval('foldclosed(%d)' % h.start_vim)) != -1:
+        if int(vim.eval("foldclosed(%d)" % h.start_vim)) != -1:
             return (h.number_of_parents, True)
 
         res = [h.number_of_parents + 1]
@@ -46,7 +45,7 @@ class ShowHide:
     @classmethod
     @apply_count
     def toggle_folding(cls, reverse=False):
-        """ Toggle folding similar to the way orgmode does
+        """Toggle folding similar to the way orgmode does
 
         This is just a convenience function, don't hesitate to use the z*
         keybindings vim offers to deal with folding!
@@ -61,31 +60,36 @@ class ShowHide:
 
         cursor = vim.current.window.cursor[:]
 
-        if int(vim.eval('foldclosed(%d)' % heading.start_vim)) != -1:
+        if int(vim.eval("foldclosed(%d)" % heading.start_vim)) != -1:
             if not reverse:
                 # open closed fold
                 p = heading.number_of_parents
                 if not p:
                     p = heading.level
-                vim.command('normal! %dzo' % p)
+                vim.command("normal! %dzo" % p)
             else:
                 # reverse folding opens all folds under the cursor
-                vim.command('%d,%dfoldopen!' % (heading.start_vim, heading.end_of_last_child_vim))
+                vim.command(
+                    "%d,%dfoldopen!"
+                    % (heading.start_vim, heading.end_of_last_child_vim)
+                )
             vim.current.window.cursor = cursor
             return heading
 
         def open_fold(h):
             if h.number_of_parents <= open_depth:
-                vim.command('normal! %dgg%dzo' % (h.start_vim, open_depth))
+                vim.command("normal! %dgg%dzo" % (h.start_vim, open_depth))
             for c in h.children:
                 open_fold(c)
 
         def close_fold(h):
             for c in h.children:
                 close_fold(c)
-            if h.number_of_parents >= open_depth - 1 and \
-                int(vim.eval('foldclosed(%d)' % h.start_vim)) == -1:
-                vim.command('normal! %dggzc' % (h.start_vim, ))
+            if (
+                h.number_of_parents >= open_depth - 1
+                and int(vim.eval("foldclosed(%d)" % h.start_vim)) == -1
+            ):
+                vim.command("normal! %dggzc" % (h.start_vim,))
 
         # find deepest fold
         open_depth, found_fold = cls._fold_depth(heading)
@@ -96,7 +100,10 @@ class ShowHide:
                 for child in heading.children:
                     open_fold(child)
             else:
-                vim.command('%d,%dfoldclose!' % (heading.start_vim, heading.end_of_last_child_vim))
+                vim.command(
+                    "%d,%dfoldclose!"
+                    % (heading.start_vim, heading.end_of_last_child_vim)
+                )
 
                 if heading.number_of_parents:
                     # restore cursor position, it might have been changed by open_fold
@@ -106,7 +113,7 @@ class ShowHide:
                     if not p:
                         p = heading.level
                     # reopen fold again because the former closing of the fold closed all levels, including parents!
-                    vim.command('normal! %dzo' % (p, ))
+                    vim.command("normal! %dzo" % (p,))
         else:
             # close the last level of folds
             close_fold(heading)
@@ -118,13 +125,13 @@ class ShowHide:
     @classmethod
     @apply_count
     def global_toggle_folding(cls, reverse=False):
-        """ Toggle folding globally
+        """Toggle folding globally
 
         :reverse:    If False open folding by one level otherwise close it by one.
         """
         d = ORGMODE.get_document()
         if reverse:
-            foldlevel = int(vim.eval('&foldlevel'))
+            foldlevel = int(vim.eval("&foldlevel"))
             if foldlevel == 0:
                 # open all folds because the user tries to close folds beyond 0
                 vim.eval('feedkeys("zR", "n")')
@@ -155,22 +162,58 @@ class ShowHide:
         """
         # register plug
 
-        self.keybindings.append(Keybinding('<Tab>',
-                                     Plug('OrgToggleFoldingNormal', '%s ORGMODE.plugins["ShowHide"].toggle_folding()<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('&Cycle Visibility', self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "<Tab>",
+                Plug(
+                    "OrgToggleFoldingNormal",
+                    '%s ORGMODE.plugins["ShowHide"].toggle_folding()<CR>' % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry("&Cycle Visibility", self.keybindings[-1])
 
-        self.keybindings.append(Keybinding('<S-Tab>',
-                                     Plug('OrgToggleFoldingReverse', '%s ORGMODE.plugins["ShowHide"].toggle_folding(reverse=True)<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('Cycle Visibility &Reverse', self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "<S-Tab>",
+                Plug(
+                    "OrgToggleFoldingReverse",
+                    '%s ORGMODE.plugins["ShowHide"].toggle_folding(reverse=True)<CR>'
+                    % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry("Cycle Visibility &Reverse", self.keybindings[-1])
 
-        self.keybindings.append(Keybinding('<localleader>.',
-                                     Plug('OrgGlobalToggleFoldingNormal', '%s ORGMODE.plugins["ShowHide"].global_toggle_folding()<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('Cycle Visibility &Globally', self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "<localleader>.",
+                Plug(
+                    "OrgGlobalToggleFoldingNormal",
+                    '%s ORGMODE.plugins["ShowHide"].global_toggle_folding()<CR>'
+                    % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry("Cycle Visibility &Globally", self.keybindings[-1])
 
-        self.keybindings.append(Keybinding('<localleader>,',
-                                     Plug('OrgGlobalToggleFoldingReverse',
-               '%s ORGMODE.plugins["ShowHide"].global_toggle_folding(reverse=True)<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('Cycle Visibility Reverse G&lobally', self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "<localleader>,",
+                Plug(
+                    "OrgGlobalToggleFoldingReverse",
+                    '%s ORGMODE.plugins["ShowHide"].global_toggle_folding(reverse=True)<CR>'
+                    % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry(
+            "Cycle Visibility Reverse G&lobally", self.keybindings[-1]
+        )
 
         for i in range(0, 10):
-            self.keybindings.append(Keybinding('<localleader>%d' % (i, ), 'zM:set fdl=%d<CR>' % i, mode=MODE_NORMAL))
+            self.keybindings.append(
+                Keybinding(
+                    "<localleader>%d" % (i,), "zM:set fdl=%d<CR>" % i, mode=MODE_NORMAL
+                )
+            )

@@ -1,10 +1,9 @@
-
 """
-    base
-    ~~~~~~~~~~
+base
+~~~~~~~~~~
 
-    Here are some really basic data structures that are used throughout
-    the liborgmode.
+Here are some really basic data structures that are used throughout
+the liborgmode.
 """
 
 from collections import UserList
@@ -12,7 +11,7 @@ from collections.abc import Iterable
 
 
 def flatten_list(lst):
-    """ Flattens a list
+    """Flattens a list
 
     Args:
         lst (iterable): An iterable that will is non-flat
@@ -20,6 +19,7 @@ def flatten_list(lst):
     Returns:
         list: Flat list
     """
+
     # TODO write tests
     def gen_lst(item):
         if isinstance(item, str) or isinstance(item, bytes):
@@ -29,6 +29,7 @@ def flatten_list(lst):
                 yield from gen_lst(val)
         else:
             yield item
+
     return [i for i in gen_lst(lst)]
 
 
@@ -38,6 +39,7 @@ class Direction:
 
     Example: it defines the direction headings get parted in.
     """
+
     FORWARD = 1
     BACKWARD = 2
 
@@ -58,7 +60,7 @@ class MultiPurposeList(UserList):
         self._on_change = on_change
 
     def _changed(self):
-        """ Call hook """
+        """Call hook"""
         if callable(self._on_change):
             self._on_change()
 
@@ -117,7 +119,9 @@ class MultiPurposeList(UserList):
         self._changed()
 
 
-def get_domobj_range(content=(), position=0, direction=Direction.FORWARD, identify_fun=None):
+def get_domobj_range(
+    content=(), position=0, direction=Direction.FORWARD, identify_fun=None
+):
     """
     Get the start and end line number of the dom obj lines from content.
 

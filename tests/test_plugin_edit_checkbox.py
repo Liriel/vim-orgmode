@@ -1,13 +1,13 @@
-
 import unittest
 
 import vim
 
 from orgmode._vim import ORGMODE
 
-PLUGIN_NAME = 'EditCheckbox'
+PLUGIN_NAME = "EditCheckbox"
 
 bufnr = 10
+
 
 def set_vim_buffer(buf=None, cursor=(2, 0), bufnr=0):
     if buf is None:
@@ -18,30 +18,33 @@ def set_vim_buffer(buf=None, cursor=(2, 0), bufnr=0):
 
 
 counter = 0
+
+
 class EditCheckboxTestCase(unittest.TestCase):
     def setUp(self):
         if PLUGIN_NAME not in ORGMODE.plugins:
             ORGMODE.register_plugin(PLUGIN_NAME)
         self.editcheckbox = ORGMODE.plugins[PLUGIN_NAME]
         vim.EVALRESULTS = {
-                # no org_todo_keywords for b
-                'exists("b:org_todo_keywords")': '0',
-                # global values for org_todo_keywords
-                'exists("g:org_todo_keywords")': '1',
-                'g:org_todo_keywords': ['TODO', '|', 'DONE'],
-                'exists("g:org_improve_split_heading")': '0',
-                'exists("b:org_improve_split_heading")': '0',
-                'exists("g:org_debug")': '0',
-                'exists("b:org_debug")': '0',
-                'exists("*repeat#set()")': '0',
-                'b:changedtick': '%d' % counter,
-                '&ts': '8',
-                'exists("g:org_tag_column")': '0',
-                'exists("b:org_tag_column")': '0',
-                "v:count": '0',
-                # jump to insert mode after adding heading/checkbox
-                'exists("g:org_prefer_insert_mode")': '0',
-                'exists("b:org_prefer_insert_mode")': '0'}
+            # no org_todo_keywords for b
+            'exists("b:org_todo_keywords")': "0",
+            # global values for org_todo_keywords
+            'exists("g:org_todo_keywords")': "1",
+            "g:org_todo_keywords": ["TODO", "|", "DONE"],
+            'exists("g:org_improve_split_heading")': "0",
+            'exists("b:org_improve_split_heading")': "0",
+            'exists("g:org_debug")': "0",
+            'exists("b:org_debug")': "0",
+            'exists("*repeat#set()")': "0",
+            "b:changedtick": "%d" % counter,
+            "&ts": "8",
+            'exists("g:org_tag_column")': "0",
+            'exists("b:org_tag_column")': "0",
+            "v:count": "0",
+            # jump to insert mode after adding heading/checkbox
+            'exists("g:org_prefer_insert_mode")': "0",
+            'exists("b:org_prefer_insert_mode")': "0",
+        }
 
         self.c1 = """
 * heading1 [%]
@@ -53,7 +56,7 @@ class EditCheckboxTestCase(unittest.TestCase):
         - [ ] checkbox6
               - [ ] checkbox7
               - [ ] checkbox8
-""".split('\n')
+""".split("\n")
 
         self.c2 = """
 * a checkbox list [%]
@@ -61,7 +64,7 @@ class EditCheckboxTestCase(unittest.TestCase):
         - [ ] test1
         - [ ] test2
         - [ ] test3
-""".split('\n')
+""".split("\n")
 
         self.c3 = """
 * heading
@@ -69,11 +72,11 @@ class EditCheckboxTestCase(unittest.TestCase):
          - [ ] sub task 1
          - [ ] sub task 2
   2. [ ] another main task
-""".split('\n')
+""".split("\n")
 
         self.c4 = """
 * heading
-""".split('\n')
+""".split("\n")
 
         self.c5 = """
 * heading1
@@ -111,12 +114,12 @@ class EditCheckboxTestCase(unittest.TestCase):
         bufnr += 1
         set_vim_buffer(buf=self.c1, cursor=(9, 0), bufnr=bufnr)
         vim.current.window.cursor = (9, 0)
-        self.assertEqual(vim.current.buffer[9], '              - [ ] checkbox8')
+        self.assertEqual(vim.current.buffer[9], "              - [ ] checkbox8")
         self.editcheckbox.new_checkbox(below=True)
         # vim's buffer behave just opposite to Python's list when inserting a
         # new item.  The new entry is appended in vim put prepended in Python!
-        self.assertEqual(vim.current.buffer[10], '              - [ ] checkbox8')
-        self.assertEqual(vim.current.buffer[9], '              - [ ] ')
+        self.assertEqual(vim.current.buffer[10], "              - [ ] checkbox8")
+        self.assertEqual(vim.current.buffer[9], "              - [ ] ")
         self.editcheckbox.update_checkboxes_status()
 
     def test_no_status_checkbox(self):

@@ -1,11 +1,9 @@
-
 """
-    checkboxes
-    ~~~~~~~~~~
+checkboxes
+~~~~~~~~~~
 
-    TODO: explain this :)
+TODO: explain this :)
 """
-
 
 from orgmode.liborgmode.dom_obj import (
     REGEX_CHECKBOX,
@@ -18,13 +16,14 @@ from orgmode.liborgmode.dom_obj import (
 
 
 class Checkbox(DomObj):
-    """ Structural checkbox object """
-    STATUS_ON = '[X]'
-    STATUS_OFF = '[ ]'
-    # intermediate status
-    STATUS_INT = '[-]'
+    """Structural checkbox object"""
 
-    def __init__(self, level=1, type='-', title='', status='[ ]', body=None):
+    STATUS_ON = "[X]"
+    STATUS_OFF = "[ ]"
+    # intermediate status
+    STATUS_INT = "[-]"
+
+    def __init__(self, level=1, type="-", title="", status="[ ]", body=None):
         """
         :level:        Indent level of the checkbox
         :type:        Type of the checkbox list (-, +, *)
@@ -40,7 +39,7 @@ class Checkbox(DomObj):
         self._children = CheckboxList(obj=self)
         self._dirty_checkbox = False
         # list type
-        self._type = '-'
+        self._type = "-"
         if type:
             self.type = type
         # status
@@ -49,8 +48,13 @@ class Checkbox(DomObj):
             self.status = status
 
     def __str__(self):
-        return ' ' * self.level + self.type + ' ' + \
-            (self.status + ' ' if self.status else '') + self.title
+        return (
+            " " * self.level
+            + self.type
+            + " "
+            + (self.status + " " if self.status else "")
+            + self.title
+        )
 
     def __len__(self):
         # 1 is for the heading's title
@@ -67,16 +71,12 @@ class Checkbox(DomObj):
         :parent:                Don't use this parameter. It's set
                                 automatically.
         """
-        checkbox = self.__class__(
-            level=self.level, title=self.title,
-            body=self.body[:])
+        checkbox = self.__class__(level=self.level, title=self.title, body=self.body[:])
         if parent:
             parent.children.append(checkbox)
         if including_children and self.children:
             for item in self.children:
-                item.copy(
-                    including_children=including_children,
-                    parent=checkbox)
+                item.copy(including_children=including_children, parent=checkbox)
         checkbox._orig_start = self._orig_start
         checkbox._orig_len = self._orig_len
 
@@ -86,7 +86,7 @@ class Checkbox(DomObj):
 
     @classmethod
     def parse_checkbox_from_data(cls, data, heading=None, orig_start=None):
-        """ Construct a new checkbox from the provided data
+        """Construct a new checkbox from the provided data
 
         :data:            List of lines
         :heading:        The heading object this checkbox belongs to
@@ -96,6 +96,7 @@ class Checkbox(DomObj):
 
         :returns:    The newly created checkbox
         """
+
         def parse_title(heading_line):
             # checkbox is not heading
             if REGEX_HEADING.match(heading_line) is not None:
@@ -103,12 +104,12 @@ class Checkbox(DomObj):
             m = REGEX_CHECKBOX.match(heading_line)
             if m:
                 r = m.groupdict()
-                return (len(r['level']), r['type'], r['status'], r['title'])
+                return (len(r["level"]), r["type"], r["status"], r["title"])
 
             return None
 
         if not data:
-            raise ValueError('Unable to create checkbox, no data provided.')
+            raise ValueError("Unable to create checkbox, no data provided.")
 
         # create new checkbox
         nc = cls()
@@ -137,7 +138,7 @@ class Checkbox(DomObj):
 
     @classmethod
     def identify_checkbox(cls, line):
-        """ Test if a certain line is a checkbox or not.
+        """Test if a certain line is a checkbox or not.
 
         :line: the line to check
 
@@ -149,22 +150,22 @@ class Checkbox(DomObj):
         m = REGEX_CHECKBOX.match(line)
         if m:
             r = m.groupdict()
-            return len(r['level'])
+            return len(r["level"])
 
         return None
 
     @property
     def is_dirty(self):
-        """ Return True if the heading's body is marked dirty """
+        """Return True if the heading's body is marked dirty"""
         return self._dirty_checkbox or self._dirty_body
 
     @property
     def is_dirty_checkbox(self):
-        """ Return True if the heading is marked dirty """
+        """Return True if the heading is marked dirty"""
         return self._dirty_checkbox
 
     def get_index_in_parent_list(self):
-        """ Retrieve the index value of current checkbox in the parents list of
+        """Retrieve the index value of current checkbox in the parents list of
         checkboxes. This works also for top level checkboxes.
 
         :returns:    Index value or None if heading doesn't have a
@@ -178,7 +179,7 @@ class Checkbox(DomObj):
                 return parent_list.index(self)
 
     def get_parent_list(self):
-        """ Retrieve the parents' list of headings. This works also for top
+        """Retrieve the parents' list of headings. This works also for top
         level headings.
 
         :returns:    List of headings or None if heading doesn't have a
@@ -191,43 +192,43 @@ class Checkbox(DomObj):
                 return self.document.checkboxes
 
     def set_dirty(self):
-        """ Mark the heading and body dirty so that it will be rewritten when
-        saving the document """
+        """Mark the heading and body dirty so that it will be rewritten when
+        saving the document"""
         self._dirty_checkbox = True
         self._dirty_body = True
         if self._document:
             self._document.set_dirty_document()
 
     def set_dirty_checkbox(self):
-        """ Mark the checkbox dirty so that it will be rewritten when saving the
-        document """
+        """Mark the checkbox dirty so that it will be rewritten when saving the
+        document"""
         self._dirty_checkbox = True
         if self._document:
             self._document.set_dirty_document()
 
     @property
     def previous_checkbox(self):
-        """ Serialized access to the previous checkbox """
+        """Serialized access to the previous checkbox"""
         return super().previous_item
 
     @property
     def next_checkbox(self):
-        """ Serialized access to the next checkbox """
+        """Serialized access to the next checkbox"""
         return super().next_item
 
     @property
     def first_checkbox(self):
-        """ Access to the first child heading or None if no children exist """
+        """Access to the first child heading or None if no children exist"""
         if self.children:
             return self.children[0]
 
     @property
     def start(self):
-        """ Access to the starting line of the checkbox """
+        """Access to the starting line of the checkbox"""
         return super().start
 
     def toggle(self):
-        """ Toggle status of this checkbox """
+        """Toggle status of this checkbox"""
         if self.status == Checkbox.STATUS_OFF or self.status is None:
             self.status = Checkbox.STATUS_ON
         else:
@@ -261,7 +262,7 @@ class Checkbox(DomObj):
         return
 
     def all_children_status(self):
-        """ Return checkboxes status for current checkbox's all children
+        """Return checkboxes status for current checkbox's all children
 
         :return: (total, on)
             total: total # of checkboxes
@@ -278,7 +279,7 @@ class Checkbox(DomObj):
         return (total, on)
 
     def all_siblings_status(self):
-        """ Return checkboxes status for current checkbox's all siblings
+        """Return checkboxes status for current checkbox's all siblings
 
         :return: (total, on)
             total: total # of checkboxes
@@ -295,7 +296,7 @@ class Checkbox(DomObj):
         return (total, on)
 
     def are_children_all(self, status):
-        """ Check all children checkboxes status """
+        """Check all children checkboxes status"""
         clen = len(self.children)
         for i in range(clen):
             if self.children[i].status != status:
@@ -307,7 +308,7 @@ class Checkbox(DomObj):
         return True
 
     def is_child_one(self, status):
-        """ Return true, if there is one child with given status """
+        """Return true, if there is one child with given status"""
         clen = len(self.children)
         for i in range(clen):
             if self.children[i].status == status:
@@ -316,7 +317,7 @@ class Checkbox(DomObj):
         return False
 
     def are_siblings_all(self, status):
-        """ Check all sibling checkboxes status """
+        """Check all sibling checkboxes status"""
         for c in self.all_siblings():
             if c.status != status:
                 return False
@@ -325,22 +326,22 @@ class Checkbox(DomObj):
 
     @DomObj.level.setter
     def level(self, value):
-        """ Set the checkbox level and mark the checkbox and the document
-        dirty """
+        """Set the checkbox level and mark the checkbox and the document
+        dirty"""
         self._level = int(value)
         self.set_dirty_checkbox()
 
     @DomObj.title.setter
     def title(self, value):
-        """ Set the title and mark the document and the checkbox dirty """
+        """Set the title and mark the document and the checkbox dirty"""
         if type(value) is not str:
-            raise ValueError('Title must be a string.')
+            raise ValueError("Title must be a string.")
         self._title = value.strip()
         self.set_dirty_checkbox()
 
     @property
     def status(self):
-        """ status of current checkbox """
+        """status of current checkbox"""
         return self._status
 
     @status.setter
@@ -350,11 +351,11 @@ class Checkbox(DomObj):
 
     @status.deleter
     def status(self):
-        self._status = ''
+        self._status = ""
 
     @property
     def type(self):
-        """ type of current checkbox list type """
+        """type of current checkbox list type"""
         return self._type
 
     @type.setter
@@ -363,13 +364,14 @@ class Checkbox(DomObj):
 
     @type.deleter
     def type(self):
-        self._type = ''
+        self._type = ""
 
 
 class CheckboxList(DomObjList):
     """
     Checkbox List
     """
+
     def __init__(self, initlist=None, obj=None):
         """
         :initlist:    Initial data

@@ -13,7 +13,7 @@ def require_vim():
     """
     if HAVE_VIM:
         return
-    msg = 'vim with +python3 not available'
-    if os.environ.get('REQUIRE_VIM'):
-        pytest.fail(msg + ' (REQUIRE_VIM is set)')
+    msg = "vim with +python3 not available"
+    if os.environ.get("REQUIRE_VIM"):
+        pytest.fail(msg + " (REQUIRE_VIM is set)")
     pytest.skip(msg)

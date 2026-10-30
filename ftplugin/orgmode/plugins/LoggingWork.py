@@ -1,18 +1,16 @@
-
-
 from orgmode._vim import ORGMODE
 from orgmode.keybinding import VIM_PY_CALL, Command
 from orgmode.menu import ActionEntry, Submenu
 
 
 class LoggingWork:
-    """ LoggingWork plugin """
+    """LoggingWork plugin"""
 
     def __init__(self):
-        """ Initialize plugin """
+        """Initialize plugin"""
         object.__init__(self)
         # menu entries this plugin should create
-        self.menu = ORGMODE.orgmenu + Submenu('&Logging work')
+        self.menu = ORGMODE.orgmenu + Submenu("&Logging work")
 
         # key bindings for this plugin
         # key bindings are also registered through the menu so only additional
@@ -24,7 +22,7 @@ class LoggingWork:
 
     @classmethod
     def action(cls):
-        """ Some kind of action
+        """Some kind of action
 
         :returns: TODO
         """
@@ -35,5 +33,10 @@ class LoggingWork:
         Registration of plugin. Key bindings and other initialization should be done.
         """
         # an Action menu entry which binds "keybinding" to action ":action"
-        self.commands.append(Command('OrgLoggingRecordDoneTime', '%s ORGMODE.plugins["LoggingWork"].action()' % VIM_PY_CALL))
-        self.menu + ActionEntry('&Record DONE time', self.commands[-1])
+        self.commands.append(
+            Command(
+                "OrgLoggingRecordDoneTime",
+                '%s ORGMODE.plugins["LoggingWork"].action()' % VIM_PY_CALL,
+            )
+        )
+        self.menu + ActionEntry("&Record DONE time", self.commands[-1])

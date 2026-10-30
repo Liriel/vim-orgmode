@@ -1,17 +1,16 @@
-
 import vim
 
 # command prefix used to call back into Python from key bindings and commands
-VIM_PY_CALL = ':py3'
+VIM_PY_CALL = ":py3"
 
-MODE_ALL = 'a'
-MODE_NORMAL = 'n'
-MODE_VISUAL = 'v'
-MODE_INSERT = 'i'
-MODE_OPERATOR = 'o'
+MODE_ALL = "a"
+MODE_NORMAL = "n"
+MODE_VISUAL = "v"
+MODE_INSERT = "i"
+MODE_OPERATOR = "o"
 
-OPTION_BUFFER_ONLY = '<buffer>'
-OPTION_SLIENT = '<silent>'
+OPTION_BUFFER_ONLY = "<buffer>"
+OPTION_SLIENT = "<silent>"
 
 
 def _register(f, name):
@@ -21,21 +20,24 @@ def _register(f, name):
             for i in getattr(p, name):
                 i.create()
         return p
+
     return r
 
 
 def register_keybindings(f):
-    return _register(f, 'keybindings')
+    return _register(f, "keybindings")
 
 
 def register_commands(f):
-    return _register(f, 'commands')
+    return _register(f, "commands")
 
 
 class Command:
-    """ A vim command """
+    """A vim command"""
 
-    def __init__(self, name, command, arguments='0', complete=None, overwrite_exisiting=False):
+    def __init__(
+        self, name, command, arguments="0", complete=None, overwrite_exisiting=False
+    ):
         """
         :name:        The name of command, first character must be uppercase
         :command:    The actual command that is executed
@@ -44,14 +46,14 @@ class Command:
         """
         object.__init__(self)
 
-        self._name                = name
-        self._command             = command
-        self._arguments           = arguments
-        self._complete            = complete
+        self._name = name
+        self._command = command
+        self._arguments = arguments
+        self._complete = complete
         self._overwrite_exisiting = overwrite_exisiting
 
     def __str__(self):
-        return ':%s<CR>' % self.name
+        return ":%s<CR>" % self.name
 
     @property
     def name(self):
@@ -74,18 +76,21 @@ class Command:
         return self._overwrite_exisiting
 
     def create(self):
-        """ Register/create the command
-        """
-        vim.command(':command%(overwrite)s -nargs=%(arguments)s %(complete)s %(name)s %(command)s' %
-                {'overwrite': '!' if self.overwrite_exisiting else '',
-                    'arguments': self.arguments,
-                    'complete': '-complete=%s' % self.complete if self.complete else '',
-                    'name': self.name,
-                    'command': self.command})
+        """Register/create the command"""
+        vim.command(
+            ":command%(overwrite)s -nargs=%(arguments)s %(complete)s %(name)s %(command)s"
+            % {
+                "overwrite": "!" if self.overwrite_exisiting else "",
+                "arguments": self.arguments,
+                "complete": "-complete=%s" % self.complete if self.complete else "",
+                "name": self.name,
+                "command": self.command,
+            }
+        )
 
 
 class Plug:
-    """ Represents a <Plug> to an abitrary command """
+    """Represents a <Plug> to an abitrary command"""
 
     def __init__(self, name, command, mode=MODE_NORMAL):
         """
@@ -95,7 +100,9 @@ class Plug:
         object.__init__(self)
 
         if mode not in (MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT, MODE_OPERATOR):
-            raise ValueError('Parameter mode not in MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT, MODE_OPERATOR')
+            raise ValueError(
+                "Parameter mode not in MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT, MODE_OPERATOR"
+            )
         self._mode = mode
 
         self.name = name
@@ -103,15 +110,15 @@ class Plug:
         self.created = False
 
     def __str__(self):
-        return '<Plug>%s' % self.name
+        return "<Plug>%s" % self.name
 
     def create(self):
         if not self.created:
             self.created = True
             cmd = self._mode
             if cmd == MODE_ALL:
-                cmd = ''
-            vim.command(':%snoremap %s %s' % (cmd, str(self), self.command))
+                cmd = ""
+            vim.command(":%snoremap %s %s" % (cmd, str(self), self.command))
 
     @property
     def mode(self):
@@ -119,9 +126,18 @@ class Plug:
 
 
 class Keybinding:
-    """ Representation of a single key binding """
+    """Representation of a single key binding"""
 
-    def __init__(self, key, action, mode=None, options=None, remap=True, buffer_only=True, silent=True):
+    def __init__(
+        self,
+        key,
+        action,
+        mode=None,
+        options=None,
+        remap=True,
+        buffer_only=True,
+        silent=True,
+    ):
         """
         :key: the key(s) action is bound to
         :action: the action triggered by key(s)
@@ -139,7 +155,9 @@ class Keybinding:
             mode = self._action.mode
 
         if mode not in (MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT, MODE_OPERATOR):
-            raise ValueError('Parameter mode not in MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT, MODE_OPERATOR')
+            raise ValueError(
+                "Parameter mode not in MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT, MODE_OPERATOR"
+            )
         self._mode = mode
         self._options = options
         if self._options is None:
@@ -187,22 +205,27 @@ class Keybinding:
 
         cmd = self._mode
         if cmd == MODE_ALL:
-            cmd = ''
+            cmd = ""
         if not self._remap:
-            cmd += 'nore'
+            cmd += "nore"
         try:
             create_mapping = True
             if isinstance(self._action, Plug):
                 # create plug
                 self._action.create()
-                if int(vim.eval('hasmapto("%s")' % (self._action, ))):
+                if int(vim.eval('hasmapto("%s")' % (self._action,))):
                     create_mapping = False
             if isinstance(self._action, Command):
                 # create command
                 self._action.create()
 
             if create_mapping:
-                vim.command(':%smap %s %s %s' % (cmd, ' '.join(self._options), self._key, self._action))
+                vim.command(
+                    ":%smap %s %s %s"
+                    % (cmd, " ".join(self._options), self._key, self._action)
+                )
         except BaseException:
             if ORGMODE.debug:
-                echom('Failed to register key binding %s %s' % (self._key, self._action))
+                echom(
+                    "Failed to register key binding %s %s" % (self._key, self._action)
+                )

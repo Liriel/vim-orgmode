@@ -1,5 +1,3 @@
-
-
 class PluginError(BaseException):
     def __init__(self, message):
         BaseException.__init__(self, message)

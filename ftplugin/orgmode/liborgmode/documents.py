@@ -1,9 +1,8 @@
-
 """
-    documents
-    ~~~~~~~~~
+documents
+~~~~~~~~~
 
-    TODO: explain this :)
+TODO: explain this :)
 """
 
 from collections import UserList
@@ -40,7 +39,8 @@ class Document:
         self._dirty_meta_information = False
         self._dirty_document = False
         self._meta_information = MultiPurposeList(
-            on_change=self.set_dirty_meta_information)
+            on_change=self.set_dirty_meta_information
+        )
         self._orig_meta_information_len = None
         self._headings = HeadingList(obj=self)
         self._deleted_headings = []
@@ -50,17 +50,17 @@ class Document:
         self._tag_column = 77
 
         # TODO this doesn't differentiate between ACTIVE and FINISHED todo's
-        self.todo_states = ['TODO', 'DONE']
+        self.todo_states = ["TODO", "DONE"]
 
     def __str__(self):
         lines = list(self.meta_information)
         for heading in self.all_headings():
             lines.append(str(heading))
             lines.extend(heading.body)
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
     def get_all_todo_states(self):
-        """ Convenience function that returns all todo and done states and
+        """Convenience function that returns all todo and done states and
         sequences in one big list.
 
         Returns:
@@ -70,7 +70,7 @@ class Document:
         return flatten_list(self.get_todo_states())
 
     def get_todo_states(self):
-        """ Returns a list containing a tuple of two lists of allowed todo
+        """Returns a list containing a tuple of two lists of allowed todo
         states split by todo and done states. Multiple todo-done state
         sequences can be defined.
 
@@ -84,7 +84,7 @@ class Document:
 
     @property
     def tabstop(self):
-        """ Tabstop for this document """
+        """Tabstop for this document"""
         return self._tabstop
 
     @tabstop.setter
@@ -93,7 +93,7 @@ class Document:
 
     @property
     def tag_column(self):
-        """ The column all tags are right-aligned to """
+        """The column all tags are right-aligned to"""
         return self._tag_column
 
     @tag_column.setter
@@ -101,12 +101,13 @@ class Document:
         self._tag_column = value
 
     def init_dom(self, heading=Heading):
-        """ Initialize all headings in document - build DOM. This method
+        """Initialize all headings in document - build DOM. This method
         should be call prior to accessing the document.
 
         Returns:
             self
         """
+
         def init_heading(_h):
             """
             :returns    the initialized heading
@@ -121,8 +122,7 @@ class Document:
                 # or
                 # * Heading 2 <- heading
                 # * Heading 1 <- parent's sibling
-                if not new_heading or \
-                    new_heading.level <= _h.level:
+                if not new_heading or new_heading.level <= _h.level:
                     break
 
                 # * Heading 1 <- heading
@@ -149,7 +149,7 @@ class Document:
         h = self.find_heading(heading=heading)
         # initialize meta information
         if h:
-            self._meta_information.data.extend(self._content[:h._orig_start])
+            self._meta_information.data.extend(self._content[: h._orig_start])
         else:
             self._meta_information.data.extend(self._content[:])
         self._orig_meta_information_len = len(self.meta_information)
@@ -169,7 +169,7 @@ class Document:
 
     @property
     def meta_information(self):
-        """ Meta information is text that precedes all headings in an org-mode
+        """Meta information is text that precedes all headings in an org-mode
         document. It might contain additional information about the document,
         e.g. author
         """
@@ -181,19 +181,19 @@ class Document:
             self._orig_meta_information_len = len(self.meta_information)
         if type(value) in (list, tuple) or isinstance(value, UserList):
             self._meta_information[:] = flatten_list(value)
-        elif type(value) in (str, ):
-            self._meta_information[:] = value.split('\n')
+        elif type(value) in (str,):
+            self._meta_information[:] = value.split("\n")
         elif type(value) is str:
-            self._meta_information[:] = value.split('\n')
+            self._meta_information[:] = value.split("\n")
         self.set_dirty_meta_information()
 
     @meta_information.deleter
     def meta_information(self):
-        self.meta_information = ''
+        self.meta_information = ""
 
     @property
     def headings(self):
-        """ List of top level headings """
+        """List of top level headings"""
         return self._headings
 
     @headings.setter
@@ -205,15 +205,17 @@ class Document:
         del self.headings[:]
 
     def write(self):
-        """ Write the document
+        """Write the document
 
         Returns:
             bool: True if something was written, otherwise False
         """
-        raise NotImplementedError('Abstract method, please use concrete implementation!')
+        raise NotImplementedError(
+            "Abstract method, please use concrete implementation!"
+        )
 
     def set_dirty_meta_information(self):
-        """ Mark the meta information dirty.
+        """Mark the meta information dirty.
 
         Note:
             Causes meta information to be rewritten when saving the document
@@ -221,7 +223,7 @@ class Document:
         self._dirty_meta_information = True
 
     def set_dirty_document(self):
-        """ Mark the whole document dirty.
+        """Mark the whole document dirty.
 
         Note:
             When changing a heading this method must be executed in order to
@@ -232,7 +234,7 @@ class Document:
 
     @property
     def is_dirty(self):
-        """ Return information about unsaved changes for the document and all
+        """Return information about unsaved changes for the document and all
         related headings.
 
         Returns:
@@ -251,16 +253,16 @@ class Document:
 
     @property
     def is_dirty_meta_information(self):
-        """ Return True if the meta information is marked dirty """
+        """Return True if the meta information is marked dirty"""
         return self._dirty_meta_information
 
     @property
     def is_dirty_document(self):
-        """ Return True if the document is marked dirty """
+        """Return True if the document is marked dirty"""
         return self._dirty_document
 
     def all_headings(self):
-        """ Iterate over all headings of the current document in serialized
+        """Iterate over all headings of the current document in serialized
         order
 
         :returns:    Returns an iterator object which returns all headings of
@@ -276,9 +278,13 @@ class Document:
         return
 
     def find_heading(
-        self, position=0, direction=Direction.FORWARD, heading=Heading,
-        connect_with_document=True):
-        """ Find heading in the given direction
+        self,
+        position=0,
+        direction=Direction.FORWARD,
+        heading=Heading,
+        connect_with_document=True,
+    ):
+        """Find heading in the given direction
 
         Args:
             position (int): starting line, counting from 0 (in vim you start
@@ -294,8 +300,11 @@ class Document:
             heading or None: New heading
         """
         start, end = get_domobj_range(
-            content=self._content, position=position, direction=direction,
-            identify_fun=heading.identify_heading)
+            content=self._content,
+            position=position,
+            direction=direction,
+            identify_fun=heading.identify_heading,
+        )
 
         if start is None:
             return None
@@ -306,5 +315,8 @@ class Document:
         document = self if connect_with_document else None
 
         return heading.parse_heading_from_data(
-            self._content[start:end + 1], self.get_all_todo_states(),
-            document=document, orig_start=start)
+            self._content[start : end + 1],
+            self.get_all_todo_states(),
+            document=document,
+            orig_start=start,
+        )

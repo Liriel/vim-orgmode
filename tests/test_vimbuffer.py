@@ -1,4 +1,3 @@
-
 import unittest
 
 import vim
@@ -7,6 +6,8 @@ from orgmode.liborgmode.headings import Heading
 from orgmode.vimbuffer import VimBuffer
 
 counter = 0
+
+
 class VimBufferTestCase(unittest.TestCase):
     def setUp(self):
         global counter
@@ -15,20 +16,22 @@ class VimBufferTestCase(unittest.TestCase):
         vim.CMDRESULTS = {}
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
-                # no org_todo_keywords for b
-                'exists("b:org_todo_keywords")': '0',
-                # global values for org_todo_keywords
-                'exists("g:org_todo_keywords")': '1',
-                'g:org_todo_keywords': ['TODO',
-                                       'DONE', '|'],
-                'exists("g:org_debug")': '0',
-                'exists("*repeat#set()")': '0',
-                'b:changedtick': '%d' % counter,
-                '&ts': '8',
-                'exists("g:org_tag_column")': '0',
-                'exists("b:org_tag_column")': '0',
-                "v:count": '0'}
-        vim.current.buffer[:] = [i for i in """#Meta information
+            # no org_todo_keywords for b
+            'exists("b:org_todo_keywords")': "0",
+            # global values for org_todo_keywords
+            'exists("g:org_todo_keywords")': "1",
+            "g:org_todo_keywords": ["TODO", "DONE", "|"],
+            'exists("g:org_debug")': "0",
+            'exists("*repeat#set()")': "0",
+            "b:changedtick": "%d" % counter,
+            "&ts": "8",
+            'exists("g:org_tag_column")': "0",
+            'exists("b:org_tag_column")': "0",
+            "v:count": "0",
+        }
+        vim.current.buffer[:] = [
+            i
+            for i in """#Meta information
 #more meta information
 * Überschrift 1
 Text 1
@@ -48,24 +51,25 @@ Bla Bla bla bla
 * Überschrift 2
 * Überschrift 3
   asdf sdf
-""".split('\n') ]
+""".split("\n")
+        ]
         self.document = VimBuffer().init_dom()
 
     def test_write_heading_tags(self):
         self.assertEqual(self.document.is_dirty, False)
         h = self.document.find_heading()
         self.assertEqual(h._orig_start, 2)
-        self.assertEqual(h.title, 'Überschrift 1')
-        h.tags = ['test', 'tag']
-        self.assertEqual(h.tags[0], 'test')
+        self.assertEqual(h.title, "Überschrift 1")
+        h.tags = ["test", "tag"]
+        self.assertEqual(h.tags[0], "test")
         self.document.write_heading(h)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.document.find_heading()
-        self.assertEqual(d.headings[0].title, 'Überschrift 1')
+        self.assertEqual(d.headings[0].title, "Überschrift 1")
         self.assertEqual(len(d.headings[0].tags), 2)
-        self.assertEqual(d.headings[0].tags[0], 'test')
+        self.assertEqual(d.headings[0].tags[0], "test")
         self.assertEqual(d.headings[0]._orig_start, 2)
         self.assertEqual(d.headings[0].children[0]._orig_start, 6)
 
@@ -73,9 +77,9 @@ Bla Bla bla bla
         self.assertEqual(self.document.is_dirty, False)
         h = self.document.headings[0].copy()
         self.assertEqual(h._orig_start, 2)
-        self.assertEqual(h.title, 'Überschrift 1')
-        h.body.append('test')
-        h.children[0].body.append('another line')
+        self.assertEqual(h.title, "Überschrift 1")
+        h.body.append("test")
+        h.children[0].body.append("another line")
         self.document.write_heading(h)
 
         # sanity check
@@ -84,59 +88,79 @@ Bla Bla bla bla
         self.assertEqual(len(d.headings[0].body), 4)
         self.assertEqual(d.headings[0]._orig_start, 2)
         self.assertEqual(d.headings[0].children[0]._orig_start, 7)
-        self.assertEqual(d.headings[0].children[0].title, 'Überschrift 1.1')
+        self.assertEqual(d.headings[0].children[0].title, "Überschrift 1.1")
         self.assertEqual(len(d.headings[0].children[0].body), 4)
         self.assertEqual(d.headings[0].children[1]._orig_start, 12)
-        self.assertEqual(d.headings[0].children[1].title, 'Überschrift 1.2')
+        self.assertEqual(d.headings[0].children[1].title, "Überschrift 1.2")
         self.assertEqual(len(d.headings[0].children[1].body), 2)
 
     def test_meta_information_assign_directly(self):
         # read meta information from document
-        self.assertEqual('\n'.join(self.document.meta_information), '#Meta information\n#more meta information')
+        self.assertEqual(
+            "\n".join(self.document.meta_information),
+            "#Meta information\n#more meta information",
+        )
         self.assertEqual(self.document.is_dirty, False)
         self.assertEqual(self.document.headings[0].start, 2)
 
         # assign meta information directly to an element in array
-        self.document.meta_information[0] = '#More or less meta information'
-        self.assertEqual('\n'.join(self.document.meta_information), '#More or less meta information\n#more meta information')
+        self.document.meta_information[0] = "#More or less meta information"
+        self.assertEqual(
+            "\n".join(self.document.meta_information),
+            "#More or less meta information\n#more meta information",
+        )
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(self.document.is_dirty_meta_information, True)
         self.assertEqual(self.document.headings[0].start, 2)
 
     def test_meta_information_assign_string(self):
         # assign a single line string
-        self.document.meta_information = '#Less meta information'
-        self.assertEqual('\n'.join(self.document.meta_information), '#Less meta information')
+        self.document.meta_information = "#Less meta information"
+        self.assertEqual(
+            "\n".join(self.document.meta_information), "#Less meta information"
+        )
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(self.document.is_dirty_meta_information, True)
         self.assertEqual(self.document.headings[0].start, 1)
 
     def test_meta_information_assign_multi_line_string(self):
         # assign a multi line string
-        self.document.meta_information = '#Less meta information\n#lesser information'
-        self.assertEqual('\n'.join(self.document.meta_information), '#Less meta information\n#lesser information')
+        self.document.meta_information = "#Less meta information\n#lesser information"
+        self.assertEqual(
+            "\n".join(self.document.meta_information),
+            "#Less meta information\n#lesser information",
+        )
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(self.document.is_dirty_meta_information, True)
         self.assertEqual(self.document.headings[0].start, 2)
 
     def test_meta_information_assign_one_element_array(self):
         # assign a single element array of strings
-        self.document.meta_information = '#More or less meta information'.split('\n')
-        self.assertEqual('\n'.join(self.document.meta_information), '#More or less meta information')
+        self.document.meta_information = "#More or less meta information".split("\n")
+        self.assertEqual(
+            "\n".join(self.document.meta_information), "#More or less meta information"
+        )
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(self.document.is_dirty_meta_information, True)
         self.assertEqual(self.document.headings[0].start, 1)
 
     def test_meta_information_assign_multi_element_array(self):
         # assign a multi element array of strings
-        self.document.meta_information = '#More or less meta information\n#lesser information'.split('\n')
-        self.assertEqual('\n'.join(self.document.meta_information), '#More or less meta information\n#lesser information')
+        self.document.meta_information = (
+            "#More or less meta information\n#lesser information".split("\n")
+        )
+        self.assertEqual(
+            "\n".join(self.document.meta_information),
+            "#More or less meta information\n#lesser information",
+        )
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(self.document.is_dirty_meta_information, True)
         self.assertEqual(self.document.headings[0].start, 2)
 
     def test_meta_information_read_no_meta_information(self):
-        vim.current.buffer[:] = [ i for i in """* Überschrift 1
+        vim.current.buffer[:] = [
+            i
+            for i in """* Überschrift 1
 Text 1
 
 Bla bla
@@ -154,7 +178,8 @@ Bla Bla bla bla
 * Überschrift 2
 * Überschrift 3
   asdf sdf
-""".split('\n') ]
+""".split("\n")
+        ]
         self.document = VimBuffer().init_dom()
 
         # read no meta information from document
@@ -163,8 +188,13 @@ Bla Bla bla bla
         self.assertEqual(self.document.is_dirty, False)
 
         # assign meta information to a former empty field
-        self.document.meta_information = '#More or less meta information\n#lesser information'.split('\n')
-        self.assertEqual('\n'.join(self.document.meta_information), '#More or less meta information\n#lesser information')
+        self.document.meta_information = (
+            "#More or less meta information\n#lesser information".split("\n")
+        )
+        self.assertEqual(
+            "\n".join(self.document.meta_information),
+            "#More or less meta information\n#lesser information",
+        )
         self.assertEqual(self.document.headings[0].start, 2)
         self.assertEqual(self.document.is_dirty, True)
 
@@ -177,8 +207,8 @@ Bla Bla bla bla
 
     def test_meta_information_assign_empty_string(self):
         # assign an empty string as meta information
-        self.document.meta_information = ''
-        self.assertEqual(self.document.meta_information, [''])
+        self.document.meta_information = ""
+        self.assertEqual(self.document.meta_information, [""])
         self.assertEqual(self.document.headings[0].start, 1)
         self.assertEqual(self.document.is_dirty, True)
 
@@ -190,12 +220,20 @@ Bla Bla bla bla
         # write nothing
         self.assertEqual(self.document.is_dirty, False)
         self.assertEqual(self.document.write(), False)
-        self.assertEqual('\n'.join(self.document.meta_information), '#Meta information\n#more meta information')
+        self.assertEqual(
+            "\n".join(self.document.meta_information),
+            "#Meta information\n#more meta information",
+        )
 
         # write changed meta information
         self.assertEqual(self.document.is_dirty, False)
-        self.document.meta_information = '#More or less meta information\n#lesser information'.split('\n')
-        self.assertEqual('\n'.join(self.document.meta_information), '#More or less meta information\n#lesser information')
+        self.document.meta_information = (
+            "#More or less meta information\n#lesser information".split("\n")
+        )
+        self.assertEqual(
+            "\n".join(self.document.meta_information),
+            "#More or less meta information\n#lesser information",
+        )
         self.assertEqual(self.document.headings[0].start, 2)
         self.assertEqual(self.document.headings[0]._orig_start, 2)
         self.assertEqual(self.document.is_dirty, True)
@@ -203,12 +241,17 @@ Bla Bla bla bla
         self.assertEqual(self.document.is_dirty, False)
         self.assertEqual(self.document.headings[0].start, 2)
         self.assertEqual(self.document.headings[0]._orig_start, 2)
-        self.assertEqual('\n'.join(VimBuffer().init_dom().meta_information), '#More or less meta information\n#lesser information')
+        self.assertEqual(
+            "\n".join(VimBuffer().init_dom().meta_information),
+            "#More or less meta information\n#lesser information",
+        )
 
         # shorten meta information
         self.assertEqual(self.document.is_dirty, False)
-        self.document.meta_information = '!More or less meta information'.split('\n')
-        self.assertEqual('\n'.join(self.document.meta_information), '!More or less meta information')
+        self.document.meta_information = "!More or less meta information".split("\n")
+        self.assertEqual(
+            "\n".join(self.document.meta_information), "!More or less meta information"
+        )
         self.assertEqual(self.document.headings[0].start, 1)
         self.assertEqual(self.document.headings[0]._orig_start, 2)
         self.assertEqual(self.document.is_dirty, True)
@@ -216,12 +259,18 @@ Bla Bla bla bla
         self.assertEqual(self.document.is_dirty, False)
         self.assertEqual(self.document.headings[0].start, 1)
         self.assertEqual(self.document.headings[0]._orig_start, 1)
-        self.assertEqual('\n'.join(VimBuffer().init_dom().meta_information), '!More or less meta information')
+        self.assertEqual(
+            "\n".join(VimBuffer().init_dom().meta_information),
+            "!More or less meta information",
+        )
 
         # lengthen meta information
         self.assertEqual(self.document.is_dirty, False)
-        self.document.meta_information = '!More or less meta information\ntest\ntest'
-        self.assertEqual('\n'.join(self.document.meta_information), '!More or less meta information\ntest\ntest')
+        self.document.meta_information = "!More or less meta information\ntest\ntest"
+        self.assertEqual(
+            "\n".join(self.document.meta_information),
+            "!More or less meta information\ntest\ntest",
+        )
         self.assertEqual(self.document.headings[0].start, 3)
         self.assertEqual(self.document.headings[0]._orig_start, 1)
         self.assertEqual(self.document.is_dirty, True)
@@ -229,7 +278,10 @@ Bla Bla bla bla
         self.assertEqual(self.document.is_dirty, False)
         self.assertEqual(self.document.headings[0].start, 3)
         self.assertEqual(self.document.headings[0]._orig_start, 3)
-        self.assertEqual('\n'.join(VimBuffer().init_dom().meta_information), '!More or less meta information\ntest\ntest')
+        self.assertEqual(
+            "\n".join(VimBuffer().init_dom().meta_information),
+            "!More or less meta information\ntest\ntest",
+        )
 
         # write empty meta information
         self.assertEqual(self.document.is_dirty, False)
@@ -246,12 +298,12 @@ Bla Bla bla bla
 
     def test_write_changed_title(self):
         # write a changed title
-        self.document.headings[0].title = 'Heading 1'
+        self.document.headings[0].title = "Heading 1"
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(self.document.is_dirty_meta_information, False)
         self.assertEqual(self.document.headings[0].is_dirty_body, False)
         self.assertEqual(self.document.headings[0].is_dirty_heading, True)
-        self.assertEqual(self.document.headings[0].title, 'Heading 1')
+        self.assertEqual(self.document.headings[0].title, "Heading 1")
         self.assertEqual(self.document.headings[0].end, 5)
         self.assertEqual(len(self.document.headings[0]), 4)
         self.assertEqual(self.document.headings[0]._orig_start, 2)
@@ -267,12 +319,12 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0]._orig_len, 4)
         self.assertEqual(self.document.headings[0].children[0].start, 6)
         self.assertEqual(self.document.headings[0].children[0]._orig_start, 6)
-        self.assertEqual(VimBuffer().init_dom().headings[0].title, 'Heading 1')
+        self.assertEqual(VimBuffer().init_dom().headings[0].title, "Heading 1")
 
     def test_write_changed_body(self):
         # write a changed body
         self.assertEqual(self.document.headings[0].end, 5)
-        self.document.headings[0].body[0] = 'Another text'
+        self.document.headings[0].body[0] = "Another text"
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(self.document.is_dirty_meta_information, False)
         self.assertEqual(self.document.headings[0].is_dirty_body, True)
@@ -283,7 +335,9 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0]._orig_len, 4)
         self.assertEqual(self.document.headings[0].children[0].start, 6)
         self.assertEqual(self.document.headings[0].children[0]._orig_start, 6)
-        self.assertEqual(self.document.headings[0].body, ['Another text', '', 'Bla bla'])
+        self.assertEqual(
+            self.document.headings[0].body, ["Another text", "", "Bla bla"]
+        )
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
@@ -293,11 +347,13 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0]._orig_len, 4)
         self.assertEqual(self.document.headings[0].children[0].start, 6)
         self.assertEqual(self.document.headings[0].children[0]._orig_start, 6)
-        self.assertEqual(VimBuffer().init_dom().headings[0].body, ['Another text', '', 'Bla bla'])
+        self.assertEqual(
+            VimBuffer().init_dom().headings[0].body, ["Another text", "", "Bla bla"]
+        )
 
     def test_write_shortened_body(self):
         # write a shortened body
-        self.document.headings[0].body = 'Another text'
+        self.document.headings[0].body = "Another text"
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(self.document.is_dirty_meta_information, False)
         self.assertEqual(self.document.headings[0].is_dirty_body, True)
@@ -308,7 +364,7 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0]._orig_len, 4)
         self.assertEqual(self.document.headings[0].children[0].start, 4)
         self.assertEqual(self.document.headings[0].children[0]._orig_start, 6)
-        self.assertEqual(self.document.headings[0].body, ['Another text'])
+        self.assertEqual(self.document.headings[0].body, ["Another text"])
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
@@ -318,11 +374,16 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0]._orig_len, 2)
         self.assertEqual(self.document.headings[0].children[0].start, 4)
         self.assertEqual(self.document.headings[0].children[0]._orig_start, 4)
-        self.assertEqual(VimBuffer().init_dom().headings[0].body, ['Another text'])
+        self.assertEqual(VimBuffer().init_dom().headings[0].body, ["Another text"])
 
     def test_write_lengthened_body(self):
         # write a lengthened body
-        self.document.headings[0].body = ['Another text', 'more', 'and more', 'and more']
+        self.document.headings[0].body = [
+            "Another text",
+            "more",
+            "and more",
+            "and more",
+        ]
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(self.document.is_dirty_meta_information, False)
         self.assertEqual(self.document.headings[0].is_dirty_body, True)
@@ -333,7 +394,10 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0]._orig_len, 4)
         self.assertEqual(self.document.headings[0].children[0].start, 7)
         self.assertEqual(self.document.headings[0].children[0]._orig_start, 6)
-        self.assertEqual(self.document.headings[0].body, ['Another text', 'more', 'and more', 'and more'])
+        self.assertEqual(
+            self.document.headings[0].body,
+            ["Another text", "more", "and more", "and more"],
+        )
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
@@ -343,7 +407,10 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0]._orig_len, 5)
         self.assertEqual(self.document.headings[0].children[0].start, 7)
         self.assertEqual(self.document.headings[0].children[0]._orig_start, 7)
-        self.assertEqual(VimBuffer().init_dom().headings[0].body, ['Another text', 'more', 'and more', 'and more'])
+        self.assertEqual(
+            VimBuffer().init_dom().headings[0].body,
+            ["Another text", "more", "and more", "and more"],
+        )
 
     def test_write_delete_heading(self):
         # delete a heading
@@ -474,7 +541,9 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0].end_of_last_child, 9)
         self.assertEqual(self.document.headings[0]._orig_start, 2)
         self.assertEqual(self.document.headings[0].children[0]._orig_start, 10)
-        self.assertEqual(self.document.headings[0].children[0].children[0]._orig_start, 16)
+        self.assertEqual(
+            self.document.headings[0].children[0].children[0]._orig_start, 16
+        )
         self.assertEqual(self.document.headings[-1]._orig_start, 18)
         self.assertEqual(self.document.headings[0].start, 2)
         self.assertEqual(self.document.headings[0].children[0].start, 6)
@@ -487,16 +556,20 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0].end_of_last_child, 9)
         self.assertEqual(self.document.headings[0]._orig_start, 2)
         self.assertEqual(self.document.headings[0].children[0]._orig_start, 6)
-        self.assertEqual(self.document.headings[0].children[0].children[0]._orig_start, 9)
+        self.assertEqual(
+            self.document.headings[0].children[0].children[0]._orig_start, 9
+        )
         self.assertEqual(self.document.headings[-1]._orig_start, 10)
         self.assertEqual(self.document.headings[0].start, 2)
         self.assertEqual(self.document.headings[0].children[0].start, 6)
         self.assertEqual(self.document.headings[0].children[0].children[0].start, 9)
         self.assertEqual(self.document.headings[-1].start, 10)
-        self.assertEqual(self.document.headings[0].title, 'Überschrift 1')
-        self.assertEqual(self.document.headings[0].children[0].title, 'Überschrift 1.2')
-        self.assertEqual(self.document.headings[0].children[0].children[0].title, 'Überschrift 1.2.1')
-        self.assertEqual(self.document.headings[-1].title, 'Überschrift 3')
+        self.assertEqual(self.document.headings[0].title, "Überschrift 1")
+        self.assertEqual(self.document.headings[0].children[0].title, "Überschrift 1.2")
+        self.assertEqual(
+            self.document.headings[0].children[0].children[0].title, "Überschrift 1.2.1"
+        )
+        self.assertEqual(self.document.headings[-1].title, "Überschrift 3")
 
         # sanity check
         d = VimBuffer().init_dom()
@@ -513,42 +586,43 @@ Bla Bla bla bla
         self.assertEqual(d.headings[0].children[0].start, 6)
         self.assertEqual(d.headings[0].children[0].children[0].start, 9)
         self.assertEqual(d.headings[-1].start, 10)
-        self.assertEqual(d.headings[0].title, 'Überschrift 1')
-        self.assertEqual(d.headings[0].children[0].title, 'Überschrift 1.2')
-        self.assertEqual(d.headings[0].children[0].children[0].title, 'Überschrift 1.2.1')
-        self.assertEqual(d.headings[-1].title, 'Überschrift 3')
-
+        self.assertEqual(d.headings[0].title, "Überschrift 1")
+        self.assertEqual(d.headings[0].children[0].title, "Überschrift 1.2")
+        self.assertEqual(
+            d.headings[0].children[0].children[0].title, "Überschrift 1.2.1"
+        )
+        self.assertEqual(d.headings[-1].title, "Überschrift 3")
 
     def test_write_add_heading(self):
         # add a heading
         self.assertEqual(len(self.document.headings), 3)
         self.assertEqual(len(self.document.headings[0].children), 2)
         h = Heading()
-        h.title = 'Test heading'
+        h.title = "Test heading"
         h.level = 2
-        h.body = 'Text, text\nmore text'
+        h.body = "Text, text\nmore text"
         self.document.headings[0].children.append(h)
         self.assertEqual(self.document.is_dirty, True)
         self.assertEqual(len(self.document.headings[0].children), 3)
-        self.assertEqual(self.document.headings[0].children[-1].title, 'Test heading')
+        self.assertEqual(self.document.headings[0].children[-1].title, "Test heading")
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
         self.assertEqual(len(self.document.headings[0].children), 3)
-        self.assertEqual(self.document.headings[0].children[-1].title, 'Test heading')
+        self.assertEqual(self.document.headings[0].children[-1].title, "Test heading")
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings[0].children), 3)
-        self.assertEqual(d.headings[0].children[-1].title, 'Test heading')
+        self.assertEqual(d.headings[0].children[-1].title, "Test heading")
 
     def test_write_add_heading_before_first_heading(self):
         # add a heading before the first heading
         self.assertEqual(len(self.document.headings), 3)
         h = Heading()
-        h.title = 'Test heading'
+        h.title = "Test heading"
         h.level = 2
-        h.body = 'Text, text\nmore text'
+        h.body = "Text, text\nmore text"
         self.assertEqual(h.start, None)
         self.document.headings[0:0] = h
         self.assertEqual(h.start, 2)
@@ -557,22 +631,22 @@ Bla Bla bla bla
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
-        self.assertEqual(self.document.headings[0].title, 'Test heading')
+        self.assertEqual(self.document.headings[0].title, "Test heading")
         self.assertEqual(self.document.headings[0].start, 2)
         self.assertEqual(self.document.headings[0]._orig_start, 2)
         self.assertEqual(len(self.document.headings[0]), 3)
-        self.assertEqual(self.document.headings[1].title, 'Überschrift 1')
+        self.assertEqual(self.document.headings[1].title, "Überschrift 1")
         self.assertEqual(self.document.headings[1].start, 5)
         self.assertEqual(len(self.document.headings[1]), 4)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings), 4)
-        self.assertEqual(d.headings[0].title, 'Test heading')
+        self.assertEqual(d.headings[0].title, "Test heading")
         self.assertEqual(d.headings[0].start, 2)
         self.assertEqual(d.headings[0]._orig_start, 2)
         self.assertEqual(len(d.headings[0]), 3)
-        self.assertEqual(d.headings[1].title, 'Überschrift 1')
+        self.assertEqual(d.headings[1].title, "Überschrift 1")
         self.assertEqual(d.headings[1].start, 5)
         self.assertEqual(len(d.headings[1]), 4)
 
@@ -580,10 +654,10 @@ Bla Bla bla bla
         # add a heading after the last heading (top level heading)
         self.assertEqual(len(self.document.headings), 3)
         h = Heading()
-        h.title = 'Test heading'
-        h.body = 'Text, text\nmore text'
+        h.title = "Test heading"
+        h.body = "Text, text\nmore text"
         self.assertEqual(h.start, None)
-        #self.document.headings += h
+        # self.document.headings += h
         self.document.headings.append(h)
         self.assertEqual(h.start, 21)
         self.assertEqual(self.document.is_dirty, True)
@@ -591,22 +665,22 @@ Bla Bla bla bla
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
-        self.assertEqual(self.document.headings[-1].title, 'Test heading')
+        self.assertEqual(self.document.headings[-1].title, "Test heading")
         self.assertEqual(self.document.headings[-1].start, 21)
         self.assertEqual(self.document.headings[-1]._orig_start, 21)
         self.assertEqual(len(self.document.headings[-1]), 3)
-        self.assertEqual(self.document.headings[-2].title, 'Überschrift 3')
+        self.assertEqual(self.document.headings[-2].title, "Überschrift 3")
         self.assertEqual(self.document.headings[-2].start, 18)
         self.assertEqual(len(self.document.headings[-2]), 3)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings), 4)
-        self.assertEqual(d.headings[-1].title, 'Test heading')
+        self.assertEqual(d.headings[-1].title, "Test heading")
         self.assertEqual(d.headings[-1].start, 21)
         self.assertEqual(d.headings[-1]._orig_start, 21)
         self.assertEqual(len(d.headings[-1]), 3)
-        self.assertEqual(d.headings[-2].title, 'Überschrift 3')
+        self.assertEqual(d.headings[-2].title, "Überschrift 3")
         self.assertEqual(d.headings[-2].start, 18)
         self.assertEqual(len(d.headings[-2]), 3)
 
@@ -614,15 +688,15 @@ Bla Bla bla bla
         # add a heading after the last heading (subheading)
         self.assertEqual(len(self.document.headings), 3)
         h = Heading()
-        h.title = 'Test heading'
+        h.title = "Test heading"
         h.level = 2
-        h.body = 'Text, text\nmore text'
+        h.body = "Text, text\nmore text"
         self.assertEqual(h.start, None)
         # TODO make it work with += operator so far it works with append and
         # extend so it seems that there is a problem in __iadd__ method in
         # UserList from collection in python3
-        #self.document.headings[-1].children += h
-        #self.document.headings[-1].children.extend([h])
+        # self.document.headings[-1].children += h
+        # self.document.headings[-1].children.extend([h])
         self.document.headings[-1].children.append(h)
         self.assertEqual(h.start, 21)
         self.assertEqual(self.document.is_dirty, True)
@@ -631,11 +705,11 @@ Bla Bla bla bla
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
-        self.assertEqual(self.document.headings[-1].children[-1].title, 'Test heading')
+        self.assertEqual(self.document.headings[-1].children[-1].title, "Test heading")
         self.assertEqual(self.document.headings[-1].children[-1].start, 21)
         self.assertEqual(self.document.headings[-1].children[-1]._orig_start, 21)
         self.assertEqual(len(self.document.headings[-1].children[-1]), 3)
-        self.assertEqual(self.document.headings[-1].title, 'Überschrift 3')
+        self.assertEqual(self.document.headings[-1].title, "Überschrift 3")
         self.assertEqual(self.document.headings[-1].start, 18)
         self.assertEqual(len(self.document.headings[-1]), 3)
 
@@ -643,11 +717,11 @@ Bla Bla bla bla
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings), 3)
         self.assertEqual(len(d.headings[-1]), 3)
-        self.assertEqual(d.headings[-1].children[-1].title, 'Test heading')
+        self.assertEqual(d.headings[-1].children[-1].title, "Test heading")
         self.assertEqual(d.headings[-1].children[-1].start, 21)
         self.assertEqual(d.headings[-1].children[-1]._orig_start, 21)
         self.assertEqual(len(d.headings[-1].children[-1]), 3)
-        self.assertEqual(d.headings[-1].title, 'Überschrift 3')
+        self.assertEqual(d.headings[-1].title, "Überschrift 3")
         self.assertEqual(d.headings[-1].start, 18)
         self.assertEqual(len(d.headings[-1]), 3)
 
@@ -655,9 +729,9 @@ Bla Bla bla bla
         # replace subheadings by a list of newly created headings (one item)
         self.assertEqual(len(self.document.headings), 3)
         h = Heading()
-        h.title = 'Test heading'
+        h.title = "Test heading"
         h.level = 3
-        h.body = 'Text, text\nmore text\nanother text'
+        h.body = "Text, text\nmore text\nanother text"
         self.assertEqual(h.start, None)
         self.document.headings[0].children[1].children[0] = h
         self.assertEqual(h.start, 13)
@@ -667,22 +741,31 @@ Bla Bla bla bla
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
-        self.assertEqual(self.document.headings[0].children[1].children[0].title, 'Test heading')
+        self.assertEqual(
+            self.document.headings[0].children[1].children[0].title, "Test heading"
+        )
         self.assertEqual(self.document.headings[0].children[1].children[0].start, 13)
-        self.assertEqual(self.document.headings[0].children[1].children[0]._orig_start, 13)
+        self.assertEqual(
+            self.document.headings[0].children[1].children[0]._orig_start, 13
+        )
         self.assertEqual(len(self.document.headings[0].children[1].children[0]), 4)
-        self.assertEqual(len(self.document.headings[0].children[1].children[0].children), 0)
+        self.assertEqual(
+            len(self.document.headings[0].children[1].children[0].children), 0
+        )
         self.assertEqual(len(self.document.headings[0].children[1]), 3)
         self.assertEqual(len(self.document.headings[0].children[0].children), 0)
         self.assertEqual(len(self.document.headings[1].children), 0)
-        self.assertEqual(self.document.headings[0].children[1].children[-1].title, 'Überschrift 1.2.1')
+        self.assertEqual(
+            self.document.headings[0].children[1].children[-1].title,
+            "Überschrift 1.2.1",
+        )
         self.assertEqual(self.document.headings[0].children[1].children[-1].start, 17)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings), 3)
         self.assertEqual(len(d.headings[0].children[1].children), 2)
-        self.assertEqual(d.headings[0].children[1].children[0].title, 'Test heading')
+        self.assertEqual(d.headings[0].children[1].children[0].title, "Test heading")
         self.assertEqual(d.headings[0].children[1].children[0].start, 13)
         self.assertEqual(d.headings[0].children[1].children[0]._orig_start, 13)
         self.assertEqual(len(d.headings[0].children[1].children[0]), 4)
@@ -690,16 +773,18 @@ Bla Bla bla bla
         self.assertEqual(len(d.headings[0].children[1]), 3)
         self.assertEqual(len(d.headings[0].children[0].children), 0)
         self.assertEqual(len(d.headings[1].children), 0)
-        self.assertEqual(d.headings[0].children[1].children[-1].title, 'Überschrift 1.2.1')
+        self.assertEqual(
+            d.headings[0].children[1].children[-1].title, "Überschrift 1.2.1"
+        )
         self.assertEqual(d.headings[0].children[1].children[-1].start, 17)
 
     def test_write_replace_multiple_headings_with_one_heading(self):
         # replace subheadings by a list of newly created headings (one item)
         self.assertEqual(len(self.document.headings), 3)
         h = Heading()
-        h.title = 'Test heading'
+        h.title = "Test heading"
         h.level = 3
-        h.body = 'Text, text\nmore text\nanother text'
+        h.body = "Text, text\nmore text\nanother text"
 
         self.assertEqual(h.start, None)
         self.assertEqual(len(self.document.headings[0].children[1].children), 2)
@@ -712,33 +797,35 @@ Bla Bla bla bla
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
-        self.assertEqual(self.document.headings[0].children[1].title, 'Überschrift 1.2')
-        self.assertEqual(self.document.headings[0].children[1].children[0].title, 'Test heading')
+        self.assertEqual(self.document.headings[0].children[1].title, "Überschrift 1.2")
+        self.assertEqual(
+            self.document.headings[0].children[1].children[0].title, "Test heading"
+        )
         self.assertEqual(self.document.headings[0].children[1].children[0].start, 13)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings[0].children[1].children), 1)
-        self.assertEqual(d.headings[0].children[1].title, 'Überschrift 1.2')
-        self.assertEqual(d.headings[0].children[1].children[0].title, 'Test heading')
+        self.assertEqual(d.headings[0].children[1].title, "Überschrift 1.2")
+        self.assertEqual(d.headings[0].children[1].children[0].title, "Test heading")
         self.assertEqual(d.headings[0].children[1].children[0].start, 13)
 
     def test_write_replace_multiple_headings_with_a_multiple_heading_structure(self):
         # replace subheadings by a list of newly created headings (multiple items)
         self.assertEqual(len(self.document.headings), 3)
         h = Heading()
-        h.title = 'Test heading'
+        h.title = "Test heading"
         h.level = 3
-        h.body = 'Text, text\nmore text\nanother text'
+        h.body = "Text, text\nmore text\nanother text"
         h1 = Heading()
-        h1.title = 'another heading'
+        h1.title = "another heading"
         h1.level = 4
-        h1.body = 'This\nIs\nJust more\ntext'
+        h1.body = "This\nIs\nJust more\ntext"
         h.children.append(h1)
         h2 = Heading()
-        h2.title = 'yet another heading'
+        h2.title = "yet another heading"
         h2.level = 3
-        h2.body = 'This\nis less text'
+        h2.body = "This\nis less text"
 
         self.assertEqual(h.start, None)
         self.document.headings[0].children[1].children[:] = (h, h2)
@@ -749,25 +836,43 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0].children[1].is_dirty, False)
         self.assertEqual(len(self.document.headings), 3)
         self.assertEqual(len(self.document.headings[0].children[1].children), 2)
-        self.assertEqual(len(self.document.headings[0].children[1].children[0].children), 1)
-        self.assertEqual(len(self.document.headings[0].children[1].children[1].children), 0)
+        self.assertEqual(
+            len(self.document.headings[0].children[1].children[0].children), 1
+        )
+        self.assertEqual(
+            len(self.document.headings[0].children[1].children[1].children), 0
+        )
 
         self.assertEqual(self.document.write(), True)
         self.assertEqual(self.document.is_dirty, False)
-        self.assertEqual(self.document.headings[0].children[1].title, 'Überschrift 1.2')
-        self.assertEqual(self.document.headings[0].children[1].children[0].title, 'Test heading')
-        self.assertEqual(self.document.headings[0].children[1].children[0].children[0].title, 'another heading')
-        self.assertEqual(self.document.headings[0].children[1].children[1].title, 'yet another heading')
+        self.assertEqual(self.document.headings[0].children[1].title, "Überschrift 1.2")
+        self.assertEqual(
+            self.document.headings[0].children[1].children[0].title, "Test heading"
+        )
+        self.assertEqual(
+            self.document.headings[0].children[1].children[0].children[0].title,
+            "another heading",
+        )
+        self.assertEqual(
+            self.document.headings[0].children[1].children[1].title,
+            "yet another heading",
+        )
         self.assertEqual(self.document.headings[0].children[1].children[0].start, 13)
-        self.assertEqual(self.document.headings[0].children[1].children[0].children[0].start, 17)
+        self.assertEqual(
+            self.document.headings[0].children[1].children[0].children[0].start, 17
+        )
         self.assertEqual(self.document.headings[0].children[1].children[1].start, 22)
 
         # sanity check
         d = VimBuffer().init_dom()
-        self.assertEqual(d.headings[0].children[1].title, 'Überschrift 1.2')
-        self.assertEqual(d.headings[0].children[1].children[0].title, 'Test heading')
-        self.assertEqual(d.headings[0].children[1].children[0].children[0].title, 'another heading')
-        self.assertEqual(d.headings[0].children[1].children[1].title, 'yet another heading')
+        self.assertEqual(d.headings[0].children[1].title, "Überschrift 1.2")
+        self.assertEqual(d.headings[0].children[1].children[0].title, "Test heading")
+        self.assertEqual(
+            d.headings[0].children[1].children[0].children[0].title, "another heading"
+        )
+        self.assertEqual(
+            d.headings[0].children[1].children[1].title, "yet another heading"
+        )
         self.assertEqual(d.headings[0].children[1].children[0].start, 13)
         self.assertEqual(d.headings[0].children[1].children[0].children[0].start, 17)
         self.assertEqual(d.headings[0].children[1].children[1].start, 22)
@@ -779,8 +884,12 @@ Bla Bla bla bla
         self.assertEqual(len(self.document.headings[0].children), 2)
         self.assertEqual(len(self.document.headings[0].children[0].children), 0)
         self.assertEqual(len(self.document.headings[0].children[1].children), 2)
-        self.assertEqual(len(self.document.headings[0].children[1].children[0].children), 0)
-        self.assertEqual(len(self.document.headings[0].children[1].children[1].children), 0)
+        self.assertEqual(
+            len(self.document.headings[0].children[1].children[0].children), 0
+        )
+        self.assertEqual(
+            len(self.document.headings[0].children[1].children[1].children), 0
+        )
         self.assertEqual(len(self.document.headings[1].children), 0)
         self.assertEqual(len(self.document.headings[2].children), 0)
 
@@ -833,7 +942,9 @@ Bla Bla bla bla
         self.assertEqual(h.end, 20)
         self.assertEqual(h.end_of_last_child, 20)
 
-        vim.current.buffer[:] = [ i for i in """
+        vim.current.buffer[:] = [
+            i
+            for i in """
 ** Überschrift 1.2
 Text 3
 
@@ -844,14 +955,15 @@ Bla Bla bla bla
 * Überschrift 2
 * Überschrift 3
   asdf sdf
-""".split('\n') ]
+""".split("\n")
+        ]
         self.document = VimBuffer().init_dom()
         vim.current.window.cursor = (3, 0)
         h = self.document.current_heading()
         self.assertNotEqual(h, None)
         self.assertEqual(h.parent, None)
         self.assertEqual(h.level, 2)
-        self.assertEqual(h.title, 'Überschrift 1.2')
+        self.assertEqual(h.title, "Überschrift 1.2")
         self.assertEqual(len(h.children), 2)
         self.assertEqual(h.children[1].start, 7)
         self.assertEqual(h.children[1].children, [])
@@ -861,16 +973,19 @@ Bla Bla bla bla
         self.assertEqual(h.end, 3)
         self.assertEqual(h.end_of_last_child, 7)
 
-        vim.current.buffer[:] = [ i for i in """
+        vim.current.buffer[:] = [
+            i
+            for i in """
 * Überschrift 2
-* Überschrift 3""".split('\n') ]
+* Überschrift 3""".split("\n")
+        ]
         self.document = VimBuffer().init_dom()
         vim.current.window.cursor = (3, 0)
         h = self.document.current_heading()
         self.assertNotEqual(h, None)
         self.assertEqual(h.end, 2)
         self.assertEqual(h.end_of_last_child, 2)
-        self.assertEqual(h.title, 'Überschrift 3')
+        self.assertEqual(h.title, "Überschrift 3")
 
     def test_first_heading(self):
         # test first heading
@@ -936,12 +1051,12 @@ Bla Bla bla bla
         self.assertEqual(h.previous_sibling.level, 1)
         self.assertNotEqual(h.previous_sibling.previous_sibling, None)
         self.assertEqual(h.previous_sibling.previous_sibling.level, 1)
-        self.assertEqual(h.previous_sibling.previous_sibling.previous_sibling,
-                None)
+        self.assertEqual(h.previous_sibling.previous_sibling.previous_sibling, None)
 
         vim.current.window.cursor = (77, 0)
         h = self.document.current_heading()
         self.assertEqual(h, None)
+
 
 class VimBufferTagsTestCase(unittest.TestCase):
     def setUp(self):
@@ -951,20 +1066,22 @@ class VimBufferTagsTestCase(unittest.TestCase):
         vim.CMDRESULTS = {}
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
-                # no org_todo_keywords for b
-                'exists("b:org_todo_keywords")': '0',
-                # global values for org_todo_keywords
-                'exists("g:org_todo_keywords")': '1',
-                'g:org_todo_keywords': ['TODO',
-                                       'DONE', '|'],
-                'exists("g:org_debug")': '0',
-                'exists("*repeat#set()")': '0',
-                'b:changedtick': '0',
-                '&ts': '8',
-                'exists("g:org_tag_column")': '0',
-                'exists("b:org_tag_column")': '0',
-                "v:count": '0'}
-        vim.current.buffer[:] = [ i for i in """#Meta information
+            # no org_todo_keywords for b
+            'exists("b:org_todo_keywords")': "0",
+            # global values for org_todo_keywords
+            'exists("g:org_todo_keywords")': "1",
+            "g:org_todo_keywords": ["TODO", "DONE", "|"],
+            'exists("g:org_debug")': "0",
+            'exists("*repeat#set()")': "0",
+            "b:changedtick": "0",
+            "&ts": "8",
+            'exists("g:org_tag_column")': "0",
+            'exists("b:org_tag_column")': "0",
+            "v:count": "0",
+        }
+        vim.current.buffer[:] = [
+            i
+            for i in """#Meta information
 #more meta information
 * Überschrift 1     :testtag:
 Text 1
@@ -990,36 +1107,43 @@ Bla Bla bla bla
 * oneword :with:tags:
 * :noword:with:tags:
 * TODO :todo:with:tags:
-""".split('\n') ]
+""".split("\n")
+        ]
         self.document = VimBuffer().init_dom()
 
     def test_tag_read_no_word_with_tags(self):
         self.assertEqual(len(self.document.headings[6].tags), 3)
-        self.assertEqual(self.document.headings[6].tags[0], 'noword')
-        self.assertEqual(self.document.headings[6].title, '')
+        self.assertEqual(self.document.headings[6].tags[0], "noword")
+        self.assertEqual(self.document.headings[6].title, "")
         self.assertEqual(self.document.headings[6].todo, None)
 
     def test_tag_read_one_word_with_tags(self):
         self.assertEqual(len(self.document.headings[5].tags), 2)
-        self.assertEqual(self.document.headings[5].tags[0], 'with')
-        self.assertEqual(self.document.headings[5].title, 'oneword')
+        self.assertEqual(self.document.headings[5].tags[0], "with")
+        self.assertEqual(self.document.headings[5].title, "oneword")
         self.assertEqual(self.document.headings[5].todo, None)
 
     def test_tag_read_TODO_with_tags(self):
         self.assertEqual(len(self.document.headings[7].tags), 3)
-        self.assertEqual(self.document.headings[7].tags[0], 'todo')
-        self.assertEqual(self.document.headings[7].title, '')
-        self.assertEqual(self.document.headings[7].todo, 'TODO')
+        self.assertEqual(self.document.headings[7].tags[0], "todo")
+        self.assertEqual(self.document.headings[7].title, "")
+        self.assertEqual(self.document.headings[7].todo, "TODO")
 
     def test_tag_read_one(self):
         self.assertEqual(len(self.document.headings[0].tags), 1)
-        self.assertEqual(self.document.headings[0].tags[0], 'testtag')
-        self.assertEqual(str(self.document.headings[0]), '* Überschrift 1							    :testtag:')
+        self.assertEqual(self.document.headings[0].tags[0], "testtag")
+        self.assertEqual(
+            str(self.document.headings[0]),
+            "* Überschrift 1							    :testtag:",
+        )
 
     def test_tag_read_multiple(self):
         self.assertEqual(len(self.document.headings[0].children[0].tags), 2)
-        self.assertEqual(self.document.headings[0].children[0].tags, ['multi', 'tags'])
-        self.assertEqual(str(self.document.headings[0].children[0]), '** Überschrift 1.1						 :multi:tags:')
+        self.assertEqual(self.document.headings[0].children[0].tags, ["multi", "tags"])
+        self.assertEqual(
+            str(self.document.headings[0].children[0]),
+            "** Überschrift 1.1						 :multi:tags:",
+        )
 
     def test_tag_no_tags(self):
         self.assertEqual(len(self.document.headings[0].children[1].children), 3)
@@ -1031,27 +1155,36 @@ Bla Bla bla bla
     def test_tag_read_space_and_tab_separated(self):
         self.assertEqual(len(self.document.headings[1].children), 0)
         self.assertEqual(len(self.document.headings[1].tags), 2)
-        self.assertEqual(self.document.headings[1].tags, ['more', 'tags'])
+        self.assertEqual(self.document.headings[1].tags, ["more", "tags"])
 
     def test_tag_read_tab_separated(self):
         self.assertEqual(len(self.document.headings[2].children), 0)
         self.assertEqual(len(self.document.headings[2].tags), 2)
-        self.assertEqual(self.document.headings[2].tags, ['lesser', 'tag'])
+        self.assertEqual(self.document.headings[2].tags, ["lesser", "tag"])
 
     def test_tag_read_long_title(self):
         self.assertEqual(len(self.document.headings[3].children), 0)
         self.assertEqual(len(self.document.headings[3].tags), 2)
-        self.assertEqual(self.document.headings[3].tags, ['title', 'long'])
-        self.assertEqual(str(self.document.headings[3]), '* Überschrift 4 super long long long long long long long long extremely long title  :title:long:')
+        self.assertEqual(self.document.headings[3].tags, ["title", "long"])
+        self.assertEqual(
+            str(self.document.headings[3]),
+            "* Überschrift 4 super long long long long long long long long extremely long title  :title:long:",
+        )
 
     def test_tag_read_long_title_plus_todo_state(self):
         self.assertEqual(len(self.document.headings[4].children), 0)
         self.assertEqual(len(self.document.headings[4].tags), 1)
         self.assertEqual(self.document.headings[4].level, 1)
-        self.assertEqual(self.document.headings[4].todo, 'TODO')
-        self.assertEqual(self.document.headings[4].title, 'Überschrift 5 super long long long long long long long long extremely long title')
-        self.assertEqual(self.document.headings[4].tags, ['title_with_todo'])
-        self.assertEqual(str(self.document.headings[4]), '* TODO Überschrift 5 super long long long long long long long long extremely long title  :title_with_todo:')
+        self.assertEqual(self.document.headings[4].todo, "TODO")
+        self.assertEqual(
+            self.document.headings[4].title,
+            "Überschrift 5 super long long long long long long long long extremely long title",
+        )
+        self.assertEqual(self.document.headings[4].tags, ["title_with_todo"])
+        self.assertEqual(
+            str(self.document.headings[4]),
+            "* TODO Überschrift 5 super long long long long long long long long extremely long title  :title_with_todo:",
+        )
 
     def test_tag_del_tags(self):
         self.assertEqual(len(self.document.headings[0].tags), 1)
@@ -1059,46 +1192,59 @@ Bla Bla bla bla
         self.assertEqual(len(self.document.headings[0].tags), 0)
         self.assertEqual(self.document.headings[0].is_dirty_heading, True)
         self.assertEqual(self.document.headings[0].is_dirty_body, False)
-        self.assertEqual(str(self.document.headings[0]), '* Überschrift 1')
+        self.assertEqual(str(self.document.headings[0]), "* Überschrift 1")
         self.assertEqual(self.document.write(), True)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings[0].tags), 0)
-        self.assertEqual(d.headings[0].title, 'Überschrift 1')
-        self.assertEqual(str(d.headings[0]), '* Überschrift 1')
+        self.assertEqual(d.headings[0].title, "Überschrift 1")
+        self.assertEqual(str(d.headings[0]), "* Überschrift 1")
 
     def test_tag_replace_one_tag(self):
         self.assertEqual(len(self.document.headings[0].tags), 1)
-        self.document.headings[0].tags = ['justonetag']
+        self.document.headings[0].tags = ["justonetag"]
         self.assertEqual(len(self.document.headings[0].tags), 1)
         self.assertEqual(self.document.headings[0].is_dirty_heading, True)
         self.assertEqual(self.document.headings[0].is_dirty_body, False)
-        self.assertEqual(str(self.document.headings[0]), '* Überschrift 1							 :justonetag:')
+        self.assertEqual(
+            str(self.document.headings[0]),
+            "* Überschrift 1							 :justonetag:",
+        )
         self.assertEqual(self.document.write(), True)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings[0].tags), 1)
-        self.assertEqual(d.headings[0].tags, ['justonetag'])
-        self.assertEqual(d.headings[0].title, 'Überschrift 1')
-        self.assertEqual(str(d.headings[0]), '* Überschrift 1							 :justonetag:')
+        self.assertEqual(d.headings[0].tags, ["justonetag"])
+        self.assertEqual(d.headings[0].title, "Überschrift 1")
+        self.assertEqual(
+            str(d.headings[0]),
+            "* Überschrift 1							 :justonetag:",
+        )
 
     def test_tag_replace_multiple_tags(self):
         self.assertEqual(len(self.document.headings[1].tags), 2)
-        self.document.headings[1].tags = ['justonetag', 'moretags', 'lesstags']
+        self.document.headings[1].tags = ["justonetag", "moretags", "lesstags"]
         self.assertEqual(len(self.document.headings[1].tags), 3)
         self.assertEqual(self.document.headings[1].is_dirty_heading, True)
         self.assertEqual(self.document.headings[1].is_dirty_body, False)
-        self.assertEqual(str(self.document.headings[1]), '* Überschrift 2				       :justonetag:moretags:lesstags:')
+        self.assertEqual(
+            str(self.document.headings[1]),
+            "* Überschrift 2				       :justonetag:moretags:lesstags:",
+        )
         self.assertEqual(self.document.write(), True)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings[1].tags), 3)
-        self.assertEqual(d.headings[1].tags, ['justonetag', 'moretags', 'lesstags'])
-        self.assertEqual(d.headings[1].title, 'Überschrift 2')
-        self.assertEqual(str(d.headings[1]), '* Überschrift 2				       :justonetag:moretags:lesstags:')
+        self.assertEqual(d.headings[1].tags, ["justonetag", "moretags", "lesstags"])
+        self.assertEqual(d.headings[1].title, "Überschrift 2")
+        self.assertEqual(
+            str(d.headings[1]),
+            "* Überschrift 2				       :justonetag:moretags:lesstags:",
+        )
+
 
 class VimBufferTodoTestCase(unittest.TestCase):
     def setUp(self):
@@ -1108,22 +1254,30 @@ class VimBufferTodoTestCase(unittest.TestCase):
         vim.CMDRESULTS = {}
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
-                # no org_todo_keywords for b
-                'exists("b:org_todo_keywords")': '0',
-                # global values for org_todo_keywords
-                'exists("g:org_todo_keywords")': '1',
-                'g:org_todo_keywords': ['TODO', \
-                        'DONß', 'DONÉ', \
-                        'DÖNE', 'WAITING', \
-                        'DONE', '|'],
-                'exists("g:org_debug")': '0',
-                'exists("*repeat#set()")': '0',
-                'b:changedtick': '0',
-                '&ts': '8',
-                'exists("g:org_tag_column")': '0',
-                'exists("b:org_tag_column")': '0',
-                "v:count": '0'}
-        vim.current.buffer[:] = [ i for i in """#Meta information
+            # no org_todo_keywords for b
+            'exists("b:org_todo_keywords")': "0",
+            # global values for org_todo_keywords
+            'exists("g:org_todo_keywords")': "1",
+            "g:org_todo_keywords": [
+                "TODO",
+                "DONß",
+                "DONÉ",
+                "DÖNE",
+                "WAITING",
+                "DONE",
+                "|",
+            ],
+            'exists("g:org_debug")': "0",
+            'exists("*repeat#set()")': "0",
+            "b:changedtick": "0",
+            "&ts": "8",
+            'exists("g:org_tag_column")': "0",
+            'exists("b:org_tag_column")': "0",
+            "v:count": "0",
+        }
+        vim.current.buffer[:] = [
+            i
+            for i in """#Meta information
 #more meta information
 * TODO Überschrift 1     :testtag:
 Text 1
@@ -1148,11 +1302,14 @@ Bla Bla bla bla
 * DONß Überschrift 5
 * DONÉ Überschrift 6
 * DONé    Überschrift 7
-""".split('\n') ]
+""".split("\n")
+        ]
         self.document = VimBuffer().init_dom()
 
     def test_no_space_after_upper_case_single_word_heading(self):
-        vim.current.buffer[:] = [ i for i in """
+        vim.current.buffer[:] = [
+            i
+            for i in """
 * TEST
 ** Text 1
 *** Text 2
@@ -1161,147 +1318,183 @@ Bla Bla bla bla
    some text that is
    no heading
 
-""".split('\n') ]
+""".split("\n")
+        ]
         d = VimBuffer().init_dom()
-        self.assertEqual(str(d.headings[0]), '* TEST')
+        self.assertEqual(str(d.headings[0]), "* TEST")
 
     def test_todo_read_TODO(self):
-        self.assertEqual(self.document.headings[0].todo, 'TODO')
-        self.assertEqual(self.document.headings[0].title, 'Überschrift 1')
-        self.assertEqual(str(self.document.headings[0]), '* TODO Überschrift 1						    :testtag:')
+        self.assertEqual(self.document.headings[0].todo, "TODO")
+        self.assertEqual(self.document.headings[0].title, "Überschrift 1")
+        self.assertEqual(
+            str(self.document.headings[0]),
+            "* TODO Überschrift 1						    :testtag:",
+        )
 
     def test_todo_read_TODO_NOTODO(self):
-        self.assertEqual(self.document.headings[0].children[0].todo, 'TODO')
-        self.assertEqual(self.document.headings[0].children[0].title, 'NOTODO Überschrift 1.1')
-        self.assertEqual(str(self.document.headings[0].children[0]), '** TODO NOTODO Überschrift 1.1					 :multi:tags:')
+        self.assertEqual(self.document.headings[0].children[0].todo, "TODO")
+        self.assertEqual(
+            self.document.headings[0].children[0].title, "NOTODO Überschrift 1.1"
+        )
+        self.assertEqual(
+            str(self.document.headings[0].children[0]),
+            "** TODO NOTODO Überschrift 1.1					 :multi:tags:",
+        )
 
     def test_todo_read_WAITING(self):
-        self.assertEqual(self.document.headings[1].todo, 'WAITING')
-        self.assertEqual(self.document.headings[1].title, 'Überschrift 2')
-        self.assertEqual(str(self.document.headings[1]), '* WAITING Überschrift 2						  :more:tags:')
+        self.assertEqual(self.document.headings[1].todo, "WAITING")
+        self.assertEqual(self.document.headings[1].title, "Überschrift 2")
+        self.assertEqual(
+            str(self.document.headings[1]),
+            "* WAITING Überschrift 2						  :more:tags:",
+        )
 
     def test_todo_read_DONE(self):
-        self.assertEqual(self.document.headings[2].todo, 'DONE')
-        self.assertEqual(self.document.headings[2].title, 'Überschrift 3')
-        self.assertEqual(str(self.document.headings[2]), '* DONE Überschrift 3						 :lesser:tag:')
+        self.assertEqual(self.document.headings[2].todo, "DONE")
+        self.assertEqual(self.document.headings[2].title, "Überschrift 3")
+        self.assertEqual(
+            str(self.document.headings[2]),
+            "* DONE Überschrift 3						 :lesser:tag:",
+        )
 
     def test_todo_read_special(self):
-        self.assertEqual(self.document.headings[3].todo, 'DÖNE')
-        self.assertEqual(self.document.headings[3].title, 'Überschrift 4')
+        self.assertEqual(self.document.headings[3].todo, "DÖNE")
+        self.assertEqual(self.document.headings[3].title, "Überschrift 4")
 
-        self.assertEqual(self.document.headings[4].todo, 'DONß')
-        self.assertEqual(self.document.headings[4].title, 'Überschrift 5')
+        self.assertEqual(self.document.headings[4].todo, "DONß")
+        self.assertEqual(self.document.headings[4].title, "Überschrift 5")
 
-        self.assertEqual(self.document.headings[5].todo, 'DONÉ')
-        self.assertEqual(self.document.headings[5].title, 'Überschrift 6')
+        self.assertEqual(self.document.headings[5].todo, "DONÉ")
+        self.assertEqual(self.document.headings[5].title, "Überschrift 6")
 
         self.assertEqual(self.document.headings[6].todo, None)
-        self.assertEqual(self.document.headings[6].title, 'DONé    Überschrift 7')
+        self.assertEqual(self.document.headings[6].title, "DONé    Überschrift 7")
 
     def test_todo_del_todo(self):
-        self.assertEqual(self.document.headings[0].todo, 'TODO')
+        self.assertEqual(self.document.headings[0].todo, "TODO")
         del self.document.headings[0].todo
         self.assertEqual(self.document.headings[0].is_dirty_body, False)
         self.assertEqual(self.document.headings[0].is_dirty_heading, True)
         self.assertEqual(self.document.headings[0].todo, None)
-        self.assertEqual(self.document.headings[0].title, 'Überschrift 1')
-        self.assertEqual(str(self.document.headings[0]), '* Überschrift 1							    :testtag:')
+        self.assertEqual(self.document.headings[0].title, "Überschrift 1")
+        self.assertEqual(
+            str(self.document.headings[0]),
+            "* Überschrift 1							    :testtag:",
+        )
         self.assertEqual(self.document.write(), True)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(d.headings[0].todo, None)
-        self.assertEqual(d.headings[0].title, 'Überschrift 1')
-        self.assertEqual(str(d.headings[0]), '* Überschrift 1							    :testtag:')
+        self.assertEqual(d.headings[0].title, "Überschrift 1")
+        self.assertEqual(
+            str(d.headings[0]),
+            "* Überschrift 1							    :testtag:",
+        )
 
     def test_todo_write_todo_uppercase(self):
-        self.assertEqual(self.document.headings[0].todo, 'TODO')
-        self.document.headings[0].todo = 'DONE'
+        self.assertEqual(self.document.headings[0].todo, "TODO")
+        self.document.headings[0].todo = "DONE"
         self.assertEqual(self.document.headings[0].is_dirty_body, False)
         self.assertEqual(self.document.headings[0].is_dirty_heading, True)
-        self.assertEqual(self.document.headings[0].todo, 'DONE')
-        self.assertEqual(self.document.headings[0].title, 'Überschrift 1')
-        self.assertEqual(str(self.document.headings[0]), '* DONE Überschrift 1						    :testtag:')
+        self.assertEqual(self.document.headings[0].todo, "DONE")
+        self.assertEqual(self.document.headings[0].title, "Überschrift 1")
+        self.assertEqual(
+            str(self.document.headings[0]),
+            "* DONE Überschrift 1						    :testtag:",
+        )
         self.assertEqual(self.document.write(), True)
 
         # sanity check
         d = VimBuffer().init_dom()
-        self.assertEqual(d.headings[0].todo, 'DONE')
-        self.assertEqual(d.headings[0].title, 'Überschrift 1')
-        self.assertEqual(str(d.headings[0]), '* DONE Überschrift 1						    :testtag:')
+        self.assertEqual(d.headings[0].todo, "DONE")
+        self.assertEqual(d.headings[0].title, "Überschrift 1")
+        self.assertEqual(
+            str(d.headings[0]),
+            "* DONE Überschrift 1						    :testtag:",
+        )
 
     def test_todo_set_illegal_todo(self):
         def set_todo(todo):
             self.document.headings[0].todo = todo
-        self.assertEqual(self.document.headings[0].todo, 'TODO')
-        self.assertRaises(ValueError, set_todo, 'DO NE')
-        self.assertRaises(ValueError, set_todo, 'DO\tNE')
-        self.assertRaises(ValueError, set_todo, 'D\nNE')
-        self.assertRaises(ValueError, set_todo, 'DO\rNE')
-        self.assertEqual(self.document.headings[0].todo, 'TODO')
+
+        self.assertEqual(self.document.headings[0].todo, "TODO")
+        self.assertRaises(ValueError, set_todo, "DO NE")
+        self.assertRaises(ValueError, set_todo, "DO\tNE")
+        self.assertRaises(ValueError, set_todo, "D\nNE")
+        self.assertRaises(ValueError, set_todo, "DO\rNE")
+        self.assertEqual(self.document.headings[0].todo, "TODO")
 
     def test_write_after_deleting_unwritten_headings(self):
         # Regression: deleted headings that were never written have no
         # _orig_start, which made sorting the deleted headings fail
         before = list(vim.current.buffer)
-        h1 = Heading(level=1, title='new 1')
-        h2 = Heading(level=1, title='new 2')
+        h1 = Heading(level=1, title="new 1")
+        h2 = Heading(level=1, title="new 2")
         self.document.headings.append(h1)
         self.document.headings.append(h2)
         del self.document.headings[-2:]
-        self.document.headings[0].title = 'changed'
+        self.document.headings[0].title = "changed"
         self.assertEqual(self.document.write(), True)
         self.assertEqual(len(vim.current.buffer), len(before))
-        self.assertTrue('changed' in vim.current.buffer[2])
+        self.assertTrue("changed" in vim.current.buffer[2])
 
     def test_write_refuses_heading_without_start(self):
         # A start of None must never be turned into [None:None], which would
         # replace the whole buffer
         before = list(vim.current.buffer)
         child = self.document.headings[0].children[0]
-        self.document.headings[0].title = 'changed'
+        self.document.headings[0].title = "changed"
         child._document = None
         child._orig_start = None
         child.set_dirty_body()
         self.assertRaises(ValueError, self.document.write)
         self.assertEqual(list(vim.current.buffer), before)
 
+
 class VimBufferContentTestCase(unittest.TestCase):
     def setUp(self):
         from orgmode.vimbuffer import VimBufferContent
+
         self.changes = []
-        self.buffer = vim.VimBuffer(['a', 'b', 'c'])
+        self.buffer = vim.VimBuffer(["a", "b", "c"])
         self.content = VimBufferContent(
-            self.buffer, on_change=lambda: self.changes.append(1))
+            self.buffer, on_change=lambda: self.changes.append(1)
+        )
 
     def test_slice_assignment_accepts_any_iterable(self):
         from collections import UserList
-        for value in (['x', 'y'], ('x', 'y'), UserList(['x', 'y']),
-                      (c for c in ('x', 'y'))):
-            self.buffer[:] = ['a', 'b', 'c']
+
+        for value in (
+            ["x", "y"],
+            ("x", "y"),
+            UserList(["x", "y"]),
+            (c for c in ("x", "y")),
+        ):
+            self.buffer[:] = ["a", "b", "c"]
             self.content[0:1] = value
-            self.assertEqual(list(self.buffer), ['x', 'y', 'b', 'c'])
+            self.assertEqual(list(self.buffer), ["x", "y", "b", "c"])
 
     def test_item_assignment(self):
-        self.content[1] = 'B'
-        self.assertEqual(list(self.buffer), ['a', 'B', 'c'])
+        self.content[1] = "B"
+        self.assertEqual(list(self.buffer), ["a", "B", "c"])
         self.assertEqual(len(self.changes), 1)
 
     def test_index_returns_position(self):
-        self.assertEqual(self.content.index('c'), 2)
+        self.assertEqual(self.content.index("c"), 2)
 
     def test_pop_returns_line_and_marks_changed(self):
-        self.assertEqual(self.content.pop(), 'c')
-        self.assertEqual(list(self.buffer), ['a', 'b'])
+        self.assertEqual(self.content.pop(), "c")
+        self.assertEqual(list(self.buffer), ["a", "b"])
         self.assertEqual(len(self.changes), 1)
 
     def test_append_extend_iadd_mark_changed(self):
-        self.content.append('d')
-        self.content.extend(('e', ))
-        self.content += ['f']
-        self.assertEqual(list(self.buffer), ['a', 'b', 'c', 'd', 'e', 'f'])
+        self.content.append("d")
+        self.content.extend(("e",))
+        self.content += ["f"]
+        self.assertEqual(list(self.buffer), ["a", "b", "c", "d", "e", "f"])
         self.assertEqual(len(self.changes), 3)
 
     def test_contains(self):
-        self.assertTrue('b' in self.content)
-        self.assertFalse('z' in self.content)
+        self.assertTrue("b" in self.content)
+        self.assertFalse("z" in self.content)

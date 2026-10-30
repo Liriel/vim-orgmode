@@ -1,4 +1,3 @@
-
 import vim
 
 from orgmode._vim import ORGMODE, apply_count, echo
@@ -8,11 +7,11 @@ from orgmode.menu import ActionEntry, Submenu
 
 
 class Navigator:
-    """ Implement navigation in org-mode documents """
+    """Implement navigation in org-mode documents"""
 
     def __init__(self):
         object.__init__(self)
-        self.menu = ORGMODE.orgmenu + Submenu('&Navigate Headings')
+        self.menu = ORGMODE.orgmenu + Submenu("&Navigate Headings")
         self.keybindings = []
 
     @classmethod
@@ -25,23 +24,25 @@ class Navigator:
         """
         heading = ORGMODE.get_document().current_heading()
         if not heading:
-            if mode == 'visual':
-                vim.command('normal! gv')
+            if mode == "visual":
+                vim.command("normal! gv")
             else:
-                echo('No heading found')
+                echo("No heading found")
             return
 
         if not heading.parent:
-            if mode == 'visual':
-                vim.command('normal! gv')
+            if mode == "visual":
+                vim.command("normal! gv")
             else:
-                echo('No parent heading found')
+                echo("No parent heading found")
             return
 
         p = heading.parent
 
-        if mode == 'visual':
-            cls._change_visual_selection(heading, p, direction=Direction.BACKWARD, parent=True)
+        if mode == "visual":
+            cls._change_visual_selection(
+                heading, p, direction=Direction.BACKWARD, parent=True
+            )
         else:
             vim.current.window.cursor = (p.start_vim, p.level + 1)
         return p
@@ -56,31 +57,40 @@ class Navigator:
         """
         heading = ORGMODE.get_document().current_heading()
         if not heading:
-            if mode == 'visual':
-                vim.command('normal! gv')
+            if mode == "visual":
+                vim.command("normal! gv")
             else:
-                echo('No heading found')
+                echo("No heading found")
             return
 
         if not heading.parent or not heading.parent.next_sibling:
-            if mode == 'visual':
-                vim.command('normal! gv')
+            if mode == "visual":
+                vim.command("normal! gv")
             else:
-                echo('No parent heading found')
+                echo("No parent heading found")
             return
 
         ns = heading.parent.next_sibling
 
-        if mode == 'visual':
-            cls._change_visual_selection(heading, ns, direction=Direction.FORWARD, parent=False)
-        elif mode == 'operator':
+        if mode == "visual":
+            cls._change_visual_selection(
+                heading, ns, direction=Direction.FORWARD, parent=False
+            )
+        elif mode == "operator":
             vim.current.window.cursor = (ns.start_vim, 0)
         else:
             vim.current.window.cursor = (ns.start_vim, ns.level + 1)
         return ns
 
     @classmethod
-    def _change_visual_selection(cls, current_heading, heading, direction=Direction.FORWARD, noheadingfound=False, parent=False):
+    def _change_visual_selection(
+        cls,
+        current_heading,
+        heading,
+        direction=Direction.FORWARD,
+        noheadingfound=False,
+        parent=False,
+    ):
         current = vim.current.window.cursor[0]
         line_start, col_start = [int(i) for i in vim.eval('getpos("\'<")')[1:3]]
         line_end, col_end = [int(i) for i in vim.eval('getpos("\'>")')[1:3]]
@@ -92,7 +102,11 @@ class Navigator:
         # << |visual start
         # selection end >>
         if current == line_start:
-            if (direction == Direction.FORWARD and line_end < f_start) or noheadingfound and not direction == Direction.BACKWARD:
+            if (
+                (direction == Direction.FORWARD and line_end < f_start)
+                or noheadingfound
+                and not direction == Direction.BACKWARD
+            ):
                 swap_cursor = False
 
             # focus heading HERE
@@ -116,7 +130,11 @@ class Navigator:
             # focus heading HERE
             else:
                 if direction == Direction.FORWARD:
-                    if line_end < f_start and not line_start == f_start - 1 and current_heading:
+                    if (
+                        line_end < f_start
+                        and not line_start == f_start - 1
+                        and current_heading
+                    ):
                         # focus end of previous heading instead of beginning of next heading
                         line_start = line_end
                         line_end = f_start - 1
@@ -141,8 +159,11 @@ class Navigator:
                 line_end = f_end
                 swap_cursor = False
 
-            elif (line_start > f_start or line_start == f_start) and \
-                line_end <= f_end and direction == Direction.BACKWARD:
+            elif (
+                (line_start > f_start or line_start == f_start)
+                and line_end <= f_end
+                and direction == Direction.BACKWARD
+            ):
                 line_end = line_start
                 line_start = f_start
 
@@ -168,11 +189,29 @@ class Navigator:
                     line_end = f_end
                 swap_cursor = False
 
-        move_col_start = '%dl' % (col_start - 1) if (col_start - 1) > 0 and (col_start - 1) < 2000000000 else ''
-        move_col_end = '%dl' % (col_end - 1) if (col_end - 1) > 0 and (col_end - 1) < 2000000000 else ''
-        swap = 'o' if swap_cursor else ''
+        move_col_start = (
+            "%dl" % (col_start - 1)
+            if (col_start - 1) > 0 and (col_start - 1) < 2000000000
+            else ""
+        )
+        move_col_end = (
+            "%dl" % (col_end - 1)
+            if (col_end - 1) > 0 and (col_end - 1) < 2000000000
+            else ""
+        )
+        swap = "o" if swap_cursor else ""
 
-        vim.command('normal! %dgg%s%s%dgg%s%s' % (line_start, move_col_start, vim.eval('visualmode()'), line_end, move_col_end, swap))
+        vim.command(
+            "normal! %dgg%s%s%dgg%s%s"
+            % (
+                line_start,
+                move_col_start,
+                vim.eval("visualmode()"),
+                line_end,
+                move_col_end,
+                swap,
+            )
+        )
 
     @classmethod
     def _focus_heading(cls, mode, direction=Direction.FORWARD, skip_children=False):
@@ -189,25 +228,29 @@ class Navigator:
         # FIXME this is just a piece of really ugly and unmaintainable code. It
         # should be rewritten
         if not heading:
-            if direction == Direction.FORWARD and d.headings \
-                and vim.current.window.cursor[0] < d.headings[0].start_vim:
+            if (
+                direction == Direction.FORWARD
+                and d.headings
+                and vim.current.window.cursor[0] < d.headings[0].start_vim
+            ):
                 # the cursor is in the meta information are, therefore focus
                 # first heading
                 focus_heading = d.headings[0]
             if not (heading or focus_heading):
-                if mode == 'visual':
+                if mode == "visual":
                     # restore visual selection when no heading was found
-                    vim.command('normal! gv')
+                    vim.command("normal! gv")
                 else:
-                    echo('No heading found')
+                    echo("No heading found")
                 return
         elif direction == Direction.BACKWARD:
             if vim.current.window.cursor[0] != heading.start_vim:
                 # the cursor is in the body of the current heading, therefore
                 # the current heading will be focused
-                if mode == 'visual':
-                    line_start, col_start = [int(i) for i in
-                              vim.eval('getpos("\'<")')[1:3]]
+                if mode == "visual":
+                    line_start, col_start = [
+                        int(i) for i in vim.eval('getpos("\'<")')[1:3]
+                    ]
                     line_end, col_end = [int(i) for i in vim.eval('getpos("\'>")')[1:3]]
                     if line_start >= heading.start_vim and line_end > heading.start_vim:
                         focus_heading = heading
@@ -216,7 +259,11 @@ class Navigator:
 
         # so far no heading has been found that the next focus should be on
         if not focus_heading:
-            if not skip_children and direction == Direction.FORWARD and heading.children:
+            if (
+                not skip_children
+                and direction == Direction.FORWARD
+                and heading.children
+            ):
                 focus_heading = heading.children[0]
             elif direction == Direction.FORWARD and heading.next_sibling:
                 focus_heading = heading.next_sibling
@@ -233,27 +280,41 @@ class Navigator:
 
         noheadingfound = False
         if not focus_heading:
-            if mode in ('visual', 'operator'):
+            if mode in ("visual", "operator"):
                 # the cursor seems to be on the last or first heading of this
                 # document and performs another next/previous operation
                 focus_heading = heading
                 noheadingfound = True
             else:
                 if direction == Direction.FORWARD:
-                    echo('Already focussing last heading')
+                    echo("Already focussing last heading")
                 else:
-                    echo('Already focussing first heading')
+                    echo("Already focussing first heading")
                 return
 
-        if mode == 'visual':
-            cls._change_visual_selection(current_heading, focus_heading, direction=direction, noheadingfound=noheadingfound)
-        elif mode == 'operator':
-            if direction == Direction.FORWARD and vim.current.window.cursor[0] >= focus_heading.start_vim:
-                vim.current.window.cursor = (focus_heading.end_vim, len(vim.current.buffer[focus_heading.end]))
+        if mode == "visual":
+            cls._change_visual_selection(
+                current_heading,
+                focus_heading,
+                direction=direction,
+                noheadingfound=noheadingfound,
+            )
+        elif mode == "operator":
+            if (
+                direction == Direction.FORWARD
+                and vim.current.window.cursor[0] >= focus_heading.start_vim
+            ):
+                vim.current.window.cursor = (
+                    focus_heading.end_vim,
+                    len(vim.current.buffer[focus_heading.end]),
+                )
             else:
                 vim.current.window.cursor = (focus_heading.start_vim, 0)
         else:
-            vim.current.window.cursor = (focus_heading.start_vim, focus_heading.level + 1)
+            vim.current.window.cursor = (
+                focus_heading.start_vim,
+                focus_heading.level + 1,
+            )
         if noheadingfound:
             return
         return focus_heading
@@ -264,7 +325,9 @@ class Navigator:
         """
         Focus previous heading
         """
-        return cls._focus_heading(mode, direction=Direction.BACKWARD, skip_children=skip_children)
+        return cls._focus_heading(
+            mode, direction=Direction.BACKWARD, skip_children=skip_children
+        )
 
     @classmethod
     @apply_count
@@ -272,50 +335,218 @@ class Navigator:
         """
         Focus next heading
         """
-        return cls._focus_heading(mode, direction=Direction.FORWARD, skip_children=skip_children)
+        return cls._focus_heading(
+            mode, direction=Direction.FORWARD, skip_children=skip_children
+        )
 
     def register(self):
         # normal mode
-        self.keybindings.append(Keybinding('g{', Plug('OrgJumpToParentNormal',
-                                                 '%s ORGMODE.plugins["Navigator"].parent(mode="normal")<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('&Up', self.keybindings[-1])
-        self.keybindings.append(Keybinding('g}',
-                                     Plug('OrgJumpToParentsSiblingNormal', '%s ORGMODE.plugins["Navigator"].parent_next_sibling(mode="normal")<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('&Down', self.keybindings[-1])
-        self.keybindings.append(Keybinding('{',
-                                     Plug('OrgJumpToPreviousNormal', '%s ORGMODE.plugins["Navigator"].previous(mode="normal")<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('&Previous', self.keybindings[-1])
-        self.keybindings.append(Keybinding('}', Plug('OrgJumpToNextNormal',
-                                                '%s ORGMODE.plugins["Navigator"].next(mode="normal")<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('&Next', self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "g{",
+                Plug(
+                    "OrgJumpToParentNormal",
+                    '%s ORGMODE.plugins["Navigator"].parent(mode="normal")<CR>'
+                    % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry("&Up", self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "g}",
+                Plug(
+                    "OrgJumpToParentsSiblingNormal",
+                    '%s ORGMODE.plugins["Navigator"].parent_next_sibling(mode="normal")<CR>'
+                    % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry("&Down", self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "{",
+                Plug(
+                    "OrgJumpToPreviousNormal",
+                    '%s ORGMODE.plugins["Navigator"].previous(mode="normal")<CR>'
+                    % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry("&Previous", self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "}",
+                Plug(
+                    "OrgJumpToNextNormal",
+                    '%s ORGMODE.plugins["Navigator"].next(mode="normal")<CR>'
+                    % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry("&Next", self.keybindings[-1])
 
         # visual mode
-        self.keybindings.append(Keybinding('g{', Plug('OrgJumpToParentVisual', '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].parent(mode="visual")<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding('g}', Plug('OrgJumpToParentsSiblingVisual', '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].parent_next_sibling(mode="visual")<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding('{', Plug('OrgJumpToPreviousVisual', '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].previous(mode="visual")<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding('}', Plug('OrgJumpToNextVisual', '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].next(mode="visual")<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(
+            Keybinding(
+                "g{",
+                Plug(
+                    "OrgJumpToParentVisual",
+                    '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].parent(mode="visual")<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_VISUAL,
+                ),
+            )
+        )
+        self.keybindings.append(
+            Keybinding(
+                "g}",
+                Plug(
+                    "OrgJumpToParentsSiblingVisual",
+                    '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].parent_next_sibling(mode="visual")<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_VISUAL,
+                ),
+            )
+        )
+        self.keybindings.append(
+            Keybinding(
+                "{",
+                Plug(
+                    "OrgJumpToPreviousVisual",
+                    '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].previous(mode="visual")<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_VISUAL,
+                ),
+            )
+        )
+        self.keybindings.append(
+            Keybinding(
+                "}",
+                Plug(
+                    "OrgJumpToNextVisual",
+                    '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].next(mode="visual")<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_VISUAL,
+                ),
+            )
+        )
 
         # operator-pending mode
-        self.keybindings.append(Keybinding('g{', Plug('OrgJumpToParentOperator', ':<C-u>%s ORGMODE.plugins["Navigator"].parent(mode="operator")<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
-        self.keybindings.append(Keybinding('g}', Plug('OrgJumpToParentsSiblingOperator', ':<C-u>%s ORGMODE.plugins["Navigator"].parent_next_sibling(mode="operator")<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
-        self.keybindings.append(Keybinding('{', Plug('OrgJumpToPreviousOperator', ':<C-u>%s ORGMODE.plugins["Navigator"].previous(mode="operator")<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
-        self.keybindings.append(Keybinding('}', Plug('OrgJumpToNextOperator', ':<C-u>%s ORGMODE.plugins["Navigator"].next(mode="operator")<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
+        self.keybindings.append(
+            Keybinding(
+                "g{",
+                Plug(
+                    "OrgJumpToParentOperator",
+                    ':<C-u>%s ORGMODE.plugins["Navigator"].parent(mode="operator")<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_OPERATOR,
+                ),
+            )
+        )
+        self.keybindings.append(
+            Keybinding(
+                "g}",
+                Plug(
+                    "OrgJumpToParentsSiblingOperator",
+                    ':<C-u>%s ORGMODE.plugins["Navigator"].parent_next_sibling(mode="operator")<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_OPERATOR,
+                ),
+            )
+        )
+        self.keybindings.append(
+            Keybinding(
+                "{",
+                Plug(
+                    "OrgJumpToPreviousOperator",
+                    ':<C-u>%s ORGMODE.plugins["Navigator"].previous(mode="operator")<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_OPERATOR,
+                ),
+            )
+        )
+        self.keybindings.append(
+            Keybinding(
+                "}",
+                Plug(
+                    "OrgJumpToNextOperator",
+                    ':<C-u>%s ORGMODE.plugins["Navigator"].next(mode="operator")<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_OPERATOR,
+                ),
+            )
+        )
 
         # section wise movement (skip children)
         # normal mode
-        self.keybindings.append(Keybinding('[[',
-                                     Plug('OrgJumpToPreviousSkipChildrenNormal',
-               '%s ORGMODE.plugins["Navigator"].previous(mode="normal", skip_children=True)<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('Ne&xt Same Level', self.keybindings[-1])
-        self.keybindings.append(Keybinding(']]',
-                                     Plug('OrgJumpToNextSkipChildrenNormal',
-               '%s ORGMODE.plugins["Navigator"].next(mode="normal", skip_children=True)<CR>' % VIM_PY_CALL)))
-        self.menu + ActionEntry('Pre&vious Same Level', self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "[[",
+                Plug(
+                    "OrgJumpToPreviousSkipChildrenNormal",
+                    '%s ORGMODE.plugins["Navigator"].previous(mode="normal", skip_children=True)<CR>'
+                    % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry("Ne&xt Same Level", self.keybindings[-1])
+        self.keybindings.append(
+            Keybinding(
+                "]]",
+                Plug(
+                    "OrgJumpToNextSkipChildrenNormal",
+                    '%s ORGMODE.plugins["Navigator"].next(mode="normal", skip_children=True)<CR>'
+                    % VIM_PY_CALL,
+                ),
+            )
+        )
+        self.menu + ActionEntry("Pre&vious Same Level", self.keybindings[-1])
 
         # visual mode
-        self.keybindings.append(Keybinding('[[', Plug('OrgJumpToPreviousSkipChildrenVisual', '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].previous(mode="visual", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding(']]', Plug('OrgJumpToNextSkipChildrenVisual', '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].next(mode="visual", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(
+            Keybinding(
+                "[[",
+                Plug(
+                    "OrgJumpToPreviousSkipChildrenVisual",
+                    '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].previous(mode="visual", skip_children=True)<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_VISUAL,
+                ),
+            )
+        )
+        self.keybindings.append(
+            Keybinding(
+                "]]",
+                Plug(
+                    "OrgJumpToNextSkipChildrenVisual",
+                    '<Esc>:<C-u>%s ORGMODE.plugins["Navigator"].next(mode="visual", skip_children=True)<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_VISUAL,
+                ),
+            )
+        )
 
         # operator-pending mode
-        self.keybindings.append(Keybinding('[[', Plug('OrgJumpToPreviousSkipChildrenOperator', ':<C-u>%s ORGMODE.plugins["Navigator"].previous(mode="operator", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
-        self.keybindings.append(Keybinding(']]', Plug('OrgJumpToNextSkipChildrenOperator', ':<C-u>%s ORGMODE.plugins["Navigator"].next(mode="operator", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
+        self.keybindings.append(
+            Keybinding(
+                "[[",
+                Plug(
+                    "OrgJumpToPreviousSkipChildrenOperator",
+                    ':<C-u>%s ORGMODE.plugins["Navigator"].previous(mode="operator", skip_children=True)<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_OPERATOR,
+                ),
+            )
+        )
+        self.keybindings.append(
+            Keybinding(
+                "]]",
+                Plug(
+                    "OrgJumpToNextSkipChildrenOperator",
+                    ':<C-u>%s ORGMODE.plugins["Navigator"].next(mode="operator", skip_children=True)<CR>'
+                    % VIM_PY_CALL,
+                    mode=MODE_OPERATOR,
+                ),
+            )
+        )

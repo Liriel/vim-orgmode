@@ -1,6 +1,3 @@
-
-
-
 import unittest
 
 import vim
@@ -9,11 +6,27 @@ from orgmode._vim import ORGMODE
 from orgmode.exceptions import PluginError
 from orgmode.keybinding import MODE_ALL, Plug
 
-ORG_PLUGINS = ['ShowHide', '|', 'Navigator', 'EditStructure', '|', 'Hyperlinks', '|', 'Todo', 'TagsProperties', 'Date', 'Agenda', 'Misc', '|', 'Export']
+ORG_PLUGINS = [
+    "ShowHide",
+    "|",
+    "Navigator",
+    "EditStructure",
+    "|",
+    "Hyperlinks",
+    "|",
+    "Todo",
+    "TagsProperties",
+    "Date",
+    "Agenda",
+    "Misc",
+    "|",
+    "Export",
+]
 
 
 class MappingTestCase(unittest.TestCase):
     """Tests all plugins for overlapping mappings."""
+
     def test_non_overlapping_plug_mappings(self):
         def find_overlapping_mappings(kb, all_keybindings):
             found_overlapping_mapping = False
@@ -22,8 +35,13 @@ class MappingTestCase(unittest.TestCase):
                     if isinstance(kb._action, Plug) and isinstance(tkb._action, Plug):
                         akb = kb.action
                         atkb = tkb.action
-                        if (akb.startswith(atkb) or atkb.startswith(akb)) and akb != atkb:
-                            print('\nERROR: Found overlapping mapping: %s (%s), %s (%s)' % (kb.key, akb, tkb.key, atkb))
+                        if (
+                            akb.startswith(atkb) or atkb.startswith(akb)
+                        ) and akb != atkb:
+                            print(
+                                "\nERROR: Found overlapping mapping: %s (%s), %s (%s)"
+                                % (kb.key, akb, tkb.key, atkb)
+                            )
                             found_overlapping_mapping = True
 
             if all_keybindings:
@@ -33,21 +51,23 @@ class MappingTestCase(unittest.TestCase):
             return found_overlapping_mapping
 
         if self.keybindings:
-            self.assertFalse(find_overlapping_mappings(self.keybindings[0], self.keybindings[1:]))
+            self.assertFalse(
+                find_overlapping_mappings(self.keybindings[0], self.keybindings[1:])
+            )
 
     def setUp(self):
         self.keybindings = []
 
         vim.EVALRESULTS = {
-                'exists("g:org_debug")': 0,
-                'exists("b:org_debug")': 0,
-                'exists("*repeat#set()")': 0,
-                'b:changedtick': 0,
-                'exists("b:org_plugins")': 0,
-                'exists("g:org_plugins")': 1,
-                'g:org_plugins': ORG_PLUGINS,
-                }
-        for plugin in filter(lambda p: p != '|', ORG_PLUGINS):
+            'exists("g:org_debug")': 0,
+            'exists("b:org_debug")': 0,
+            'exists("*repeat#set()")': 0,
+            "b:changedtick": 0,
+            'exists("b:org_plugins")': 0,
+            'exists("g:org_plugins")': 1,
+            "g:org_plugins": ORG_PLUGINS,
+        }
+        for plugin in filter(lambda p: p != "|", ORG_PLUGINS):
             try:
                 ORGMODE.register_plugin(plugin)
             except PluginError:

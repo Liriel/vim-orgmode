@@ -1,23 +1,23 @@
 """
-    OrgDate
-    ~~~~~~~~~~~~~~~~~~
+OrgDate
+~~~~~~~~~~~~~~~~~~
 
-    This module contains all date/time/timerange representations that exist in
-    orgmode.
+This module contains all date/time/timerange representations that exist in
+orgmode.
 
-    There exist three different kinds:
+There exist three different kinds:
 
-    * OrgDate: is similar to a date object in python and it looks like
-      '2011-09-07 Wed'.
+* OrgDate: is similar to a date object in python and it looks like
+  '2011-09-07 Wed'.
 
-    * OrgDateTime: is similar to a datetime object in python and looks like
-      '2011-09-07 Wed 10:30'
+* OrgDateTime: is similar to a datetime object in python and looks like
+  '2011-09-07 Wed 10:30'
 
-    * OrgTimeRange: indicates a range of time. It has a start and and end date:
-      * <2011-09-07 Wed>--<2011-09-08 Fri>
-      * <2011-09-07 Wed 10:00-13:00>
+* OrgTimeRange: indicates a range of time. It has a start and and end date:
+  * <2011-09-07 Wed>--<2011-09-08 Fri>
+  * <2011-09-07 Wed 10:00-13:00>
 
-    All OrgTime oblects can be active or inactive.
+All OrgTime oblects can be active or inactive.
 """
 
 import datetime
@@ -30,26 +30,33 @@ _DATE_PASSIVE_REGEX = re.compile(r"\[(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w\]", re.U
 
 # <2011-09-12 Mon 10:20>
 _DATETIME_REGEX = re.compile(
-    r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w (\d{1,2}):(\d\d)>", re.UNICODE)
+    r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w (\d{1,2}):(\d\d)>", re.UNICODE
+)
 # [2011-09-12 Mon 10:20]
 _DATETIME_PASSIVE_REGEX = re.compile(
-    r"\[(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w (\d{1,2}):(\d\d)\]", re.UNICODE)
+    r"\[(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w (\d{1,2}):(\d\d)\]", re.UNICODE
+)
 
 # <2011-09-12 Mon>--<2011-09-13 Tue>
 _DATERANGE_REGEX = re.compile(
     # <2011-09-12 Mon>--
     r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w>--"
     # <2011-09-13 Tue>
-    r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w>", re.UNICODE)
+    r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w>",
+    re.UNICODE,
+)
 # <2011-09-12 Mon 10:00>--<2011-09-12 Mon 11:00>
 _DATETIMERANGE_REGEX = re.compile(
     # <2011-09-12 Mon 10:00>--
     r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w (\d\d):(\d\d)>--"
     # <2011-09-12 Mon 11:00>
-    r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w (\d\d):(\d\d)>", re.UNICODE)
+    r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w (\d\d):(\d\d)>",
+    re.UNICODE,
+)
 # <2011-09-12 Mon 10:00--12:00>
 _DATETIMERANGE_SAME_DAY_REGEX = re.compile(
-    r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w (\d\d):(\d\d)-(\d\d):(\d\d)>", re.UNICODE)
+    r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w (\d\d):(\d\d)-(\d\d):(\d\d)>", re.UNICODE
+)
 
 
 def get_orgdate(data):
@@ -90,8 +97,9 @@ def _text2orgdate(string):
     result = _DATETIMERANGE_SAME_DAY_REGEX.search(string)
     if result:
         try:
-            (syear, smonth, sday, shour, smin, ehour, emin) = \
-                [int(m) for m in result.groups()]
+            (syear, smonth, sday, shour, smin, ehour, emin) = [
+                int(m) for m in result.groups()
+            ]
             start = datetime.datetime(syear, smonth, sday, shour, smin)
             end = datetime.datetime(syear, smonth, sday, ehour, emin)
             return OrgTimeRange(True, start, end)
@@ -168,6 +176,7 @@ class OrgDate(datetime.date):
     NOTE: date is immutable. That's why there needs to be __new__().
     See: http://docs.python.org/reference/datamodel.html#object.__new__
     """
+
     def __init__(self, active, year, month, day):
         self.active = active
         pass
@@ -180,12 +189,12 @@ class OrgDate(datetime.date):
         Return a string representation.
         """
         if self.active:
-            return self.strftime('<%Y-%m-%d %a>')
+            return self.strftime("<%Y-%m-%d %a>")
         else:
-            return self.strftime('[%Y-%m-%d %a]')
+            return self.strftime("[%Y-%m-%d %a]")
 
     def timestr(self):
-        return '--:--'
+        return "--:--"
 
     def date(self):
         return self
@@ -215,12 +224,12 @@ class OrgDateTime(datetime.datetime):
         Return a string representation.
         """
         if self.active:
-            return self.strftime('<%Y-%m-%d %a %H:%M>')
+            return self.strftime("<%Y-%m-%d %a %H:%M>")
         else:
-            return self.strftime('[%Y-%m-%d %a %H:%M]')
+            return self.strftime("[%Y-%m-%d %a %H:%M]")
 
     def timestr(self):
-        return self.strftime('%H:%M')
+        return self.strftime("%H:%M")
 
     def date(self):
         return OrgDate(self.active, self.year, self.month, self.day)
@@ -259,39 +268,49 @@ class OrgTimeRange:
             # datetime
             if isinstance(self.start, datetime.datetime):
                 # if start and end are on same the day
-                if self.start.year == self.end.year and\
-                    self.start.month == self.end.month and\
-                    self.start.day == self.end.day:
+                if (
+                    self.start.year == self.end.year
+                    and self.start.month == self.end.month
+                    and self.start.day == self.end.day
+                ):
                     return "<%s-%s>" % (
-                        self.start.strftime('%Y-%m-%d %a %H:%M'),
-                        self.end.strftime('%H:%M'))
+                        self.start.strftime("%Y-%m-%d %a %H:%M"),
+                        self.end.strftime("%H:%M"),
+                    )
                 else:
                     return "<%s>--<%s>" % (
-                        self.start.strftime('%Y-%m-%d %a %H:%M'),
-                        self.end.strftime('%Y-%m-%d %a %H:%M'))
+                        self.start.strftime("%Y-%m-%d %a %H:%M"),
+                        self.end.strftime("%Y-%m-%d %a %H:%M"),
+                    )
             # date
             if isinstance(self.start, datetime.date):
                 return "<%s>--<%s>" % (
-                    self.start.strftime('%Y-%m-%d %a'),
-                    self.end.strftime('%Y-%m-%d %a'))
+                    self.start.strftime("%Y-%m-%d %a"),
+                    self.end.strftime("%Y-%m-%d %a"),
+                )
         # inactive
         else:
             if isinstance(self.start, datetime.datetime):
                 # if start and end are on same the day
-                if self.start.year == self.end.year and\
-                    self.start.month == self.end.month and\
-                    self.start.day == self.end.day:
+                if (
+                    self.start.year == self.end.year
+                    and self.start.month == self.end.month
+                    and self.start.day == self.end.day
+                ):
                     return "[%s-%s]" % (
-                        self.start.strftime('%Y-%m-%d %a %H:%M'),
-                        self.end.strftime('%H:%M'))
+                        self.start.strftime("%Y-%m-%d %a %H:%M"),
+                        self.end.strftime("%H:%M"),
+                    )
                 else:
                     return "[%s]--[%s]" % (
-                        self.start.strftime('%Y-%m-%d %a %H:%M'),
-                        self.end.strftime('%Y-%m-%d %a %H:%M'))
+                        self.start.strftime("%Y-%m-%d %a %H:%M"),
+                        self.end.strftime("%Y-%m-%d %a %H:%M"),
+                    )
             if isinstance(self.start, datetime.date):
                 return "[%s]--[%s]" % (
-                    self.start.strftime('%Y-%m-%d %a'),
-                    self.end.strftime('%Y-%m-%d %a'))
+                    self.start.strftime("%Y-%m-%d %a"),
+                    self.end.strftime("%Y-%m-%d %a"),
+                )
 
     def date(self):
         return OrgDate(self.active, self.start.year, self.start.month, self.start.day)

@@ -1,7 +1,5 @@
-
-
 class VimWindow:
-    """ Docstring for VimWindow """
+    """Docstring for VimWindow"""
 
     def __init__(self, test):
         object.__init__(self)
@@ -14,7 +12,9 @@ class VimWindow:
 
         def fset(self, value):
             self._test.buffer = value
+
         return locals()
+
     buffer = property(**buffer())
 
 
@@ -38,7 +38,7 @@ class VimBuffer(list):
 
 
 class VimTest:
-    """ Replacement for vim API """
+    """Replacement for vim API"""
 
     def __init__(self):
         object.__init__(self)
@@ -51,23 +51,25 @@ class VimTest:
 
         def fset(self, value):
             self._buffer = VimBuffer(value)
+
         return locals()
+
     buffer = property(**buffer())
 
 
 EVALHISTORY = []
 EVALRESULTS = {
-        'exists("g:org_debug")': 0,
-        'exists("b:org_debug")': 0,
-        'exists("*repeat#set()")': 0,
-        'exists("b:org_plugins")': 0,
-        'exists("g:org_plugins")': 0,
-        'b:changedtick': 0,
-        }
+    'exists("g:org_debug")': 0,
+    'exists("b:org_debug")': 0,
+    'exists("*repeat#set()")': 0,
+    'exists("b:org_plugins")': 0,
+    'exists("g:org_plugins")': 0,
+    "b:changedtick": 0,
+}
 
 
 def eval(cmd):
-    """ evaluate command
+    """evaluate command
 
     :returns: results stored in EVALRESULTS
     """

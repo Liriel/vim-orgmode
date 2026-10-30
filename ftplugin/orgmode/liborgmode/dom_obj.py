@@ -1,9 +1,8 @@
-
 """
-    dom object
-    ~~~~~~~~~~
+dom object
+~~~~~~~~~~
 
-    TODO: explain this :)
+TODO: explain this :)
 """
 
 import re
@@ -12,28 +11,28 @@ from collections import UserList
 from orgmode.liborgmode.base import MultiPurposeList, flatten_list
 
 # breaking down tasks regex
-REGEX_SUBTASK = re.compile(r'\[(\d*)/(\d*)\]')
-REGEX_SUBTASK_PERCENT = re.compile(r'\[(\d*)%\]')
+REGEX_SUBTASK = re.compile(r"\[(\d*)/(\d*)\]")
+REGEX_SUBTASK_PERCENT = re.compile(r"\[(\d*)%\]")
 
 # heading regex
 REGEX_HEADING = re.compile(
-    r'^(?P<level>\*+)(\s+(?P<title>.*?))?\s*(\s(?P<tags>:[\w_:@]+:))?$',
-    flags=re.U)
-REGEX_TAG = re.compile(
-    r'^\s*((?P<title>[^\s]*?)\s+)?(?P<tags>:[\w_:@]+:)$',
-    flags=re.U)
-REGEX_TODO = re.compile(r'^[^\s]*$')
+    r"^(?P<level>\*+)(\s+(?P<title>.*?))?\s*(\s(?P<tags>:[\w_:@]+:))?$", flags=re.U
+)
+REGEX_TAG = re.compile(r"^\s*((?P<title>[^\s]*?)\s+)?(?P<tags>:[\w_:@]+:)$", flags=re.U)
+REGEX_TODO = re.compile(r"^[^\s]*$")
 
 # checkbox regex:
 #   - [ ] checkbox item
 # - [X] checkbox item
 # - [ ]
 # - no status checkbox
-UnOrderListType = ['-', '+', '*']
-OrderListType = ['.', ')']
+UnOrderListType = ["-", "+", "*"]
+OrderListType = [".", ")"]
 REGEX_CHECKBOX = re.compile(
-    r'^(?P<level>\s*)(?P<type>[%s]|([a-zA-Z]|[\d]+)[%s])(\s+(?P<status>\[.\]))?\s*(?P<title>.*)$'
-    % (''.join(UnOrderListType), ''.join(OrderListType)), flags=re.U)
+    r"^(?P<level>\s*)(?P<type>[%s]|([a-zA-Z]|[\d]+)[%s])(\s+(?P<status>\[.\]))?\s*(?P<title>.*)$"
+    % ("".join(UnOrderListType), "".join(OrderListType)),
+    flags=re.U,
+)
 
 
 class DomObj:
@@ -49,10 +48,11 @@ class DomObj:
     Normally, we don't intend to use DomObj directly. However, we can add some more
     DOM structure element based on this class to make code more concise.
     """
+
     # TODO should this and DomObj_list be abstract methods? If so use ABC to
     # force abstract methods
 
-    def __init__(self, level=1, title='', body=None):
+    def __init__(self, level=1, title="", body=None):
         """
         :level:        Level of the dom object
         :title:        Title of the dom object
@@ -70,7 +70,7 @@ class DomObj:
 
         self._level = level
         # title
-        self._title = ''
+        self._title = ""
         if title:
             self.title = title
 
@@ -81,7 +81,7 @@ class DomObj:
             self.body = body
 
     def __str__(self):
-        return '<dom obj level=%s, title=%s>' % (self.level, self.title)
+        return "<dom obj level=%s, title=%s>" % (self.level, self.title)
 
     def __len__(self):
         # 1 is for the heading's title
@@ -89,16 +89,16 @@ class DomObj:
 
     @property
     def is_dirty(self):
-        """ Return True if the dom obj body is marked dirty """
+        """Return True if the dom obj body is marked dirty"""
         return self._dirty_body
 
     @property
     def is_dirty_body(self):
-        """ Return True if the dom obj body is marked dirty """
+        """Return True if the dom obj body is marked dirty"""
         return self._dirty_body
 
     def get_index_in_parent_list(self):
-        """ Retrieve the index value of current dom obj in the parents list of
+        """Retrieve the index value of current dom obj in the parents list of
         dom objs. This works also for top level dom objs.
 
         :returns:    Index value or None if dom obj doesn't have a
@@ -109,7 +109,7 @@ class DomObj:
             return parent_list.index(self)
 
     def get_parent_list(self):
-        """ Retrieve the parents list of dom objs. This works also for top
+        """Retrieve the parents list of dom objs. This works also for top
         level dom objs.
 
         :returns:    List of dom objs or None if dom objs doesn't have a
@@ -120,54 +120,55 @@ class DomObj:
                 return self.parent.children
 
     def set_dirty(self):
-        """ Mark the dom objs and body dirty so that it will be rewritten when
-        saving the document """
+        """Mark the dom objs and body dirty so that it will be rewritten when
+        saving the document"""
         if self._document:
             self._document.set_dirty_document()
 
     def set_dirty_body(self):
-        """ Mark the dom objs' body dirty so that it will be rewritten when
-        saving the document """
+        """Mark the dom objs' body dirty so that it will be rewritten when
+        saving the document"""
         self._dirty_body = True
         if self._document:
             self._document.set_dirty_document()
 
     @property
     def document(self):
-        """ Read only access to the document. If you want to change the
-        document, just assign the dom obj to another document """
+        """Read only access to the document. If you want to change the
+        document, just assign the dom obj to another document"""
         return self._document
 
     @property
     def parent(self):
-        """ Access to the parent dom obj """
+        """Access to the parent dom obj"""
         return self._parent
 
     @property
     def number_of_parents(self):
-        """ Access to the number of parent dom objs before reaching the root
-        document """
+        """Access to the number of parent dom objs before reaching the root
+        document"""
+
         def count_parents(h):
             if h.parent:
                 return 1 + count_parents(h.parent)
             else:
                 return 0
+
         return count_parents(self)
 
     @property
     def previous_sibling(self):
-        """ Access to the previous dom obj that's a sibling of the current one
-        """
+        """Access to the previous dom obj that's a sibling of the current one"""
         return self._previous_sibling
 
     @property
     def next_sibling(self):
-        """ Access to the next dom obj that's a sibling of the current one """
+        """Access to the next dom obj that's a sibling of the current one"""
         return self._next_sibling
 
     @property
     def previous_item(self):
-        """ Serialized access to the previous dom obj """
+        """Serialized access to the previous dom obj"""
         if self.previous_sibling:
             h = self.previous_sibling
             while h.children:
@@ -178,7 +179,7 @@ class DomObj:
 
     @property
     def next_item(self):
-        """ Serialized access to the next dom obj """
+        """Serialized access to the next dom obj"""
         if self.children:
             return self.children[0]
         elif self.next_sibling:
@@ -193,7 +194,7 @@ class DomObj:
 
     @property
     def start(self):
-        """ Access to the starting line of the dom obj """
+        """Access to the starting line of the dom obj"""
         if self.document is None or not self.document.is_dirty:
             return self._orig_start
 
@@ -201,6 +202,7 @@ class DomObj:
             while h:
                 yield len(h)
                 h = h.previous_item
+
         return sum(item for item in item_len_generator(self.previous_item))
 
     @property
@@ -210,7 +212,7 @@ class DomObj:
 
     @property
     def end(self):
-        """ Access to the ending line of the dom obj """
+        """Access to the ending line of the dom obj"""
         if self.start is not None:
             return self.start + len(self.body)
 
@@ -221,7 +223,7 @@ class DomObj:
 
     @property
     def end_of_last_child(self):
-        """ Access to end of the last child """
+        """Access to end of the last child"""
         if self.children:
             child = self.children[-1]
             while child.children:
@@ -235,7 +237,7 @@ class DomObj:
 
     @property
     def children(self):
-        """ MultiPurposeList[dom_objects??]: subheadings of the current DomObj
+        """MultiPurposeList[dom_objects??]: subheadings of the current DomObj
 
         Setter method takes list, tuple or userlist with DOMObjects
         """
@@ -254,19 +256,19 @@ class DomObj:
 
     @property
     def first_child(self):
-        """ Access to the first child dom obj or None if no children exist """
+        """Access to the first child dom obj or None if no children exist"""
         if self.children:
             return self.children[0]
 
     @property
     def last_child(self):
-        """ Access to the last child dom obj or None if no children exist """
+        """Access to the last child dom obj or None if no children exist"""
         if self.children:
             return self.children[-1]
 
     @property
     def level(self):
-        """ int: Access the the dom obj level
+        """int: Access the the dom obj level
 
         Setter sets the DOM object and the document as dirty if invoked.
         """
@@ -284,7 +286,7 @@ class DomObj:
 
     @property
     def title(self):
-        """ str: Get the title of current dom object
+        """str: Get the title of current dom object
 
         Setter sets the DOM object and the document as dirty if invoked.
         """
@@ -293,27 +295,27 @@ class DomObj:
     @title.setter
     def title(self, value):
         if type(value) is not str:
-            raise ValueError('Title must be a string.')
+            raise ValueError("Title must be a string.")
         self._title = value.strip()
         self.set_dirty()
 
     @title.deleter
     def title(self):
-        self._title = ''
+        self._title = ""
 
     @property
     def body(self):
-        """ MultiPurposeList[]: Holds the content belonging to the heading """
+        """MultiPurposeList[]: Holds the content belonging to the heading"""
         return self._body
 
     @body.setter
     def body(self, value):
         if type(value) in (list, tuple) or isinstance(value, UserList):
             self._body[:] = flatten_list(value)
-        elif type(value) in (str, ):
-            self._body[:] = value.split('\n')
+        elif type(value) in (str,):
+            self._body[:] = value.split("\n")
         elif type(value) is str:
-            self._body[:] = value.split('\n')
+            self._body[:] = value.split("\n")
         else:
             self.body = list(str(value))
 
@@ -328,6 +330,7 @@ class DomObjList(MultiPurposeList):
     """
     A Dom Obj List
     """
+
     def __init__(self, initlist=None, obj=None):
         """
         :initlist:    Initial data
@@ -363,11 +366,11 @@ class DomObjList(MultiPurposeList):
         if isinstance(i, slice):
             o = item
             if self.__class__.is_domobj(o):
-                o = (o, )
+                o = (o,)
             o = flatten_list(o)
             for item in o:
                 if not self.__class__.is_domobj(item):
-                    raise ValueError('List contains items that are not a Dom obj!')
+                    raise ValueError("List contains items that are not a Dom obj!")
 
             # self._add_to_deleted_domobjs(self[i:j])
             # self._associate_domobj(o, \
@@ -376,9 +379,9 @@ class DomObjList(MultiPurposeList):
             MultiPurposeList.__setitem__(self, i, o)
         else:
             if not self.__class__.is_domobj(item):
-                raise ValueError('Item is not a Dom obj!')
+                raise ValueError("Item is not a Dom obj!")
             if item in self:
-                raise ValueError('Dom obj is already part of this list!')
+                raise ValueError("Dom obj is already part of this list!")
             # self._add_to_deleted_domobjs(self[i])
 
             # self._associate_domobj(item, \
@@ -397,7 +400,7 @@ class DomObjList(MultiPurposeList):
                 if last.next_sibling:
                     last.next_sibling._previous_sibling = first.previous_sibling
             # if taint:
-                # self._add_to_deleted_domobjs(items)
+            # self._add_to_deleted_domobjs(items)
         else:
             item = self[i]
             if item.previous_sibling:
@@ -406,16 +409,16 @@ class DomObjList(MultiPurposeList):
                 item.next_sibling._previous_sibling = item.previous_sibling
 
             # if taint:
-                # self._add_to_deleted_domobjs(item)
+            # self._add_to_deleted_domobjs(item)
         MultiPurposeList.__delitem__(self, i)
 
     def __iadd__(self, other):
         o = other
         if self.__class__.is_domobj(o):
-            o = (o, )
+            o = (o,)
         for item in flatten_list(o):
             if not self.__class__.is_domobj(item):
-                raise ValueError('List contains items that are not a Dom obj!')
+                raise ValueError("List contains items that are not a Dom obj!")
         # self._associate_domobj(o, self[-1] if len(self) > 0 else None, None)
         return MultiPurposeList.__iadd__(self, o)
 
@@ -425,9 +428,9 @@ class DomObjList(MultiPurposeList):
 
     def append(self, item, taint=True):
         if not self.__class__.is_domobj(item):
-            raise ValueError('Item is not a heading!')
+            raise ValueError("Item is not a heading!")
         if item in self:
-            raise ValueError('Heading is already part of this list!')
+            raise ValueError("Heading is already part of this list!")
         # self._associate_domobj(
         #     item, self[-1] if len(self) > 0 else None,
         #     None, taint=taint)
@@ -475,9 +478,9 @@ class DomObjList(MultiPurposeList):
     def extend(self, other):
         o = other
         if self.__class__.is_domobj(o):
-            o = (o, )
+            o = (o,)
         for item in o:
             if not self.__class__.is_domobj(item):
-                raise ValueError('List contains items that are not a heading!')
+                raise ValueError("List contains items that are not a heading!")
         # self._associate_domobj(o, self[-1] if len(self) > 0 else None, None)
         MultiPurposeList.extend(self, o)

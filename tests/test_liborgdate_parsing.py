@@ -1,5 +1,3 @@
-
-
 import unittest
 
 from orgmode.liborgmode.orgdate import OrgDate, OrgDateTime, OrgTimeRange, get_orgdate
@@ -13,8 +11,8 @@ class OrgDateParsingTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        self.text = '<2011-08-29 Mon>'
-        self.textinactive = '[2011-08-29 Mon]'
+        self.text = "<2011-08-29 Mon>"
+        self.textinactive = "[2011-08-29 Mon]"
 
     def test_get_orgdate_parsing_active(self):
         """
@@ -32,7 +30,6 @@ class OrgDateParsingTestCase(unittest.TestCase):
         datestr = "This date <2011-08-30 Tue> is embedded"
         self.assertTrue(isinstance(get_orgdate(datestr), OrgDate))
 
-
     def test_get_orgdatetime_parsing_active(self):
         """
         get_orgdate should recognize all orgdatetimes in a given text
@@ -49,7 +46,6 @@ class OrgDateParsingTestCase(unittest.TestCase):
 
         result = get_orgdate("some datetime <2011-09-12 Mon 10:20> stuff")
         self.assertTrue(isinstance(result, OrgDateTime))
-
 
     def test_get_orgtimerange_parsing_active(self):
         """
@@ -121,8 +117,7 @@ class OrgDateParsingTestCase(unittest.TestCase):
         self.assertEqual(result.month, 8)
         self.assertEqual(result.day, 29)
 
-        datelist = ["<2011-08-29 Mon>",
-                "<2012-03-30 Fri>"]
+        datelist = ["<2011-08-29 Mon>", "<2012-03-30 Fri>"]
         result = get_orgdate(datelist)
         self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDate))
@@ -130,8 +125,7 @@ class OrgDateParsingTestCase(unittest.TestCase):
         self.assertEqual(result.month, 8)
         self.assertEqual(result.day, 29)
 
-        datelist = ["some <2011-08-29 Mon>text",
-                "<2012-03-30 Fri> is here"]
+        datelist = ["some <2011-08-29 Mon>text", "<2012-03-30 Fri> is here"]
         result = get_orgdate(datelist)
         self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDate))
@@ -139,9 +133,11 @@ class OrgDateParsingTestCase(unittest.TestCase):
         self.assertEqual(result.month, 8)
         self.assertEqual(result.day, 29)
 
-        datelist = ["here is no date",
-                "some <2011-08-29 Mon>text",
-                "<2012-03-30 Fri> is here"]
+        datelist = [
+            "here is no date",
+            "some <2011-08-29 Mon>text",
+            "<2012-03-30 Fri> is here",
+        ]
         result = get_orgdate(datelist)
         self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDate))
@@ -149,9 +145,11 @@ class OrgDateParsingTestCase(unittest.TestCase):
         self.assertEqual(result.month, 8)
         self.assertEqual(result.day, 29)
 
-        datelist = ["here is no date",
-                "some <2011-08-29 Mon 20:10> text",
-                "<2012-03-30 Fri> is here"]
+        datelist = [
+            "here is no date",
+            "some <2011-08-29 Mon 20:10> text",
+            "<2012-03-30 Fri> is here",
+        ]
         result = get_orgdate(datelist)
         self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDateTime))
@@ -193,7 +191,7 @@ class OrgDateParsingTestCase(unittest.TestCase):
         """
         get_orgdate should recognize all orgdates within a given utf-8 text
         """
-        result = get_orgdate('<2016-05-07 Sáb>')
+        result = get_orgdate("<2016-05-07 Sáb>")
         self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDate))
         self.assertEqual(result.year, 2016)
@@ -204,7 +202,7 @@ class OrgDateParsingTestCase(unittest.TestCase):
         datestr = "This date <2016-05-07 Sáb> is embedded"
         self.assertTrue(isinstance(get_orgdate(datestr), OrgDate))
 
-        result = get_orgdate('[2016-05-07 Sáb]')
+        result = get_orgdate("[2016-05-07 Sáb]")
         self.assertFalse(result.active)
 
         datestr = "This date [2016-05-07 Sáb] is embedded"

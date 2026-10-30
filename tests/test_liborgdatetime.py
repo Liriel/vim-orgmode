@@ -1,4 +1,3 @@
-
 import unittest
 from datetime import datetime
 
@@ -13,16 +12,18 @@ class OrgDateTimeTestCase(unittest.TestCase):
     def test_OrgDateTime_ctor_active(self):
         """OrdDateTime should be created."""
         today = datetime.today()
-        odt = OrgDateTime(True, today.year, today.month, today.day, today.hour,
-                today.minute)
+        odt = OrgDateTime(
+            True, today.year, today.month, today.day, today.hour, today.minute
+        )
         self.assertTrue(isinstance(odt, OrgDateTime))
         self.assertTrue(odt.active)
 
     def test_OrgDateTime_ctor_inactive(self):
         """OrdDateTime should be created."""
         today = datetime.today()
-        odt = OrgDateTime(False, today.year, today.month, today.day, today.hour,
-                today.minute)
+        odt = OrgDateTime(
+            False, today.year, today.month, today.day, today.hour, today.minute
+        )
         self.assertTrue(isinstance(odt, OrgDateTime))
         self.assertFalse(odt.active)
 

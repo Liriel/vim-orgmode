@@ -1,4 +1,3 @@
-
 import unittest
 
 import vim
@@ -16,28 +15,28 @@ def set_vim_buffer(buf=None, cursor=(2, 0), bufnr=0):
 
 
 class CheckboxTestCase(unittest.TestCase):
-
     def setUp(self):
         counter = 0
         vim.CMDHISTORY = []
         vim.CMDRESULTS = {}
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
-                # no org_todo_keywords for b
-                'exists("b:org_todo_keywords")': '0',
-                # global values for org_todo_keywords
-                'exists("g:org_todo_keywords")': '1',
-                'g:org_todo_keywords': ['TODO', '|', 'DONE'],
-                'exists("g:org_improve_split_heading")': '0',
-                'exists("b:org_improve_split_heading")': '0',
-                'exists("g:org_debug")': '0',
-                'exists("b:org_debug")': '0',
-                'exists("*repeat#set()")': '0',
-                'b:changedtick': '%d' % counter,
-                '&ts': '8',
-                'exists("g:org_tag_column")': '0',
-                'exists("b:org_tag_column")': '0',
-                "v:count": '0'}
+            # no org_todo_keywords for b
+            'exists("b:org_todo_keywords")': "0",
+            # global values for org_todo_keywords
+            'exists("g:org_todo_keywords")': "1",
+            "g:org_todo_keywords": ["TODO", "|", "DONE"],
+            'exists("g:org_improve_split_heading")': "0",
+            'exists("b:org_improve_split_heading")': "0",
+            'exists("g:org_debug")': "0",
+            'exists("b:org_debug")': "0",
+            'exists("*repeat#set()")': "0",
+            "b:changedtick": "%d" % counter,
+            "&ts": "8",
+            'exists("g:org_tag_column")': "0",
+            'exists("b:org_tag_column")': "0",
+            "v:count": "0",
+        }
 
         self.c1 = """
 * heading1 [/]
