@@ -61,6 +61,16 @@ Bla Bla bla bla
   asdf sdf
 """.split(u'\n')]
 
+    def test_new_heading_below_keeps_whole_buffer(self):
+        # Regression: slicing a heading's children used to detach them from
+        # the document and the new heading replaced the whole buffer
+        lines = [u'* A', u'body a', u'** B', u'body b', u'* C', u'body c']
+        vim.current.buffer[:] = [u_encode(i) for i in lines]
+        vim.current.window.cursor = (1, 0)
+        self.assertNotEqual(self.editstructure.new_heading(below=True, insert_mode=False), None)
+        self.assertEqual(list(vim.current.buffer),
+                [u_encode(i) for i in [u'* A', u'body a', u'* ', u'** B', u'body b', u'* C', u'body c']])
+
     def test_new_heading_below_normal_behavior(self):
         vim.current.window.cursor = (1, 0)
         self.assertNotEqual(self.editstructure.new_heading(below=True), None)

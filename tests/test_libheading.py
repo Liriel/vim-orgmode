@@ -149,6 +149,32 @@ class TestHeadingRecognizeDatesInHeading(unittest.TestCase):
                 sorted([self.h2_datetime, self.h3, self.h2, self.h_no_date, self.h1]))
 
 
+class TestHeadingChildrenSlicing(unittest.TestCase):
+    def test_slicing_children_does_not_detach_them(self):
+        parent = Heading(level=1, title=u'parent')
+        child1 = Heading(level=2, title=u'child1')
+        child2 = Heading(level=2, title=u'child2')
+        parent.children.append(child1)
+        parent.children.append(child2)
+        child1._orig_start = 3
+        child2._orig_start = 5
+
+        for sliced in (parent.children[:], parent.children[::-1],
+                parent.children[0:1]):
+            self.assertEqual(type(sliced), list)
+
+        self.assertEqual(child1._orig_start, 3)
+        self.assertEqual(child2._orig_start, 5)
+        self.assertTrue(child1.parent is parent)
+        self.assertTrue(child2.parent is parent)
+        self.assertTrue(child1.next_sibling is child2)
+        self.assertTrue(child2.previous_sibling is child1)
+
+
 def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(
-            TestHeadingRecognizeDatesInHeading)
+    suite = unittest.TestSuite()
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
+            TestHeadingRecognizeDatesInHeading))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
+            TestHeadingChildrenSlicing))
+    return suite

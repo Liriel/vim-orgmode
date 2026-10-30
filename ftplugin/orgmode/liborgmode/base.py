@@ -93,11 +93,11 @@ class MultiPurposeList(UserList):
         self._changed()
 
     def __getitem__(self, i):
-        if sys.version_info < (3, ):
-            if isinstance(i, slice):
-                # TODO Return just a list. Why?
-                return [self[i] for i in range(*i.indices(len(self)))]
-                # return UserList([self[i] for i in range(*i.indices(len(self)))])
+        if isinstance(i, slice):
+            # Return a plain list. UserList would build a new instance of the
+            # subclass from the slice, and for DomObjList that re-associates
+            # (and thereby detaches and untaints) the items of the slice.
+            return [self[j] for j in range(*i.indices(len(self)))]
         return UserList.__getitem__(self, i)
 
     # NOTE: These wrappers are necessary because of python 2
