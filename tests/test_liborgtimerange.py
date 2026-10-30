@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
 
-import sys
 import unittest
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
 
 from orgmode.liborgmode.orgdate import OrgTimeRange
 

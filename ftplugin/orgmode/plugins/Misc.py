@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 
 import vim
 
 from orgmode._vim import ORGMODE, apply_count
+from orgmode.keybinding import MODE_OPERATOR, MODE_VISUAL, VIM_PY_CALL, Keybinding, Plug
 from orgmode.menu import Submenu
-from orgmode.keybinding import Keybinding, Plug, MODE_VISUAL, MODE_OPERATOR, VIM_PY_CALL
 
 
-class Misc(object):
+class Misc:
     """ Miscellaneous functionality """
 
     def __init__(self):

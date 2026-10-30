@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import unittest
-import sys
 
 import vim
 
-from orgmode._vim import indent_orgmode, fold_orgmode, ORGMODE
-
+from orgmode._vim import ORGMODE, fold_orgmode, indent_orgmode
 
 ORGMODE.debug = True
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
     checkboxes
@@ -7,15 +6,15 @@
     TODO: explain this :)
 """
 
-import re
-from collections import UserList
 
-import vim
-from orgmode.liborgmode.base import MultiPurposeList, flatten_list
-from orgmode.liborgmode.orgdate import OrgTimeRange
-from orgmode.liborgmode.orgdate import get_orgdate
-from orgmode.liborgmode.dom_obj import DomObj, DomObjList, REGEX_SUBTASK, REGEX_SUBTASK_PERCENT, REGEX_HEADING, REGEX_CHECKBOX
-
+from orgmode.liborgmode.dom_obj import (
+    REGEX_CHECKBOX,
+    REGEX_HEADING,
+    REGEX_SUBTASK,
+    REGEX_SUBTASK_PERCENT,
+    DomObj,
+    DomObjList,
+)
 
 
 class Checkbox(DomObj):
@@ -172,7 +171,7 @@ class Checkbox(DomObj):
                     parent/document or is not in the list of checkboxes
         """
         if self.parent:
-            return super(Checkbox, self).get_index_in_parent_list()
+            return super().get_index_in_parent_list()
         elif self.document:
             l = self.get_parent_list()
             if l:
@@ -186,7 +185,7 @@ class Checkbox(DomObj):
                     parent/document or is not in the list of headings
         """
         if self.parent:
-            return super(Checkbox, self).get_parent_list()
+            return super().get_parent_list()
         elif self.document:
             if self in self.document.checkboxes:
                 return self.document.checkboxes
@@ -209,12 +208,12 @@ class Checkbox(DomObj):
     @property
     def previous_checkbox(self):
         """ Serialized access to the previous checkbox """
-        return super(Checkbox, self).previous_item
+        return super().previous_item
 
     @property
     def next_checkbox(self):
         """ Serialized access to the next checkbox """
-        return super(Checkbox, self).next_item
+        return super().next_item
 
     @property
     def first_checkbox(self):
@@ -225,7 +224,7 @@ class Checkbox(DomObj):
     @property
     def start(self):
         """ Access to the starting line of the checkbox """
-        return super(Checkbox, self).start
+        return super().start
 
     def toggle(self):
         """ Toggle status of this checkbox """

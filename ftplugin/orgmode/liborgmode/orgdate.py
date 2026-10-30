@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     OrgDate
     ~~~~~~~~~~~~~~~~~~
@@ -23,7 +22,6 @@
 
 import datetime
 import re
-
 
 # <2011-09-12 Mon>
 _DATE_REGEX = re.compile(r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w>", re.UNICODE)
@@ -231,7 +229,7 @@ class OrgDateTime(datetime.datetime):
         return datetime.datetime.strftime(self, fmt)
 
 
-class OrgTimeRange(object):
+class OrgTimeRange:
     """
     OrgTimeRange objects have a start and an end. Start and ent can be date
     or datetime. Start and end have to be the same type.
@@ -247,7 +245,7 @@ class OrgTimeRange(object):
         stat and end must be datetime.date or datetime.datetime (both of the
         same type).
         """
-        super(OrgTimeRange, self).__init__()
+        super().__init__()
         self.start = start
         self.end = end
         self.active = active

@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
 
 import unittest
-import sys
 
 import vim
 
 from orgmode._vim import ORGMODE
-
 
 counter = 0
 class EditStructureTestCase(unittest.TestCase):
@@ -35,7 +32,7 @@ class EditStructureTestCase(unittest.TestCase):
                 # jump to insert mode after adding heading/checkbox
                 'exists("g:org_prefer_insert_mode")': '0',
                 'exists("b:org_prefer_insert_mode")': '0'}
-        if not 'EditStructure' in ORGMODE.plugins:
+        if 'EditStructure' not in ORGMODE.plugins:
             ORGMODE.register_plugin('EditStructure')
         self.editstructure = ORGMODE.plugins['EditStructure']
         vim.current.buffer[:] = [ i for i in """

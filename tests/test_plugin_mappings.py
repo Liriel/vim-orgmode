@@ -1,16 +1,13 @@
-# -*- coding: utf-8 -*-
 
 
-import sys
 
 import unittest
-import orgmode.settings
-from orgmode.exceptions import PluginError
-from orgmode._vim import ORGMODE
-from orgmode.keybinding import MODE_ALL, Plug
 
 import vim
 
+from orgmode._vim import ORGMODE
+from orgmode.exceptions import PluginError
+from orgmode.keybinding import MODE_ALL, Plug
 
 ORG_PLUGINS = ['ShowHide', '|', 'Navigator', 'EditStructure', '|', 'Hyperlinks', '|', 'Todo', 'TagsProperties', 'Date', 'Agenda', 'Misc', '|', 'Export']
 

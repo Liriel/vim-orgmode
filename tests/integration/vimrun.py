@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Helpers for running real headless Vim against a temporary org file.
 
 These tests deliberately do not use the fake tests/vim.py. Every test starts
@@ -11,7 +10,6 @@ import re
 import shutil
 import subprocess
 import textwrap
-
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 TIMEOUT = 60
@@ -47,7 +45,7 @@ with open({outpath!r}, 'w', encoding='utf-8') as _f:
 '''
 
 
-class VimRun(object):
+class VimRun:
     def __init__(self, result, output, returncode):
         self.result = result
         self.output = output

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
     documents
@@ -9,11 +8,16 @@
 
 from collections import UserList
 
-from orgmode.liborgmode.base import MultiPurposeList, flatten_list, Direction, get_domobj_range
+from orgmode.liborgmode.base import (
+    Direction,
+    MultiPurposeList,
+    flatten_list,
+    get_domobj_range,
+)
 from orgmode.liborgmode.headings import Heading, HeadingList
 
 
-class Document(object):
+class Document:
     """
     Representation of a whole org-mode document.
 

@@ -1,23 +1,20 @@
-# -*- coding: utf-8 -*-
 
 
-import sys
 
 import unittest
-from datetime import date
-from datetime import timedelta
-
-from orgmode.liborgmode.headings import Heading
-from orgmode.liborgmode.orgdate import OrgDate
-from orgmode.liborgmode.agendafilter import contains_active_todo
-from orgmode.liborgmode.agendafilter import contains_active_date
-from orgmode.liborgmode.orgdate import OrgDateTime
-from orgmode.liborgmode.agendafilter import is_within_week
-from orgmode.liborgmode.agendafilter import is_within_week_and_active_todo
-from orgmode.liborgmode.agendafilter import filter_items
+from datetime import date, timedelta
 
 import vim
 
+from orgmode.liborgmode.agendafilter import (
+    contains_active_date,
+    contains_active_todo,
+    filter_items,
+    is_within_week,
+    is_within_week_and_active_todo,
+)
+from orgmode.liborgmode.headings import Heading
+from orgmode.liborgmode.orgdate import OrgDate, OrgDateTime
 
 counter = 0
 

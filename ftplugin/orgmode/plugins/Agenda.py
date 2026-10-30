@@ -1,16 +1,15 @@
-# -*- coding: utf-8 -*-
 
-from datetime import date
-import os
 import glob
+import os
+from datetime import date
 from string import Formatter
 
 import vim
 
-from orgmode._vim import ORGMODE, get_bufnumber, get_bufname, echoe
 from orgmode import settings
-from orgmode.keybinding import Keybinding, Plug, Command, VIM_PY_CALL
-from orgmode.menu import Submenu, ActionEntry, add_cmd_mapping_menu
+from orgmode._vim import ORGMODE, echoe, get_bufname, get_bufnumber
+from orgmode.keybinding import VIM_PY_CALL
+from orgmode.menu import Submenu, add_cmd_mapping_menu
 
 
 class NoneAsEmptyFormatter(Formatter):
@@ -24,7 +23,7 @@ class NoneAsEmptyFormatter(Formatter):
 fmt = NoneAsEmptyFormatter()
 
 
-class Agenda(object):
+class Agenda:
     """
     The Agenda Plugin uses liborgmode.agenda to display the agenda views.
 

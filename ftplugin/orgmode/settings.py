@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
+
 
 import vim
-
-import sys
 
 SCOPE_ALL = 1
 

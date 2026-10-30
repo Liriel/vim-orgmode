@@ -1,18 +1,16 @@
-# -*- coding: utf-8 -*-
 
 import vim
 
-from orgmode._vim import ORGMODE, apply_count, repeat, realign_tags
 from orgmode import settings
+from orgmode._vim import ORGMODE, apply_count, realign_tags, repeat
 from orgmode.exceptions import HeadingDomError
-from orgmode.keybinding import Keybinding, Plug, MODE_INSERT, MODE_NORMAL, VIM_PY_CALL
-from orgmode.menu import Submenu, Separator, ActionEntry
+from orgmode.keybinding import MODE_INSERT, MODE_NORMAL, VIM_PY_CALL, Keybinding, Plug
 from orgmode.liborgmode.base import Direction
 from orgmode.liborgmode.headings import Heading
+from orgmode.menu import ActionEntry, Separator, Submenu
 
 
-
-class EditStructure(object):
+class EditStructure:
     """ EditStructure plugin """
 
     def __init__(self):

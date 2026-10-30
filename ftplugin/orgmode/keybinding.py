@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 import vim
 
@@ -33,7 +32,7 @@ def register_commands(f):
     return _register(f, 'commands')
 
 
-class Command(object):
+class Command:
     """ A vim command """
 
     def __init__(self, name, command, arguments='0', complete=None, overwrite_exisiting=False):
@@ -85,7 +84,7 @@ class Command(object):
                     'command': self.command})
 
 
-class Plug(object):
+class Plug:
     """ Represents a <Plug> to an abitrary command """
 
     def __init__(self, name, command, mode=MODE_NORMAL):
@@ -119,7 +118,7 @@ class Plug(object):
         return self._mode
 
 
-class Keybinding(object):
+class Keybinding:
     """ Representation of a single key binding """
 
     def __init__(self, key, action, mode=None, options=None, remap=True, buffer_only=True, silent=True):
@@ -204,6 +203,6 @@ class Keybinding(object):
 
             if create_mapping:
                 vim.command(':%smap %s %s %s' % (cmd, ' '.join(self._options), self._key, self._action))
-        except BaseException as e:
+        except BaseException:
             if ORGMODE.debug:
                 echom('Failed to register key binding %s %s' % (self._key, self._action))

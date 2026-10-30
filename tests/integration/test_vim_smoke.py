@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Smoke tests against real headless Vim.
 
 They run as part of ``pytest``. The unit tests in tests/ use a fake ``vim``
@@ -8,7 +7,6 @@ found (or fail instead if REQUIRE_VIM is set).
 from datetime import date, timedelta
 
 import pytest
-
 from vimrun import run_vim
 
 NESTED = '* A\nbody a\n** B\nbody b\n* C\nbody c\n'

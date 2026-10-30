@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
 
-import sys
-import unittest
 import locale
 import threading
-
-from datetime import date
+import unittest
 from contextlib import contextmanager
 
-
 from orgmode.liborgmode.orgdate import OrgDate
+
 
 class OrgDateUtf8TestCase(unittest.TestCase):
     """

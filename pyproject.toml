@@ -28,7 +28,22 @@ skip_empty = true
 
 [tool.ruff]
 target-version = "py310"
+# conf.py is Sphinx boilerplate
 extend-exclude = ["ftplugin/orgmode/docs"]
+# orgmode lives in ftplugin/ (Vim puts it on sys.path)
+src = ["ftplugin"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    # The formatter does not wrap long strings or comments, and the code has
+    # hundreds of them (Vim command strings, long regexes, test fixtures).
+    "E501",
+    # printf-style formatting is used all over, including to build Vim command
+    # strings; converting 247 sites to f-strings is churn with no bug-fix value.
+    "UP031",
+]
+
+[tool.ruff.lint.isort]
+# `vim` is Vim's embedded module (or the fake in tests/), not a local package
+known-third-party = ["vim"]

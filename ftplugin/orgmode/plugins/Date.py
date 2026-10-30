@@ -1,18 +1,15 @@
-# -*- coding: utf-8 -*-
-import re
-from datetime import timedelta, date, datetime
-
 import operator
+import re
+from datetime import date, datetime, timedelta
 
 import vim
 
-from orgmode._vim import ORGMODE, echom, insert_at_cursor, get_user_input
-from orgmode import settings
-from orgmode.keybinding import Keybinding, Plug, VIM_PY_CALL
-from orgmode.menu import Submenu, ActionEntry, add_cmd_mapping_menu
+from orgmode._vim import ORGMODE, echom, get_user_input, insert_at_cursor
+from orgmode.keybinding import VIM_PY_CALL
+from orgmode.menu import ActionEntry, Submenu, add_cmd_mapping_menu
 
 
-class Date(object):
+class Date:
     """
     Handles all date and timestamp related tasks.
 

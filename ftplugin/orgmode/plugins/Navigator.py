@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
 
 import vim
 
-from orgmode._vim import echo, ORGMODE, apply_count
-from orgmode.menu import Submenu, ActionEntry
-from orgmode.keybinding import Keybinding, MODE_VISUAL, MODE_OPERATOR, Plug, VIM_PY_CALL
+from orgmode._vim import ORGMODE, apply_count, echo
+from orgmode.keybinding import MODE_OPERATOR, MODE_VISUAL, VIM_PY_CALL, Keybinding, Plug
 from orgmode.liborgmode.documents import Direction
+from orgmode.menu import ActionEntry, Submenu
 
 
-class Navigator(object):
+class Navigator:
     """ Implement navigation in org-mode documents """
 
     def __init__(self):

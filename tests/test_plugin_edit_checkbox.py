@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
 
 import unittest
-import sys
 
 import vim
 
 from orgmode._vim import ORGMODE
-
 
 PLUGIN_NAME = 'EditCheckbox'
 

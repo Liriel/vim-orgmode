@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
 
 
 import unittest
-import sys
-
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
 
 from orgmode.plugins.Date import Date
 

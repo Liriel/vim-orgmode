@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
     Agenda
@@ -14,11 +13,14 @@
 
 from datetime import datetime
 
-from orgmode.liborgmode.agendafilter import filter_items
-from orgmode.liborgmode.agendafilter import is_within_week_and_active_todo
-from orgmode.liborgmode.agendafilter import contains_active_todo
-from orgmode.liborgmode.agendafilter import contains_active_date
+from orgmode.liborgmode.agendafilter import (
+    contains_active_date,
+    contains_active_todo,
+    filter_items,
+    is_within_week_and_active_todo,
+)
 from orgmode.liborgmode.orgdate import orgdate_to_datetime
+
 
 def agenda_sorting_key(heading):
     # headings without an active date (e.g. plain TODOs) sort after all dated
@@ -28,12 +30,12 @@ def agenda_sorting_key(heading):
         return (1, datetime.max)
     return (0, active)
 
-class AgendaManager(object):
+class AgendaManager:
     """Simple parsing of Documents to create an agenda."""
     # TODO Move filters in this file, they do the same thing
 
     def __init__(self):
-        super(AgendaManager, self).__init__()
+        super().__init__()
 
     def get_todo(self, documents):
         """

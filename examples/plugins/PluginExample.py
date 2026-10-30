@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
 
-from orgmode import echo, echom, echoe, ORGMODE, apply_count, repeat
-from orgmode.menu import Submenu, Separator, ActionEntry
-from orgmode.keybinding import Keybinding, Plug, Command
-
-import vim
+from orgmode import ORGMODE
+from orgmode.keybinding import Command, Keybinding, Plug
+from orgmode.menu import ActionEntry, Submenu
 
 
-class Example(object):
+class Example:
     """
     Example plugin.
 

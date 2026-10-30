@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
     dom object
@@ -8,10 +7,9 @@
 """
 
 import re
-from orgmode.liborgmode.base import MultiPurposeList, flatten_list
-
-
 from collections import UserList
+
+from orgmode.liborgmode.base import MultiPurposeList, flatten_list
 
 # breaking down tasks regex
 REGEX_SUBTASK = re.compile(r'\[(\d*)/(\d*)\]')
@@ -38,7 +36,7 @@ REGEX_CHECKBOX = re.compile(
     % (''.join(UnOrderListType), ''.join(OrderListType)), flags=re.U)
 
 
-class DomObj(object):
+class DomObj:
     """
     A DomObj is DOM structure element, like Heading and Checkbox.
     Its purpose is to abstract the same parts of Heading and Checkbox objects,

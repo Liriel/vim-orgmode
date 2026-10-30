@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 
 import unittest
-import sys
 
 from orgmode.liborgmode.base import Direction, get_domobj_range
 from orgmode.liborgmode.headings import Heading

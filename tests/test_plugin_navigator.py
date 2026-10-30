@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
 
 import unittest
-import sys
 
 import vim
 
 from orgmode._vim import ORGMODE
-
 
 START = True
 END = False
@@ -71,7 +68,7 @@ Bla Bla bla bla
   asdf sdf
 """.split('\n') ]
 
-        if not 'Navigator' in ORGMODE.plugins:
+        if 'Navigator' not in ORGMODE.plugins:
             ORGMODE.register_plugin('Navigator')
         self.navigator = ORGMODE.plugins['Navigator']
 

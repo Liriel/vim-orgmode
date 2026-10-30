@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
     agendafilter
@@ -14,8 +13,7 @@
     The function filter_items() can combine different filters and only returns
     the filtered headings.
 """
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from orgmode.liborgmode.orgdate import orgdate_to_datetime
 
@@ -85,4 +83,4 @@ def contains_active_date(heading):
     Returns:
         bool: True if heading contains an active date.
     """
-    return not(heading.active_date is None)
+    return heading.active_date is not None

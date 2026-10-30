@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
     vimbuffer
@@ -24,9 +23,8 @@ import vim
 
 from orgmode import settings
 from orgmode.exceptions import BufferNotFound, BufferNotInSync
-from orgmode.liborgmode.documents import Document, MultiPurposeList, Direction
+from orgmode.liborgmode.documents import Direction, Document, MultiPurposeList
 from orgmode.liborgmode.headings import Heading
-
 
 
 class VimBuffer(Document):
@@ -118,7 +116,7 @@ class VimBuffer(Document):
                                 r.append(_i)
                         else:
                             r.append(_i)
-                if not '|' in r:
+                if '|' not in r:
                     if not stop:
                         res.append((r[:-1], [r[-1]]))
                     else:

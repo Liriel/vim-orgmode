@@ -1,16 +1,14 @@
-# -*- coding: utf-8 -*-
 
-import sys
 
 import vim
 
-from orgmode._vim import ORGMODE, repeat
-from orgmode.menu import Submenu, ActionEntry
-from orgmode.keybinding import Keybinding, Plug, Command, VIM_PY_CALL
 from orgmode import settings
+from orgmode._vim import ORGMODE, repeat
+from orgmode.keybinding import VIM_PY_CALL, Command, Keybinding, Plug
+from orgmode.menu import ActionEntry, Submenu
 
 
-class TagsProperties(object):
+class TagsProperties:
     """ TagsProperties plugin """
 
     def __init__(self):

@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 
 import unittest
-import sys
 
 import vim
-from orgmode.liborgmode.checkboxes import Checkbox
+
 from orgmode._vim import ORGMODE
+from orgmode.liborgmode.checkboxes import Checkbox
 
 
 def set_vim_buffer(buf=None, cursor=(2, 0), bufnr=0):

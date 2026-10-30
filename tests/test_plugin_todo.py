@@ -1,15 +1,13 @@
-# -*- coding: utf-8 -*-
 
 
-import sys
 
 import unittest
-from orgmode.liborgmode.base import Direction
-from orgmode.vimbuffer import VimBuffer
-from orgmode.plugins.Todo import Todo
 
 import vim
 
+from orgmode.liborgmode.base import Direction
+from orgmode.plugins.Todo import Todo
+from orgmode.vimbuffer import VimBuffer
 
 counter = 0
 

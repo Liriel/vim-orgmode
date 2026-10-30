@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import unittest
-import sys
 
 import vim
 
-from orgmode._vim import indent_orgmode, fold_orgmode, ORGMODE
-
+from orgmode._vim import ORGMODE
 
 ORGMODE.debug = True
 
@@ -36,7 +33,7 @@ class TagsPropertiesTestCase(unittest.TestCase):
                 'exists("*repeat#set()")': '0',
                 'b:changedtick': ('%d' % counter),
                 "v:count": '0'}
-        if not 'TagsProperties' in ORGMODE.plugins:
+        if 'TagsProperties' not in ORGMODE.plugins:
             ORGMODE.register_plugin('TagsProperties')
         self.tagsproperties = ORGMODE.plugins['TagsProperties']
         vim.current.buffer[:] = [ i for i in """

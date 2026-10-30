@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
 
 import unittest
-import sys
 
 import vim
 
 from orgmode.liborgmode.headings import Heading
 from orgmode.vimbuffer import VimBuffer
-
 
 counter = 0
 class VimBufferTestCase(unittest.TestCase):

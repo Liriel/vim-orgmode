@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
     base
@@ -9,9 +8,7 @@
 """
 
 from collections import UserList
-
 from collections.abc import Iterable
-
 
 
 def flatten_list(lst):
@@ -37,7 +34,7 @@ def flatten_list(lst):
     return [i for i in gen_lst(lst)]
 
 
-class Direction():
+class Direction:
     """
     Direction is used to indicate the direction of certain actions.
 

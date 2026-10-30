@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
     headings
@@ -8,17 +7,28 @@
 """
 
 import datetime
-import re
+from collections import UserList
 
 import vim
-from orgmode.liborgmode.base import MultiPurposeList, flatten_list, Direction, get_domobj_range
-from orgmode.liborgmode.orgdate import OrgTimeRange
-from orgmode.liborgmode.orgdate import get_orgdate
+
+from orgmode.liborgmode.base import (
+    Direction,
+    MultiPurposeList,
+    flatten_list,
+    get_domobj_range,
+)
 from orgmode.liborgmode.checkboxes import Checkbox, CheckboxList
-from orgmode.liborgmode.dom_obj import DomObj, DomObjList, REGEX_SUBTASK, REGEX_SUBTASK_PERCENT, REGEX_HEADING, REGEX_TAG, REGEX_TODO
+from orgmode.liborgmode.dom_obj import (
+    REGEX_HEADING,
+    REGEX_SUBTASK,
+    REGEX_SUBTASK_PERCENT,
+    REGEX_TAG,
+    REGEX_TODO,
+    DomObj,
+    DomObjList,
+)
+from orgmode.liborgmode.orgdate import OrgTimeRange, get_orgdate
 
-
-from collections import UserList
 
 class Heading(DomObj):
     """ Structural heading object """
@@ -473,7 +483,7 @@ class Heading(DomObj):
                     parent/document or is not in the list of headings
         """
         if self.parent:
-            return super(Heading, self).get_index_in_parent_list()
+            return super().get_index_in_parent_list()
         elif self.document:
             l = self.get_parent_list()
             if l:
@@ -487,7 +497,7 @@ class Heading(DomObj):
                     parent/document or is not in the list of headings
         """
         if self.parent:
-            return super(Heading, self).get_parent_list()
+            return super().get_parent_list()
         elif self.document:
             if self in self.document.headings:
                 return self.document.headings
@@ -510,12 +520,12 @@ class Heading(DomObj):
     @property
     def previous_heading(self):
         """ Serialized access to the previous heading """
-        return super(Heading, self).previous_item
+        return super().previous_item
 
     @property
     def next_heading(self):
         """ Serialized access to the next heading """
-        return super(Heading, self).next_item
+        return super().next_item
 
     @property
     def start(self):
@@ -525,7 +535,7 @@ class Heading(DomObj):
 
         meta_len = len(self.document.meta_information) if \
                 self.document.meta_information else 0
-        return super(Heading, self).start + meta_len
+        return super().start + meta_len
 
     @DomObj.level.setter
     def level(self, value):

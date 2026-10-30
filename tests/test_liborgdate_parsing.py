@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
 
 
-import sys
 import unittest
 
-from orgmode.liborgmode.orgdate import get_orgdate
-from orgmode.liborgmode.orgdate import OrgDate
-from orgmode.liborgmode.orgdate import OrgDateTime
-from orgmode.liborgmode.orgdate import OrgTimeRange
+from orgmode.liborgmode.orgdate import OrgDate, OrgDateTime, OrgTimeRange, get_orgdate
 
 
 class OrgDateParsingTestCase(unittest.TestCase):

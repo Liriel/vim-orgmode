@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
+
+import itertools as it
+import re
 
 import vim
-import re
-import itertools as it
 
-from orgmode._vim import echom, ORGMODE, apply_count, repeat, realign_tags
 from orgmode import settings
-from orgmode.liborgmode.base import Direction
-from orgmode.menu import Submenu, ActionEntry
-from orgmode.keybinding import Keybinding, Plug, VIM_PY_CALL
+from orgmode._vim import ORGMODE, apply_count, echom, realign_tags, repeat
 from orgmode.exceptions import PluginError
+from orgmode.keybinding import VIM_PY_CALL, Keybinding, Plug
+from orgmode.liborgmode.base import Direction
+from orgmode.menu import ActionEntry, Submenu
 
 # temporary todo states for different orgmode buffers
 ORGTODOSTATES = {}
@@ -45,7 +45,7 @@ def split_access_key(t, sub=None):
     return (v, k)
 
 
-class Todo(object):
+class Todo:
     """
     Todo plugin.
 

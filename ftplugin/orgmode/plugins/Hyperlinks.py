@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
 
 import re
 
 import vim
 
-from orgmode._vim import echom, ORGMODE, realign_tags
-from orgmode.menu import Submenu, Separator, ActionEntry
-from orgmode.keybinding import Keybinding, Plug, Command, VIM_PY_CALL
+from orgmode._vim import ORGMODE, echom, realign_tags
+from orgmode.keybinding import VIM_PY_CALL, Command, Keybinding, Plug
+from orgmode.menu import ActionEntry, Separator, Submenu
 
 
-class Hyperlinks(object):
+class Hyperlinks:
     """ Hyperlinks plugin """
 
     def __init__(self):

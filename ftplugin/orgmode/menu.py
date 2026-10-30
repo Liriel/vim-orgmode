@@ -1,9 +1,15 @@
-# -*- coding: utf-8 -*-
 
 import vim
 
-from orgmode.keybinding import Command, Plug, Keybinding
-from orgmode.keybinding import MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT
+from orgmode.keybinding import (
+    MODE_ALL,
+    MODE_INSERT,
+    MODE_NORMAL,
+    MODE_VISUAL,
+    Command,
+    Keybinding,
+    Plug,
+)
 
 
 def register_menu(f):
@@ -43,7 +49,7 @@ def add_cmd_mapping_menu(plugin, name, function, key_mapping, menu_desrc):
     plugin.menu + ActionEntry(menu_desrc, keybinding)
 
 
-class Submenu(object):
+class Submenu:
     """ Submenu entry """
 
     def __init__(self, name, parent=None):
@@ -83,7 +89,7 @@ class Submenu(object):
             res += str(c)
         return res
 
-class Separator(object):
+class Separator:
     """ Menu entry for a Separator """
 
     def __init__(self, parent=None):
@@ -98,7 +104,7 @@ class Separator(object):
             menu = self.parent.get_menu()
             vim.command('menu %s.-%s- :' % (menu, id(self)))
 
-class ActionEntry(object):
+class ActionEntry:
     """ ActionEntry entry """
 
     def __init__(self, lname, action, rname=None, mode=MODE_NORMAL, parent=None):

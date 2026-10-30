@@ -1,11 +1,8 @@
-﻿# -*- coding: utf-8 -*-
-
+﻿
 import unittest
-import sys
 
 from orgmode.liborgmode.headings import Heading
-from orgmode.liborgmode.orgdate import OrgDate
-from orgmode.liborgmode.orgdate import OrgDateTime
+from orgmode.liborgmode.orgdate import OrgDate, OrgDateTime
 
 
 class TestHeadingRecognizeDatesInHeading(unittest.TestCase):

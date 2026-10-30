@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
     VIM ORGMODE
@@ -9,19 +8,17 @@
 
 import importlib
 import re
-import sys
+from datetime import datetime
 
 import vim
-from datetime import datetime
 
 import orgmode.keybinding
 import orgmode.menu
 import orgmode.plugins
 import orgmode.settings
 from orgmode.exceptions import PluginError
-from orgmode.vimbuffer import VimBuffer
 from orgmode.liborgmode.agenda import AgendaManager
-
+from orgmode.vimbuffer import VimBuffer
 
 REPEAT_EXISTS = bool(int(vim.eval('exists("*repeat#set()")')))
 TAGSPROPERTIES_EXISTS = False
@@ -77,7 +74,7 @@ def apply_count(f):
             # visual count is not implemented yet
             #if not count:
             #    count = int(vim.eval('v:prevcount'.encode('utf-8')))
-        except BaseException as e:
+        except BaseException:
             pass
 
         res = f(*args, **kwargs)
@@ -267,7 +264,7 @@ def date_to_str(date):
         date = date.strftime('%Y-%m-%d %a')
     return date
 
-class OrgMode(object):
+class OrgMode:
     """ Vim Buffer """
 
     def __init__(self):
@@ -371,7 +368,7 @@ class OrgMode(object):
         if isinstance(plugins, str):
             try:
                 self.register_plugin(plugins)
-            except BaseException as e:
+            except BaseException:
                 import traceback
                 traceback.print_exc()
         elif isinstance(plugins, list) or \
@@ -379,7 +376,7 @@ class OrgMode(object):
             for p in plugins:
                 try:
                     self.register_plugin(p)
-                except BaseException as e:
+                except BaseException:
                     echoe('Error in %s plugin:' % p)
                     import traceback
                     traceback.print_exc()

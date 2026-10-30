@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
 
 import unittest
-import sys
 
 import vim
 
 from orgmode._vim import ORGMODE
-
 
 counter = 0
 class ShowHideTestCase(unittest.TestCase):
@@ -27,7 +24,7 @@ class ShowHideTestCase(unittest.TestCase):
                 'exists("*repeat#set()")': '0',
                 'b:changedtick': '%d' % counter,
                 "v:count": '0'}
-        if not 'ShowHide' in ORGMODE.plugins:
+        if 'ShowHide' not in ORGMODE.plugins:
             ORGMODE.register_plugin('ShowHide')
         self.showhide = ORGMODE.plugins['ShowHide']
         vim.current.buffer[:] = [ i for i in """

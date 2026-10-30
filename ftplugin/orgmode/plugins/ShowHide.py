@@ -1,15 +1,13 @@
-# -*- coding: utf-8 -*-
 
 import vim
 
-from orgmode.liborgmode.headings import Heading
 from orgmode._vim import ORGMODE, apply_count
-from orgmode import settings
-from orgmode.menu import Submenu, ActionEntry
-from orgmode.keybinding import Keybinding, Plug, MODE_NORMAL, VIM_PY_CALL
+from orgmode.keybinding import MODE_NORMAL, VIM_PY_CALL, Keybinding, Plug
+from orgmode.liborgmode.headings import Heading
+from orgmode.menu import ActionEntry, Submenu
 
 
-class ShowHide(object):
+class ShowHide:
     """ Show Hide plugin """
 
     def __init__(self):

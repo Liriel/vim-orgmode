@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 
 
-class VimWindow(object):
+class VimWindow:
     """ Docstring for VimWindow """
 
     def __init__(self, test):
@@ -38,7 +37,7 @@ class VimBuffer(list):
             list.append(self, o)
 
 
-class VimTest(object):
+class VimTest:
     """ Replacement for vim API """
 
     def __init__(self):

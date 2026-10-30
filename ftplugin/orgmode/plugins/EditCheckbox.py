@@ -1,15 +1,18 @@
-# -*- coding: utf-8 -*-
 
 import vim
-from orgmode._vim import echo, echom, echoe, ORGMODE, apply_count, repeat, insert_at_cursor, indent_orgmode
+
 from orgmode import settings
-from orgmode.menu import Submenu, Separator, ActionEntry, add_cmd_mapping_menu
-from orgmode.keybinding import Keybinding, Plug, Command, VIM_PY_CALL
+from orgmode._vim import (
+    ORGMODE,
+    echom,
+)
+from orgmode.keybinding import VIM_PY_CALL
 from orgmode.liborgmode.checkboxes import Checkbox
 from orgmode.liborgmode.dom_obj import OrderListType
+from orgmode.menu import Submenu, add_cmd_mapping_menu
 
 
-class EditCheckbox(object):
+class EditCheckbox:
     """
     Checkbox plugin.
     """
