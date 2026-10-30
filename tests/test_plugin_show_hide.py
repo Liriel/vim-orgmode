@@ -2,7 +2,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 import vim
 
@@ -379,6 +378,3 @@ Bla bla
         self.assertEqual(len(vim.CMDHISTORY), 1)
         self.assertEqual(vim.CMDHISTORY[-1], 'normal! 16ggzc')
         self.assertEqual(vim.current.window.cursor, (2, 0))
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(ShowHideTestCase)

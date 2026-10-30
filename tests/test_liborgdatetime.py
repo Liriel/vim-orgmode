@@ -4,7 +4,6 @@ import sys
 import unittest
 from datetime import datetime
 
-sys.path.append('../ftplugin')
 from orgmode.liborgmode.orgdate import OrgDateTime
 
 
@@ -40,7 +39,3 @@ class OrgDateTimeTestCase(unittest.TestCase):
         t = 2011, 9, 8, 10, 20
         odt = OrgDateTime(True, t[0], t[1], t[2], t[3], t[4])
         self.assertEqual("<2011-09-08 Thu 10:20>", str(odt))
-
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(OrgDateTimeTestCase)

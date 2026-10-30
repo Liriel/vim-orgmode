@@ -2,7 +2,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 import vim
 from orgmode.liborgmode.checkboxes import Checkbox
@@ -123,7 +122,3 @@ class CheckboxTestCase(unittest.TestCase):
         (total, on) = c.all_siblings_status()
         c.update_subtasks(total=total, on=on)
         self.assertEqual(str(c), "  - [-] checkbox1 [50%]")
-
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(CheckboxTestCase)

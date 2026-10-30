@@ -5,7 +5,6 @@ import unittest
 from datetime import date
 from datetime import datetime
 
-sys.path.append('../ftplugin')
 from orgmode.liborgmode.orgdate import OrgTimeRange
 
 
@@ -78,6 +77,3 @@ class OrgTimeRangeTestCase(unittest.TestCase):
         timerange = OrgTimeRange(False, start, end)
         expected = "[2011-09-12 Mon 20:00-21:00]"
         self.assertEqual(str(timerange), expected)
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(OrgTimeRangeTestCase)

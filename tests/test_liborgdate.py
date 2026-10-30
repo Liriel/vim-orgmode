@@ -5,7 +5,6 @@ import sys
 import unittest
 from datetime import date
 
-sys.path.append('../ftplugin')
 from orgmode.liborgmode.orgdate import OrgDate
 
 
@@ -44,7 +43,3 @@ class OrgDateTestCase(unittest.TestCase):
     def test_OrdDate_str_inactive(self):
         od = OrgDate(False, self.year, self.month, self.day)
         self.assertEqual(self.textinactive, str(od))
-
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(OrgDateTestCase)

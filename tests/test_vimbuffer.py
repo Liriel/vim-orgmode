@@ -2,7 +2,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 import vim
 
@@ -1312,12 +1311,3 @@ class VimBufferContentTestCase(unittest.TestCase):
     def test_contains(self):
         self.assertTrue('b' in self.content)
         self.assertFalse('z' in self.content)
-
-
-def suite():
-    return (
-        unittest.TestLoader().loadTestsFromTestCase(VimBufferTestCase),
-        unittest.TestLoader().loadTestsFromTestCase(VimBufferTagsTestCase),
-        unittest.TestLoader().loadTestsFromTestCase(VimBufferTodoTestCase),
-        unittest.TestLoader().loadTestsFromTestCase(VimBufferContentTestCase),
-    )

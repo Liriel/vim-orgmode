@@ -3,7 +3,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 import vim
 
@@ -170,6 +169,3 @@ Bla Bla bla bla
         heading = d.find_current_heading()
         self.assertEqual(str(heading), '* Überschrift 1\t\t\t\t\t\t\t\t    :hello:world:')
         self.assertEqual(vim.current.buffer[1], '* Überschrift 1\t\t\t\t\t\t\t\t    :hello:world:')
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(TagsPropertiesTestCase)

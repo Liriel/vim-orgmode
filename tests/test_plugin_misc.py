@@ -3,7 +3,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 import vim
 
@@ -158,6 +157,3 @@ Bla Bla bla bla
         fold_orgmode()
         self.assertEqual(len(vim.CMDHISTORY), 1)
         self.assertEqual(vim.CMDHISTORY[-1], 'let b:fold_expr = 4')
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(MiscTestCase)

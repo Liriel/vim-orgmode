@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 """Smoke tests against real headless Vim.
 
-Run with ``pytest tests/integration`` (separately from the unittest suite in
-tests/, which uses a fake ``vim`` module).
+They run as part of ``pytest``. The unit tests in tests/ use a fake ``vim``
+module; these start a real Vim, and are skipped when none with +python3 is
+found (or fail instead if REQUIRE_VIM is set).
 """
 from datetime import date, timedelta
 
 import pytest
 
-from conftest import HAVE_VIM, run_vim
-
-pytestmark = pytest.mark.skipif(
-    not HAVE_VIM, reason='vim with +python3 not available')
+from vimrun import run_vim
 
 NESTED = '* A\nbody a\n** B\nbody b\n* C\nbody c\n'
 

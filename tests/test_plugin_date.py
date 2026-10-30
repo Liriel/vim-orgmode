@@ -3,7 +3,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 from datetime import date
 from datetime import datetime
@@ -166,6 +165,3 @@ class DateTestCase(unittest.TestCase):
         for modifier, expected in test_data:
             result = Date._modify_time(cust_date, modifier)
             self.assertEqual(expected, result)
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(DateTestCase)

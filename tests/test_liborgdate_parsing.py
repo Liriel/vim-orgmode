@@ -4,7 +4,6 @@
 import sys
 import unittest
 
-sys.path.append('../ftplugin')
 from orgmode.liborgmode.orgdate import get_orgdate
 from orgmode.liborgmode.orgdate import OrgDate
 from orgmode.liborgmode.orgdate import OrgDateTime
@@ -238,8 +237,3 @@ class OrgDateParsingTestCase(unittest.TestCase):
 
         result = get_orgdate("some datetime [2016-05-07 Sáb 10:20] stuff")
         self.assertTrue(isinstance(result, OrgDateTime))
-
-
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(OrgDateParsingTestCase)

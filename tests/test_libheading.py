@@ -2,7 +2,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 from orgmode.liborgmode.headings import Heading
 from orgmode.liborgmode.orgdate import OrgDate
@@ -187,12 +186,3 @@ class TestHeadingChildrenSlicing(unittest.TestCase):
         self.assertTrue(child2.parent is parent)
         self.assertTrue(child1.next_sibling is child2)
         self.assertTrue(child2.previous_sibling is child1)
-
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
-            TestHeadingRecognizeDatesInHeading))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
-            TestHeadingChildrenSlicing))
-    return suite

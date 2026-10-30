@@ -2,7 +2,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 from orgmode.liborgmode.base import Direction, get_domobj_range
 from orgmode.liborgmode.headings import Heading
@@ -26,8 +25,3 @@ class LibBaseTestCase(unittest.TestCase):
         (start, end) = get_domobj_range(content=self.case1, position=3, direction=Direction.BACKWARD, \
                                         identify_fun=Heading.identify_heading)
         self.assertEqual((start, end), (1, 3))
-
-def suite():
-    return unittest.TestLoader() \
-                   .loadTestsFromTestCase(
-                           LibBaseTestCase)

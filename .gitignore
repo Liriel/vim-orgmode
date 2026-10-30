@@ -2,5 +2,11 @@
 *.swp
 tags
 .ropeproject
-.cover*
-cover*
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+ftplugin/orgmode/docs/_build/
+.venv/

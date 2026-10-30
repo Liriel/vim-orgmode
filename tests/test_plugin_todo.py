@@ -2,7 +2,6 @@
 
 
 import sys
-sys.path.append('../ftplugin')
 
 import unittest
 from orgmode.liborgmode.base import Direction
@@ -415,7 +414,3 @@ class TodoTestCase(unittest.TestCase):
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD, next_set=True)
         self.assertEqual(result, 'TODO')
-
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(TodoTestCase)

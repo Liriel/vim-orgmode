@@ -2,7 +2,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 import vim
 
@@ -233,6 +232,3 @@ class EditCheckboxTestCase(unittest.TestCase):
         self.editcheckbox.new_checkbox(below=True, plain=True)
         self.assertEqual(vim.current.buffer[11], "  aa. item")
         self.assertEqual(vim.current.buffer[12], "")
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(EditCheckboxTestCase)

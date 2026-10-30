@@ -9,7 +9,6 @@ from datetime import date
 from contextlib import contextmanager
 
 
-sys.path.append('../ftplugin')
 from orgmode.liborgmode.orgdate import OrgDate
 
 class OrgDateUtf8TestCase(unittest.TestCase):
@@ -48,6 +47,3 @@ class OrgDateUtf8TestCase(unittest.TestCase):
         with self.setlocale(self.UTF8_LOCALE):
             od = OrgDate(False, self.year, self.month, self.day)
             self.assertEqual(self.textinactive, str(od))
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(OrgDateUtf8TestCase)

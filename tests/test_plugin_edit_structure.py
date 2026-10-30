@@ -2,7 +2,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 import vim
 
@@ -391,6 +390,3 @@ Bla Bla bla bla
         self.assertEqual(vim.current.buffer[15], '** Überschrift 1.2.1')
         self.assertEqual(vim.current.buffer[16], '* Überschrift 2')
         self.assertEqual(vim.current.window.cursor, (13, -3))
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(EditStructureTestCase)

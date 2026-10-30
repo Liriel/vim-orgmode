@@ -2,7 +2,6 @@
 
 
 import sys
-sys.path.append('../ftplugin')
 
 import unittest
 from datetime import date
@@ -173,7 +172,3 @@ class AgendaFilterTestCase(unittest.TestCase):
         d2 = Heading.parse_heading_from_data(["* TODO b <2011-08-20 Sat 10:00>"], ['TODO'])
         result = sorted([undated, d1, d2], key=agenda_sorting_key)
         self.assertEqual(result, [d2, d1, undated])
-
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(AgendaFilterTestCase)

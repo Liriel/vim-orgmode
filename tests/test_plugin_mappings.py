@@ -2,7 +2,6 @@
 
 
 import sys
-sys.path.append('../ftplugin')
 
 import unittest
 import orgmode.settings
@@ -58,7 +57,3 @@ class MappingTestCase(unittest.TestCase):
                 pass
             if plugin in ORGMODE._plugins:
                 self.keybindings.extend(ORGMODE._plugins[plugin].keybindings)
-
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(MappingTestCase)

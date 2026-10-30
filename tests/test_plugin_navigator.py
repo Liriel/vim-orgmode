@@ -2,7 +2,6 @@
 
 import unittest
 import sys
-sys.path.append('../ftplugin')
 
 import vim
 
@@ -627,6 +626,3 @@ test
         set_visual_selection('V', 8, 14, cursor_pos=END)
         self.navigator.parent(mode='visual')
         self.assertEqual(vim.CMDHISTORY[-1], 'normal! 8ggV12gg')
-
-def suite():
-    return unittest.TestLoader().loadTestsFromTestCase(NavigatorTestCase)
