@@ -24,7 +24,6 @@ u"""
 import datetime
 import re
 
-from orgmode.py3compat.encode_compatibility import *
 
 # <2011-09-12 Mon>
 _DATE_REGEX = re.compile(r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w>", re.UNICODE)
@@ -194,7 +193,7 @@ class OrgDate(datetime.date):
         return self
 
     def strftime(self, fmt):
-        return u_decode(datetime.date.strftime(self, u_encode(fmt)))
+        return datetime.date.strftime(self, fmt)
 
 
 class OrgDateTime(datetime.datetime):
@@ -229,7 +228,7 @@ class OrgDateTime(datetime.datetime):
         return OrgDate(self.active, self.year, self.month, self.day)
 
     def strftime(self, fmt):
-        return u_decode(datetime.datetime.strftime(self, u_encode(fmt)))
+        return datetime.datetime.strftime(self, fmt)
 
 
 class OrgTimeRange(object):

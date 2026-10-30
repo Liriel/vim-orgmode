@@ -135,3 +135,26 @@ def test_agenda_week_and_todo_views(tmp_path, with_time):
     shown = '\n'.join(r['agenda_buf'])
     assert r['agenda_buf'][0] == 'Week Agenda:'
     assert 'soon' in shown and 'later' not in shown
+
+
+def test_vimbuffercontent_writes_through_to_real_buffer(tmp_path):
+    # VimBufferContent must hand the real Vim buffer plain lists and strs: no
+    # encode/decode shim is needed on Python 3
+    r = run_vim(tmp_path, '* A\nbody a\n** B\n', '''
+        from collections import UserList
+        from orgmode.vimbuffer import VimBufferContent
+        c = VimBufferContent(vim.current.buffer)
+        c[0] = u'* Überschrift'
+        c[1:2] = UserList([u'body ä', u'more'])
+        c[0:0] = (u'first',)
+        c.append(u'last')
+        result['popped'] = c.pop()
+        result['item'] = c[1]
+        result['slice'] = c[0:2]
+        result['lines'] = list(vim.current.buffer)
+    ''')
+    assert r['lines'] == ['first', '* Überschrift', 'body ä',
+                          'more', '** B']
+    assert r['popped'] == 'last'
+    assert r['item'] == '* Überschrift'
+    assert r['slice'] == ['first', '* Überschrift']

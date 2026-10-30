@@ -8,7 +8,6 @@ import vim
 from orgmode.liborgmode.checkboxes import Checkbox
 from orgmode._vim import ORGMODE
 
-from orgmode.py3compat.encode_compatibility import *
 
 def set_vim_buffer(buf=None, cursor=(2, 0), bufnr=0):
     if buf is None:
@@ -27,20 +26,20 @@ class CheckboxTestCase(unittest.TestCase):
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
                 # no org_todo_keywords for b
-                u_encode(u'exists("b:org_todo_keywords")'): u_encode('0'),
+                u'exists("b:org_todo_keywords")': '0',
                 # global values for org_todo_keywords
-                u_encode(u'exists("g:org_todo_keywords")'): u_encode('1'),
-                u_encode(u'g:org_todo_keywords'): [u_encode(u'TODO'), u_encode(u'|'), u_encode(u'DONE')],
-                u_encode(u'exists("g:org_improve_split_heading")'): u_encode(u'0'),
-                u_encode(u'exists("b:org_improve_split_heading")'): u_encode(u'0'),
-                u_encode(u'exists("g:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("b:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("*repeat#set()")'): u_encode(u'0'),
-                u_encode(u'b:changedtick'): u_encode(u'%d' % counter),
-                u_encode(u'&ts'): u_encode(u'8'),
-                u_encode(u'exists("g:org_tag_column")'): u_encode(u'0'),
-                u_encode(u'exists("b:org_tag_column")'): u_encode(u'0'),
-                u_encode(u"v:count"): u_encode(u'0')}
+                u'exists("g:org_todo_keywords")': '1',
+                u'g:org_todo_keywords': [u'TODO', u'|', u'DONE'],
+                u'exists("g:org_improve_split_heading")': u'0',
+                u'exists("b:org_improve_split_heading")': u'0',
+                u'exists("g:org_debug")': u'0',
+                u'exists("b:org_debug")': u'0',
+                u'exists("*repeat#set()")': u'0',
+                u'b:changedtick': u'%d' % counter,
+                u'&ts': u'8',
+                u'exists("g:org_tag_column")': u'0',
+                u'exists("b:org_tag_column")': u'0',
+                u"v:count": u'0'}
 
         self.c1 = """
 * heading1 [/]

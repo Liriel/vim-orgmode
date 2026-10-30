@@ -16,7 +16,6 @@ from orgmode.liborgmode.orgdate import OrgTimeRange
 from orgmode.liborgmode.orgdate import get_orgdate
 from orgmode.liborgmode.dom_obj import DomObj, DomObjList, REGEX_SUBTASK, REGEX_SUBTASK_PERCENT, REGEX_HEADING, REGEX_CHECKBOX
 
-from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.unicode_compatibility import *
 
 
@@ -339,10 +338,7 @@ class Checkbox(DomObj):
         u""" Set the title and mark the document and the checkbox dirty """
         if type(value) not in (unicode, str):
             raise ValueError(u'Title must be a string.')
-        v = value
-        if type(v) == str:
-            v = u_decode(v)
-        self._title = v.strip()
+        self._title = value.strip()
         self.set_dirty_checkbox()
 
     @property

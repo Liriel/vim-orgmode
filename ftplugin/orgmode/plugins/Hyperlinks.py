@@ -8,7 +8,6 @@ from orgmode._vim import echom, ORGMODE, realign_tags
 from orgmode.menu import Submenu, Separator, ActionEntry
 from orgmode.keybinding import Keybinding, Plug, Command
 
-from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.py_py3_string import *
 
 class Hyperlinks(object):
@@ -42,7 +41,7 @@ class Hyperlinks(object):
                 or uri and description could be None if not set
         """
         cursor = cursor if cursor else vim.current.window.cursor
-        line = u_decode(vim.current.buffer[cursor[0] - 1])
+        line = vim.current.buffer[cursor[0] - 1]
 
         # if the cursor is on the last bracket, it's not recognized as a hyperlink
         start = line.rfind(u'[[', 0, cursor[1])
@@ -94,11 +93,11 @@ class Hyperlinks(object):
 
         if link and link[u'uri'] is not None:
             # call UTL with the URI
-            vim.command(u_encode(u'Utl %s %s %s' % (action, visual, link[u'uri'])))
+            vim.command(u'Utl %s %s %s' % (action, visual, link[u'uri']))
             return link[u'uri']
         else:
             # call UTL and let it decide what to do
-            vim.command(u_encode(u'Utl %s %s' % (action, visual)))
+            vim.command(u'Utl %s %s' % (action, visual))
 
     @classmethod
     @realign_tags
@@ -125,24 +124,22 @@ class Hyperlinks(object):
             uri = vim.eval(u'input("Link: ", "%s", "file")' % link[u'uri'])
         if uri is None:
             return
-        else:
-            uri = u_decode(uri)
 
         # character escaping
         uri = uri.replace(u'\\', u'\\\\\\\\')
         uri = uri.replace(u' ', u'\\ ')
 
         if description is None:
-            description = u_decode(vim.eval(u'input("Description: ")'))
+            description = vim.eval(u'input("Description: ")')
         elif link:
             description = vim.eval(
                 u'input("Description: ", "%s")' %
-                u_decode(link[u'description']))
+                link[u'description'])
         if description is None:
             return
 
         cursor = vim.current.window.cursor
-        cl = u_decode(vim.current.buffer[cursor[0] - 1])
+        cl = vim.current.buffer[cursor[0] - 1]
         head = cl[:cursor[1] + 1] if not link else cl[:link[u'start']]
         tail = cl[cursor[1] + 1:] if not link else cl[link[u'end']:]
 
@@ -152,10 +149,10 @@ class Hyperlinks(object):
 
         if uri or description:
             vim.current.buffer[cursor[0] - 1] = \
-                u_encode(u''.join((head, u'[[%s%s%s]]' % (uri, separator, description), tail)))
+                u''.join((head, u'[[%s%s%s]]' % (uri, separator, description), tail))
         elif link:
             vim.current.buffer[cursor[0] - 1] = \
-                u_encode(u''.join((head, tail)))
+                u''.join((head, tail))
 
     def register(self):
         u"""

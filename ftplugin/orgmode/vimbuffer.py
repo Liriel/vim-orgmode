@@ -27,7 +27,6 @@ from orgmode.exceptions import BufferNotFound, BufferNotInSync
 from orgmode.liborgmode.documents import Document, MultiPurposeList, Direction
 from orgmode.liborgmode.headings import Heading
 
-from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.unicode_compatibility import *
 
 
@@ -58,7 +57,7 @@ class VimBuffer(Document):
 
     @property
     def tabstop(self):
-        return int(vim.eval(u_encode(u'&ts')))
+        return int(vim.eval(u'&ts'))
 
     @property
     def tag_column(self):
@@ -113,9 +112,7 @@ class VimBuffer(Document):
                 r = []
                 for i in s:
                     _i = i
-                    if type(_i) == str:
-                        _i = u_decode(_i)
-                    if type(_i) == unicode and _i:
+                    if type(_i) == str and _i:
                         if strip_access_key and u'(' in _i:
                             _i = _i[:_i.index(u'(')]
                             if _i:
@@ -144,14 +141,14 @@ class VimBuffer(Document):
 
     def update_changedtick(self):
         if self.bufnr == vim.current.buffer.number:
-            self._changedtick = int(vim.eval(u_encode(u'b:changedtick')))
+            self._changedtick = int(vim.eval(u'b:changedtick'))
         else:
-            vim.command(u_encode(u'unlet! g:org_changedtick | let g:org_lz = &lz | let g:org_hidden = &hidden | set lz hidden'))
+            vim.command(u'unlet! g:org_changedtick | let g:org_lz = &lz | let g:org_hidden = &hidden | set lz hidden')
             # TODO is this likely to fail? maybe some error hangling should be added
-            vim.command(u_encode(u'keepalt buffer %d | let g:org_changedtick = b:changedtick | buffer %d' % \
-                    (self.bufnr, vim.current.buffer.number)))
-            vim.command(u_encode(u'let &lz = g:org_lz | let &hidden = g:org_hidden | unlet! g:org_lz g:org_hidden | redraw'))
-            self._changedtick = int(vim.eval(u_encode(u'g:org_changedtick')))
+            vim.command(u'keepalt buffer %d | let g:org_changedtick = b:changedtick | buffer %d' % \
+                    (self.bufnr, vim.current.buffer.number))
+            vim.command(u'let &lz = g:org_lz | let &hidden = g:org_hidden | unlet! g:org_lz g:org_hidden | redraw')
+            self._changedtick = int(vim.eval(u'g:org_changedtick'))
 
     def write(self):
         u""" write the changes to the vim buffer
@@ -381,12 +378,9 @@ class VimBuffer(Document):
 
 
 class VimBufferContent(MultiPurposeList):
-    u""" Vim Buffer Content is a UTF-8 wrapper around a vim buffer. When
-    retrieving or setting items in the buffer an automatic conversion is
-    performed.
-
-    This ensures UTF-8 usage on the side of liborgmode and the vim plugin
-    vim-orgmode.
+    u""" Vim Buffer Content wraps a vim buffer in a MultiPurposeList so that
+    changes made through it are written to the real buffer and trigger the
+    on_change hook.
     """
 
     def __init__(self, vimbuffer, on_change=None):
@@ -396,48 +390,12 @@ class VimBufferContent(MultiPurposeList):
         # buffer
         self.data = vimbuffer
 
-    def __contains__(self, item):
-        i = item
-        if type(i) is unicode:
-            i = u_encode(item)
-        return MultiPurposeList.__contains__(self, i)
-
-    def __getitem__(self, i):
-        if isinstance(i, slice):
-            return [u_decode(item) if type(item) is str else item \
-                    for item in MultiPurposeList.__getitem__(self, i)]
-        else:
-            item = MultiPurposeList.__getitem__(self, i)
-            if type(item) is str:
-                return u_decode(item)
-            return item
-
     def __setitem__(self, i, item):
         if isinstance(i, slice):
-            o = []
-            o_tmp = item
-            if type(o_tmp) not in (list, tuple) and not isinstance(o_tmp, UserList):
-                o_tmp = list(o_tmp)
-            for item in o_tmp:
-                if type(item) == unicode:
-                    o.append(u_encode(item))
-                else:
-                    o.append(item)
-            MultiPurposeList.__setitem__(self, i, o)
+            # the Vim buffer only accepts a real list for slice assignment
+            MultiPurposeList.__setitem__(self, i, list(item))
         else:
-            _i = item
-            if type(_i) is unicode:
-                _i = u_encode(item)
-
-            # TODO: fix this bug properly, it is really strange that it fails on
-            # python3 without it. Problem is that when _i = ['* '] it fails in
-            # UserList.__setitem__() but if it is changed in debuggr in __setitem__
-            # like item[0] = '* ' it works, hence this is some quirk with unicode
-            # stuff but very likely vim 7.4 BUG too.
-            if isinstance(_i, UserList):
-                _i = [s.encode('utf8').decode('utf8') for s in _i]
-
-            MultiPurposeList.__setitem__(self, i, _i)
+            MultiPurposeList.__setitem__(self, i, item)
 
     def __add__(self, other):
         raise NotImplementedError()
@@ -460,47 +418,7 @@ class VimBufferContent(MultiPurposeList):
             return self.__class__(list(other) + self.data)
 
     def __iadd__(self, other):
-        o = []
-        o_tmp = other
-        if type(o_tmp) not in (list, tuple) and not isinstance(o_tmp, UserList):
-            o_tmp = list(o_tmp)
-        for i in o_tmp:
-            if type(i) is unicode:
-                o.append(u_encode(i))
-            else:
-                o.append(i)
-
-        return MultiPurposeList.__iadd__(self, o)
-
-    def append(self, item):
-        i = item
-        if type(item) is str:
-            i = u_encode(item)
-        MultiPurposeList.append(self, i)
-
-    def insert(self, i, item):
-        _i = item
-        if type(_i) is str:
-            _i = u_encode(item)
-        MultiPurposeList.insert(self, i, _i)
-
-    def index(self, item, *args):
-        i = item
-        if type(i) is unicode:
-            i = u_encode(item)
-        MultiPurposeList.index(self, i, *args)
-
-    def pop(self, i=-1):
-        return u_decode(MultiPurposeList.pop(self, i))
+        return MultiPurposeList.__iadd__(self, list(other))
 
     def extend(self, other):
-        o = []
-        o_tmp = other
-        if type(o_tmp) not in (list, tuple) and not isinstance(o_tmp, UserList):
-            o_tmp = list(o_tmp)
-        for i in o_tmp:
-            if type(i) is unicode:
-                o.append(u_encode(i))
-            else:
-                o.append(i)
-        MultiPurposeList.extend(self, o)
+        MultiPurposeList.extend(self, list(other))

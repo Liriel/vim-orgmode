@@ -19,7 +19,6 @@ from orgmode.liborgmode.agendafilter import filter_items
 
 import vim
 
-from orgmode.py3compat.encode_compatibility import *
 
 counter = 0
 
@@ -33,17 +32,17 @@ class AgendaFilterTestCase(unittest.TestCase):
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
                 # no org_todo_keywords for b
-                u_encode(u'exists("b:org_todo_keywords")'): u_encode('0'),
+                u'exists("b:org_todo_keywords")': '0',
                 # global values for org_todo_keywords
-                u_encode(u'exists("g:org_todo_keywords")'): u_encode('1'),
-                u_encode(u'g:org_todo_keywords'): [u_encode(u'TODO'), u_encode(u'|'), u_encode(u'DONE')],
-                u_encode(u'exists("g:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("b:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("*repeat#set()")'): u_encode(u'0'),
-                u_encode(u'b:changedtick'): u_encode(u'%d' % counter),
-                u_encode(u"v:count"): u_encode(u'0')
+                u'exists("g:org_todo_keywords")': '1',
+                u'g:org_todo_keywords': [u'TODO', u'|', u'DONE'],
+                u'exists("g:org_debug")': u'0',
+                u'exists("b:org_debug")': u'0',
+                u'exists("*repeat#set()")': u'0',
+                u'b:changedtick': u'%d' % counter,
+                u"v:count": u'0'
                 }
-        vim.current.buffer[:] = [u_encode(i) for i in u"""
+        vim.current.buffer[:] = [i for i in u"""
 * TODO Heading 1
   some text
 """.split(u'\n')]
@@ -106,8 +105,8 @@ class AgendaFilterTestCase(unittest.TestCase):
 
     def test_filter_items(self):
         # only headings with date and todo should be returned
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = \
-                [u_encode(u'TODO'), u_encode(u'STARTED'), u_encode(u'|'), u_encode(u'DONE')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = \
+                [u'TODO', u'STARTED', u'|', u'DONE']
         tmpdate = date.today()
         odate = OrgDate(True, tmpdate.year, tmpdate.month, tmpdate.day)
         tmp_head = Heading(title=u'Refactor the code', todo=u'TODO', active_date=odate)

@@ -10,7 +10,6 @@
 import re
 from orgmode.liborgmode.base import MultiPurposeList, flatten_list
 
-from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.unicode_compatibility import *
 
 from collections import UserList
@@ -298,10 +297,7 @@ class DomObj(object):
     def title(self, value):
         if type(value) not in (unicode, str):
             raise ValueError(u'Title must be a string.')
-        v = value
-        if type(v) == str:
-            v = u_decode(v)
-        self._title = v.strip()
+        self._title = value.strip()
         self.set_dirty()
 
     @title.deleter
@@ -318,7 +314,7 @@ class DomObj(object):
         if type(value) in (list, tuple) or isinstance(value, UserList):
             self._body[:] = flatten_list(value)
         elif type(value) in (str, ):
-            self._body[:] = u_decode(value).split(u'\n')
+            self._body[:] = value.split(u'\n')
         elif type(value) in (unicode, ):
             self._body[:] = value.split(u'\n')
         else:

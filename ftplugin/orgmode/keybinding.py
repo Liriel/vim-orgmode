@@ -11,7 +11,6 @@ MODE_OPERATOR = u'o'
 OPTION_BUFFER_ONLY = u'<buffer>'
 OPTION_SLIENT = u'<silent>'
 
-from orgmode.py3compat.encode_compatibility import *
 
 def _register(f, name):
     def r(*args, **kwargs):
@@ -75,13 +74,12 @@ class Command(object):
     def create(self):
         u""" Register/create the command
         """
-        vim.command(u_encode(':command%(overwrite)s -nargs=%(arguments)s %(complete)s %(name)s %(command)s' %
+        vim.command(':command%(overwrite)s -nargs=%(arguments)s %(complete)s %(name)s %(command)s' %
                 {u'overwrite': '!' if self.overwrite_exisiting else '',
-                    u'arguments': u_encode(self.arguments),
-                    u'complete': '-complete=%s' % u_encode(self.complete) if self.complete else '',
+                    u'arguments': self.arguments,
+                    u'complete': '-complete=%s' % self.complete if self.complete else '',
                     u'name': self.name,
-                    u'command': self.command}
-                ))
+                    u'command': self.command})
 
 
 class Plug(object):
@@ -111,7 +109,7 @@ class Plug(object):
             cmd = self._mode
             if cmd == MODE_ALL:
                 cmd = u''
-            vim.command(u_encode(u':%snoremap %s %s' % (cmd, str(self), self.command)))
+            vim.command(u':%snoremap %s %s' % (cmd, str(self), self.command))
 
     @property
     def mode(self):
@@ -195,14 +193,14 @@ class Keybinding(object):
             if isinstance(self._action, Plug):
                 # create plug
                 self._action.create()
-                if int(vim.eval(u_encode(u'hasmapto("%s")' % (self._action, )))):
+                if int(vim.eval(u'hasmapto("%s")' % (self._action, ))):
                     create_mapping = False
             if isinstance(self._action, Command):
                 # create command
                 self._action.create()
 
             if create_mapping:
-                vim.command(u_encode(u':%smap %s %s %s' % (cmd, u' '.join(self._options), self._key, self._action)))
+                vim.command(u':%smap %s %s %s' % (cmd, u' '.join(self._options), self._key, self._action))
         except BaseException as e:
             if ORGMODE.debug:
                 echom(u'Failed to register key binding %s %s' % (self._key, self._action))

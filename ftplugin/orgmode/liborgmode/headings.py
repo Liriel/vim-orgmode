@@ -18,7 +18,6 @@ from orgmode.liborgmode.checkboxes import Checkbox, CheckboxList
 from orgmode.liborgmode.dom_obj import DomObj, DomObjList, REGEX_SUBTASK, REGEX_SUBTASK_PERCENT, REGEX_HEADING, REGEX_TAG, REGEX_TODO
 
 from orgmode.py3compat.xrange_compatibility import *
-from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.unicode_compatibility import *
 
 from collections import UserList
@@ -552,10 +551,7 @@ class Heading(DomObj):
         if not value:
             self._todo = None
         else:
-            v = value
-            if type(v) == str:
-                v = u_decode(v)
-            self._todo = v
+            self._todo = value
         self.set_dirty_heading()
 
     @todo.deleter
@@ -586,10 +582,7 @@ class Heading(DomObj):
         # TODO these setter should be rewritten to also reuse code from DOM OBJ
         if type(value) not in (unicode, str):
             raise ValueError(u'Title must be a string.')
-        v = value
-        if type(v) == str:
-            v = u_decode(v)
-        self._title = v.strip()
+        self._title = value.strip()
         self.set_dirty_heading()
 
     @property
@@ -611,10 +604,7 @@ class Heading(DomObj):
                 raise ValueError(u'Found non string value in tags! %s' % str(i))
             if u':' in i:
                 raise ValueError(u'Found non allowed character in tag! %s' % i)
-            i_tmp = i.strip().replace(' ', '_').replace('\t', '_')
-            if type(i) == str:
-                i_tmp = u_decode(i)
-            v_decoded.append(i_tmp)
+            v_decoded.append(i)
 
         self._tags[:] = v_decoded
 

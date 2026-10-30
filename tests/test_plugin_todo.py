@@ -11,7 +11,6 @@ from orgmode.plugins.Todo import Todo
 
 import vim
 
-from orgmode.py3compat.encode_compatibility import *
 
 counter = 0
 
@@ -25,18 +24,18 @@ class TodoTestCase(unittest.TestCase):
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
                 # no org_todo_keywords for b
-                u_encode(u'exists("b:org_todo_keywords")'): u_encode('0'),
+                u'exists("b:org_todo_keywords")': '0',
                 # global values for org_todo_keywords
-                u_encode(u'exists("g:org_todo_keywords")'): u_encode('1'),
-                u_encode(u'g:org_todo_keywords'): [u_encode(u'TODO'), u_encode(u'|'), u_encode(u'DONE')],
-                u_encode(u'exists("g:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("b:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("*repeat#set()")'): u_encode(u'0'),
-                u_encode(u'b:changedtick'): u_encode(u'%d' % counter),
-                u_encode(u"v:count"): u_encode(u'0')
+                u'exists("g:org_todo_keywords")': '1',
+                u'g:org_todo_keywords': [u'TODO', u'|', u'DONE'],
+                u'exists("g:org_debug")': u'0',
+                u'exists("b:org_debug")': u'0',
+                u'exists("*repeat#set()")': u'0',
+                u'b:changedtick': u'%d' % counter,
+                u"v:count": u'0'
                 }
 
-        vim.current.buffer[:] = [ u_encode(i) for i in u"""
+        vim.current.buffer[:] = [ i for i in u"""
 * Heading 1
 ** Text 1
 *** Text 2
@@ -60,10 +59,10 @@ class TodoTestCase(unittest.TestCase):
 
     def test_todo_toggle_NOTODO(self):
         vim.current.window.cursor = (2, 0)
-        vim.current.buffer[1] = u_encode(u'** NOTODO Überschrift 1.1')
+        vim.current.buffer[1] = u'** NOTODO Überschrift 1.1'
 
         Todo.toggle_todo_state()
-        self.assertEqual(vim.current.buffer[1], u_encode(u'** TODO NOTODO Überschrift 1.1'))
+        self.assertEqual(vim.current.buffer[1], u'** TODO NOTODO Überschrift 1.1')
 
     def test_toggle_todo_in_heading_with_no_todo_state_different_levels(self):
         # level 1
@@ -122,8 +121,8 @@ class TodoTestCase(unittest.TestCase):
         # * STARTED Heading 1 -->
         # * DONE Heading 1 -->
         # * Heading 1 -->
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [u_encode(u'TODO'), u_encode(u'STARTED'), u_encode(u'DONE'),
-                u_encode(u'|')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [u'TODO', u'STARTED', u'DONE',
+                u'|']
         vim.current.window.cursor = (2, 0)
 
         Todo.toggle_todo_state()
@@ -156,21 +155,21 @@ class TodoTestCase(unittest.TestCase):
     # get_states
     def test_get_states_without_seperator(self):
         u"""The last element in the todostates shouold be used as DONE-state when no sperator is given"""
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [u_encode(u'TODO'), u_encode(u'DONE')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [u'TODO', u'DONE']
         states_todo, states_done = VimBuffer().get_todo_states()[0]
         expected_todo, expected_done = [u'TODO'], [u'DONE']
         self.assertEqual(states_todo, expected_todo)
         self.assertEqual(states_done, expected_done)
 
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [u_encode(u'TODO'), u_encode(u'INPROGRESS'), u_encode(u'DONE')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [u'TODO', u'INPROGRESS', u'DONE']
         states_todo, states_done = VimBuffer().get_todo_states()[0]
         expected_todo = [u'TODO', u'INPROGRESS']
         expected_done = [u'DONE']
         self.assertEqual(states_todo, expected_todo)
         self.assertEqual(states_done, expected_done)
 
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [u_encode(u'TODO'), u_encode(u'INPROGRESS'),
-                u_encode(u'DUMMY'), u_encode(u'DONE')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [u'TODO', u'INPROGRESS',
+                u'DUMMY', u'DONE']
         states_todo, states_done = VimBuffer().get_todo_states()[0]
         expected_todo  = [u'TODO', u'INPROGRESS', u'DUMMY']
         expected_done = [u'DONE']
@@ -178,47 +177,47 @@ class TodoTestCase(unittest.TestCase):
         self.assertEqual(states_done, expected_done)
 
     def test_get_states_with_seperator(self):
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [u_encode(u'TODO'), u_encode(u'|'), u_encode(u'DONE')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [u'TODO', u'|', u'DONE']
         states_todo, states_done = VimBuffer().get_todo_states()[0]
         expected_todo = [u'TODO']
         expected_done = [u'DONE']
         self.assertEqual(states_todo, expected_todo)
         self.assertEqual(states_done, expected_done)
 
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [u_encode(u'TODO'), u_encode(u'INPROGRESS'), u_encode(u'|'),
-                u_encode(u'DONE')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [u'TODO', u'INPROGRESS', u'|',
+                u'DONE']
         states_todo, states_done = VimBuffer().get_todo_states()[0]
         expected_todo = [u'TODO', u'INPROGRESS']
         expected_done = [u'DONE']
         self.assertEqual(states_todo, expected_todo)
         self.assertEqual(states_done, expected_done)
 
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [u_encode(u'TODO'), u_encode(u'INPROGRESS'),
-                u_encode(u'DUMMY'), u_encode(u'|'),  u_encode(u'DONE')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [u'TODO', u'INPROGRESS',
+                u'DUMMY', u'|',  u'DONE']
         states_todo, states_done = VimBuffer().get_todo_states()[0]
         expected_todo = [u'TODO', u'INPROGRESS', u'DUMMY']
         expected_done = [u'DONE']
         self.assertEqual(states_todo, expected_todo)
         self.assertEqual(states_done, expected_done)
 
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [u_encode(u'TODO'), u_encode(u'INPROGRESS'),
-                u_encode(u'DUMMY'), u_encode(u'|'), u_encode(u'DELEGATED'), u_encode(u'DONE')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [u'TODO', u'INPROGRESS',
+                u'DUMMY', u'|', u'DELEGATED', u'DONE']
         states_todo, states_done = VimBuffer().get_todo_states()[0]
         expected_todo =[u'TODO', u'INPROGRESS', u'DUMMY']
         expected_done = [u'DELEGATED', u'DONE']
         self.assertEqual(states_todo, expected_todo)
         self.assertEqual(states_done, expected_done)
 
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [u_encode(u'TODO'), u_encode(u'|'), u_encode(u'DONEX'),
-                u_encode(u'DUMMY'), u_encode(u'DELEGATED'), u_encode(u'DONE')]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [u'TODO', u'|', u'DONEX',
+                u'DUMMY', u'DELEGATED', u'DONE']
         states_todo, states_done = VimBuffer().get_todo_states()[0]
         expected_todo = [u'TODO']
         expected_done = [u'DONEX', u'DUMMY', u'DELEGATED', u'DONE']
         self.assertEqual(states_todo, expected_todo)
         self.assertEqual(states_done, expected_done)
 
-        vim.EVALRESULTS[u_encode(u'g:org_todo_keywords')] = [[u_encode(u'TODO(t)'), u_encode(u'|'), u_encode(u'DONEX')],
-                [u_encode(u'DUMMY'), u_encode(u'DELEGATED'), u_encode(u'DONE')]]
+        vim.EVALRESULTS[u'g:org_todo_keywords'] = [[u'TODO(t)', u'|', u'DONEX'],
+                [u'DUMMY', u'DELEGATED', u'DONE']]
         states_todo, states_done = VimBuffer().get_todo_states()[0]
         expected_todo = [u'TODO']
         expected_done = [u'DONEX']

@@ -10,7 +10,6 @@ from orgmode.menu import Submenu, Separator, ActionEntry
 from orgmode.liborgmode.base import Direction
 from orgmode.liborgmode.headings import Heading
 
-from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.py_py3_string import *
 
 
@@ -50,7 +49,7 @@ class EditStructure(object):
             d.headings.insert(0, heading)
             del d.meta_information[pos:]
             d.write()
-            vim.command(u_encode(u'exe "normal %dgg"|startinsert!' % (heading.start_vim, )))
+            vim.command(u'exe "normal %dgg"|startinsert!' % (heading.start_vim, ))
             return heading
 
         # check for plain list(checkbox)
@@ -102,9 +101,9 @@ class EditStructure(object):
         d.write()
         # do not start insert upon adding new headings, unless already in insert mode. Issue #211
         if int(settings.get(u'org_prefer_insert_mode', u'1')) or insert_mode:
-            vim.command(u_encode(u'exe "normal %dgg"|startinsert!' % (heading.start_vim, )))
+            vim.command(u'exe "normal %dgg"|startinsert!' % (heading.start_vim, ))
         else:
-            vim.command(u_encode(u'exe "normal %dgg$"' % (heading.start_vim, )))
+            vim.command(u'exe "normal %dgg$"' % (heading.start_vim, ))
 
         # return newly created heading
         return heading
@@ -140,22 +139,22 @@ class EditStructure(object):
             # keys instead of making keys up like this
             if level > 0:
                 if insert_mode:
-                    vim.eval(u_encode(u'feedkeys("\\<C-t>", "n")'))
+                    vim.eval(u'feedkeys("\\<C-t>", "n")')
                 elif including_children:
-                    vim.eval(u_encode(u'feedkeys(">]]", "n")'))
+                    vim.eval(u'feedkeys(">]]", "n")')
                 elif on_heading:
-                    vim.eval(u_encode(u'feedkeys(">>", "n")'))
+                    vim.eval(u'feedkeys(">>", "n")')
                 else:
-                    vim.eval(u_encode(u'feedkeys(">}", "n")'))
+                    vim.eval(u'feedkeys(">}", "n")')
             else:
                 if insert_mode:
-                    vim.eval(u_encode(u'feedkeys("\\<C-d>", "n")'))
+                    vim.eval(u'feedkeys("\\<C-d>", "n")')
                 elif including_children:
-                    vim.eval(u_encode(u'feedkeys("<]]", "n")'))
+                    vim.eval(u'feedkeys("<]]", "n")')
                 elif on_heading:
-                    vim.eval(u_encode(u'feedkeys("<<", "n")'))
+                    vim.eval(u'feedkeys("<<", "n")')
                 else:
-                    vim.eval(u_encode(u'feedkeys("<}", "n")'))
+                    vim.eval(u'feedkeys("<}", "n")')
             # return True because otherwise apply_count will not work
             return True
 

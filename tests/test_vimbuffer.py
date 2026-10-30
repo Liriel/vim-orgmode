@@ -9,7 +9,6 @@ import vim
 from orgmode.liborgmode.headings import Heading
 from orgmode.vimbuffer import VimBuffer
 
-from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.unicode_compatibility import *
 
 counter = 0
@@ -22,20 +21,20 @@ class VimBufferTestCase(unittest.TestCase):
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
                 # no org_todo_keywords for b
-                u_encode(u'exists("b:org_todo_keywords")'): u_encode('0'),
+                u'exists("b:org_todo_keywords")': '0',
                 # global values for org_todo_keywords
-                u_encode(u'exists("g:org_todo_keywords")'): u_encode('1'),
-                u_encode(u'g:org_todo_keywords'): [u_encode(u'TODO'),
-                                       u_encode(u'DONE'), u_encode(u'|')],
-                u_encode(u'exists("g:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("g:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("*repeat#set()")'): u_encode(u'0'),
-                u_encode(u'b:changedtick'): u_encode(u'%d' % counter),
-                u_encode(u'&ts'): u_encode(u'8'),
-                u_encode(u'exists("g:org_tag_column")'): u_encode(u'0'),
-                u_encode(u'exists("b:org_tag_column")'): u_encode(u'0'),
-                u_encode(u"v:count"): u_encode(u'0')}
-        vim.current.buffer[:] = [u_encode(i) for i in u"""#Meta information
+                u'exists("g:org_todo_keywords")': '1',
+                u'g:org_todo_keywords': [u'TODO',
+                                       u'DONE', u'|'],
+                u'exists("g:org_debug")': u'0',
+                u'exists("g:org_debug")': u'0',
+                u'exists("*repeat#set()")': u'0',
+                u'b:changedtick': u'%d' % counter,
+                u'&ts': u'8',
+                u'exists("g:org_tag_column")': u'0',
+                u'exists("b:org_tag_column")': u'0',
+                u"v:count": u'0'}
+        vim.current.buffer[:] = [i for i in u"""#Meta information
 #more meta information
 * Überschrift 1
 Text 1
@@ -143,7 +142,7 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0].start, 2)
 
     def test_meta_information_read_no_meta_information(self):
-        vim.current.buffer[:] = [ u_encode(i) for i in u"""* Überschrift 1
+        vim.current.buffer[:] = [ i for i in u"""* Überschrift 1
 Text 1
 
 Bla bla
@@ -840,7 +839,7 @@ Bla Bla bla bla
         self.assertEqual(h.end, 20)
         self.assertEqual(h.end_of_last_child, 20)
 
-        vim.current.buffer[:] = [ u_encode(i) for i in u"""
+        vim.current.buffer[:] = [ i for i in u"""
 ** Überschrift 1.2
 Text 3
 
@@ -868,7 +867,7 @@ Bla Bla bla bla
         self.assertEqual(h.end, 3)
         self.assertEqual(h.end_of_last_child, 7)
 
-        vim.current.buffer[:] = [ u_encode(i) for i in u"""
+        vim.current.buffer[:] = [ i for i in u"""
 * Überschrift 2
 * Überschrift 3""".split(u'\n') ]
         self.document = VimBuffer().init_dom()
@@ -959,20 +958,20 @@ class VimBufferTagsTestCase(unittest.TestCase):
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
                 # no org_todo_keywords for b
-                u_encode(u'exists("b:org_todo_keywords")'): u_encode('0'),
+                u'exists("b:org_todo_keywords")': '0',
                 # global values for org_todo_keywords
-                u_encode(u'exists("g:org_todo_keywords")'): u_encode('1'),
-                u_encode(u'g:org_todo_keywords'): [u_encode(u'TODO'),
-                                       u_encode(u'DONE'), u_encode(u'|')],
-                u_encode(u'exists("g:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("g:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("*repeat#set()")'): u_encode(u'0'),
-                u_encode(u'b:changedtick'): u_encode(u'0'),
-                u_encode(u'&ts'): u_encode(u'8'),
-                u_encode(u'exists("g:org_tag_column")'): u_encode(u'0'),
-                u_encode(u'exists("b:org_tag_column")'): u_encode(u'0'),
-                u_encode(u"v:count"): u_encode(u'0')}
-        vim.current.buffer[:] = [ u_encode(i) for i in u"""#Meta information
+                u'exists("g:org_todo_keywords")': '1',
+                u'g:org_todo_keywords': [u'TODO',
+                                       u'DONE', u'|'],
+                u'exists("g:org_debug")': u'0',
+                u'exists("g:org_debug")': u'0',
+                u'exists("*repeat#set()")': u'0',
+                u'b:changedtick': u'0',
+                u'&ts': u'8',
+                u'exists("g:org_tag_column")': u'0',
+                u'exists("b:org_tag_column")': u'0',
+                u"v:count": u'0'}
+        vim.current.buffer[:] = [ i for i in u"""#Meta information
 #more meta information
 * Überschrift 1     :testtag:
 Text 1
@@ -1117,22 +1116,22 @@ class VimBufferTodoTestCase(unittest.TestCase):
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
                 # no org_todo_keywords for b
-                u_encode(u'exists("b:org_todo_keywords")'): u_encode('0'),
+                u'exists("b:org_todo_keywords")': '0',
                 # global values for org_todo_keywords
-                u_encode(u'exists("g:org_todo_keywords")'): u_encode('1'),
-                u_encode(u'g:org_todo_keywords'): [u_encode(u'TODO'), \
-                        u_encode(u'DONß'), u_encode(u'DONÉ'), \
-                        u_encode(u'DÖNE'), u_encode(u'WAITING'), \
-                        u_encode(u'DONE'), u_encode(u'|')],
-                u_encode(u'exists("g:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("g:org_debug")'): u_encode(u'0'),
-                u_encode(u'exists("*repeat#set()")'): u_encode(u'0'),
-                u_encode(u'b:changedtick'): u_encode(u'0'),
-                u_encode(u'&ts'): u_encode(u'8'),
-                u_encode(u'exists("g:org_tag_column")'): u_encode(u'0'),
-                u_encode(u'exists("b:org_tag_column")'): u_encode(u'0'),
-                u_encode(u"v:count"): u_encode(u'0')}
-        vim.current.buffer[:] = [ u_encode(i) for i in u"""#Meta information
+                u'exists("g:org_todo_keywords")': '1',
+                u'g:org_todo_keywords': [u'TODO', \
+                        u'DONß', u'DONÉ', \
+                        u'DÖNE', u'WAITING', \
+                        u'DONE', u'|'],
+                u'exists("g:org_debug")': u'0',
+                u'exists("g:org_debug")': u'0',
+                u'exists("*repeat#set()")': u'0',
+                u'b:changedtick': u'0',
+                u'&ts': u'8',
+                u'exists("g:org_tag_column")': u'0',
+                u'exists("b:org_tag_column")': u'0',
+                u"v:count": u'0'}
+        vim.current.buffer[:] = [ i for i in u"""#Meta information
 #more meta information
 * TODO Überschrift 1     :testtag:
 Text 1
@@ -1161,7 +1160,7 @@ Bla Bla bla bla
         self.document = VimBuffer().init_dom()
 
     def test_no_space_after_upper_case_single_word_heading(self):
-        vim.current.buffer[:] = [ u_encode(i) for i in u"""
+        vim.current.buffer[:] = [ i for i in u"""
 * TEST
 ** Text 1
 *** Text 2
@@ -1261,7 +1260,7 @@ Bla Bla bla bla
         self.document.headings[0].title = u'changed'
         self.assertEqual(self.document.write(), True)
         self.assertEqual(len(vim.current.buffer), len(before))
-        self.assertTrue(u_encode(u'changed') in vim.current.buffer[2])
+        self.assertTrue(u'changed' in vim.current.buffer[2])
 
     def test_write_refuses_heading_without_start(self):
         # A start of None must never be turned into [None:None], which would
@@ -1275,9 +1274,51 @@ Bla Bla bla bla
         self.assertRaises(ValueError, self.document.write)
         self.assertEqual(list(vim.current.buffer), before)
 
+class VimBufferContentTestCase(unittest.TestCase):
+    def setUp(self):
+        from orgmode.vimbuffer import VimBufferContent
+        self.changes = []
+        self.buffer = vim.VimBuffer([u'a', u'b', u'c'])
+        self.content = VimBufferContent(
+            self.buffer, on_change=lambda: self.changes.append(1))
+
+    def test_slice_assignment_accepts_any_iterable(self):
+        from collections import UserList
+        for value in ([u'x', u'y'], (u'x', u'y'), UserList([u'x', u'y']),
+                      (c for c in (u'x', u'y'))):
+            self.buffer[:] = [u'a', u'b', u'c']
+            self.content[0:1] = value
+            self.assertEqual(list(self.buffer), [u'x', u'y', u'b', u'c'])
+
+    def test_item_assignment(self):
+        self.content[1] = u'B'
+        self.assertEqual(list(self.buffer), [u'a', u'B', u'c'])
+        self.assertEqual(len(self.changes), 1)
+
+    def test_index_returns_position(self):
+        self.assertEqual(self.content.index(u'c'), 2)
+
+    def test_pop_returns_line_and_marks_changed(self):
+        self.assertEqual(self.content.pop(), u'c')
+        self.assertEqual(list(self.buffer), [u'a', u'b'])
+        self.assertEqual(len(self.changes), 1)
+
+    def test_append_extend_iadd_mark_changed(self):
+        self.content.append(u'd')
+        self.content.extend((u'e', ))
+        self.content += [u'f']
+        self.assertEqual(list(self.buffer), [u'a', u'b', u'c', u'd', u'e', u'f'])
+        self.assertEqual(len(self.changes), 3)
+
+    def test_contains(self):
+        self.assertTrue(u'b' in self.content)
+        self.assertFalse(u'z' in self.content)
+
+
 def suite():
     return (
         unittest.TestLoader().loadTestsFromTestCase(VimBufferTestCase),
         unittest.TestLoader().loadTestsFromTestCase(VimBufferTagsTestCase),
         unittest.TestLoader().loadTestsFromTestCase(VimBufferTodoTestCase),
+        unittest.TestLoader().loadTestsFromTestCase(VimBufferContentTestCase),
     )

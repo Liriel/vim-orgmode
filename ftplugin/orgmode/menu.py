@@ -5,7 +5,6 @@ import vim
 from orgmode.keybinding import Command, Plug, Keybinding
 from orgmode.keybinding import MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT
 
-from orgmode.py3compat.encode_compatibility import *
 
 def register_menu(f):
     def r(*args, **kwargs):
@@ -97,7 +96,7 @@ class Separator(object):
     def create(self):
         if self.parent:
             menu = self.parent.get_menu()
-            vim.command(u_encode(u'menu %s.-%s- :' % (menu, id(self))))
+            vim.command(u'menu %s.-%s- :' % (menu, id(self)))
 
 class ActionEntry(object):
     u""" ActionEntry entry """
@@ -160,7 +159,7 @@ class ActionEntry(object):
         else:
             cmd = u'%s %s %s' % (menucmd, menu, self.action)
 
-        vim.command(u_encode(cmd))
+        vim.command(cmd)
 
         # keybindings should be stored in the plugin.keybindings property and be registered by the appropriate keybinding registrar
         #if isinstance(self._action, Keybinding):

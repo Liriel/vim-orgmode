@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import sys
+
 import vim
 
 from orgmode._vim import ORGMODE, repeat
@@ -7,7 +9,6 @@ from orgmode.menu import Submenu, ActionEntry
 from orgmode.keybinding import Keybinding, Plug, Command
 from orgmode import settings
 
-from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.py_py3_string import *
 
 class TagsProperties(object):
@@ -36,7 +37,7 @@ class TagsProperties(object):
         if not heading:
             return
 
-        leading_portion = u_decode(vim.eval(u'a:ArgLead'))
+        leading_portion = vim.eval(u'a:ArgLead')
         cursor = int(vim.eval(u'a:CursorPos'))
 
         # extract currently completed tag
@@ -69,7 +70,7 @@ class TagsProperties(object):
             elif t.startswith(current_tag):
                 possible_tags.append(t)
 
-        vim.command(u_encode(u'let b:org_complete_tags = [%s]' % u', '.join([u'"%s%s:%s"' % (head, i, tail) for i in possible_tags])))
+        vim.command(u'let b:org_complete_tags = [%s]' % u', '.join([u'"%s%s:%s"' % (head, i, tail) for i in possible_tags]))
 
     @classmethod
     @repeat
@@ -93,7 +94,7 @@ class TagsProperties(object):
             return
 
         # remove empty tags
-        heading.tags = [x for x in u_decode(res).strip().strip(u':').split(u':') if x.strip() != u'']
+        heading.tags = [x for x in res.strip().strip(u':').split(u':') if x.strip() != u'']
 
         d.write()
 
@@ -108,7 +109,7 @@ class TagsProperties(object):
             # user pressed <Esc> abort any further processing
             return
 
-        tags = [x for x in u_decode(tags).strip().strip(u':').split(u':') if x.strip() != u'']
+        tags = [x for x in tags.strip().strip(u':').split(u':') if x.strip() != u'']
         if tags:
             searchstring = u'\\('
             first = True
@@ -187,7 +188,7 @@ class TagsProperties(object):
         self.commands.append(cmd)
 
         # workaround to align tags when user is leaving insert mode
-        vim.command(u_encode(u"function Org_complete_tags(ArgLead, CmdLine, CursorPos)\n"
+        vim.command(u"function Org_complete_tags(ArgLead, CmdLine, CursorPos)\n"
 + sys.executable.split('/')[-1] + u""" << EOF
 ORGMODE.plugins[u'TagsProperties'].complete_tags()
 EOF
@@ -198,16 +199,16 @@ if exists('b:org_complete_tags')
 else
     return []
 endif
-endfunction"""))
+endfunction""")
 
-        vim.command(u_encode(u"""function Org_realign_tags_on_insert_leave()
+        vim.command(u"""function Org_realign_tags_on_insert_leave()
 if !exists('b:org_complete_tag_on_insertleave_au')
     :au orgmode InsertLeave <buffer> %s ORGMODE.plugins[u'TagsProperties'].realign_tags()
     let b:org_complete_tag_on_insertleave_au = 1
 endif
-endfunction""" % VIM_PY_CALL))
+endfunction""" % VIM_PY_CALL)
 
         # this is for all org files opened after this file
-        vim.command(u_encode(u"au orgmode FileType org call Org_realign_tags_on_insert_leave()"))
+        vim.command(u"au orgmode FileType org call Org_realign_tags_on_insert_leave()")
         # this is for the current file
-        vim.command(u_encode(u"call Org_realign_tags_on_insert_leave()"))
+        vim.command(u"call Org_realign_tags_on_insert_leave()")
