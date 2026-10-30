@@ -1,4 +1,5 @@
 import locale
+import os
 import threading
 import unittest
 from contextlib import contextmanager
@@ -22,7 +23,12 @@ class OrgDateUtf8TestCase(unittest.TestCase):
                 try:
                     new = locale.setlocale(locale.LC_ALL, name)
                 except locale.Error:
-                    self.skipTest("locale %s is not available" % name)
+                    msg = "locale %s is not available" % name
+                    # CI installs the locale and sets this, so that a broken
+                    # setup fails instead of silently skipping the tests
+                    if os.environ.get("REQUIRE_LOCALE"):
+                        self.fail(msg + " (REQUIRE_LOCALE is set)")
+                    self.skipTest(msg)
                 yield new
             finally:
                 locale.setlocale(locale.LC_ALL, saved)
