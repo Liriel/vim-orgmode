@@ -1249,6 +1249,32 @@ Bla Bla bla bla
         self.assertRaises(ValueError, set_todo, u'DO\rNE')
         self.assertEqual(self.document.headings[0].todo, u'TODO')
 
+    def test_write_after_deleting_unwritten_headings(self):
+        # Regression: deleted headings that were never written have no
+        # _orig_start, which made sorting the deleted headings fail
+        before = list(vim.current.buffer)
+        h1 = Heading(level=1, title=u'new 1')
+        h2 = Heading(level=1, title=u'new 2')
+        self.document.headings.append(h1)
+        self.document.headings.append(h2)
+        del self.document.headings[-2:]
+        self.document.headings[0].title = u'changed'
+        self.assertEqual(self.document.write(), True)
+        self.assertEqual(len(vim.current.buffer), len(before))
+        self.assertTrue(u_encode(u'changed') in vim.current.buffer[2])
+
+    def test_write_refuses_heading_without_start(self):
+        # A start of None must never be turned into [None:None], which would
+        # replace the whole buffer
+        before = list(vim.current.buffer)
+        child = self.document.headings[0].children[0]
+        self.document.headings[0].title = u'changed'
+        child._document = None
+        child._orig_start = None
+        child.set_dirty_body()
+        self.assertRaises(ValueError, self.document.write)
+        self.assertEqual(list(vim.current.buffer), before)
+
 def suite():
     return (
         unittest.TestLoader().loadTestsFromTestCase(VimBufferTestCase),

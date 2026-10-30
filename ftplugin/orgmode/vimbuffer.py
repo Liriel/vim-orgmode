@@ -168,6 +168,13 @@ class VimBuffer(Document):
         if not self.is_insync:
             raise BufferNotInSync(u'Buffer is not in sync with vim!')
 
+        # A start of None would turn the slice assignments below into
+        # [None:None], replacing the whole buffer. Check before touching it.
+        for h in self.all_headings():
+            if h.is_dirty and h.start is None:
+                raise ValueError(
+                    u'Heading has no start position, refusing to write: %s' % h)
+
         # write meta information
         if self.is_dirty_meta_information:
             meta_end = 0 if self._orig_meta_information_len is None else self._orig_meta_information_len
@@ -176,8 +183,10 @@ class VimBuffer(Document):
 
         # remove deleted headings
         already_deleted = []
-        for h in sorted(self._deleted_headings, key=lambda x: x._orig_start, reverse=True):
-            if h._orig_start is not None and h._orig_start not in already_deleted:
+        # headings without _orig_start never existed in the buffer
+        for h in sorted((x for x in self._deleted_headings if x._orig_start is not None),
+                        key=lambda x: x._orig_start, reverse=True):
+            if h._orig_start not in already_deleted:
                 # this is a heading that actually exists on the buffer and it
                 # needs to be removed
                 del self._content[h._orig_start:h._orig_start + h._orig_len]
