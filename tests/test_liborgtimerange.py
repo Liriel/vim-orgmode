@@ -5,7 +5,7 @@ import unittest
 from datetime import date
 from datetime import datetime
 
-sys.path.append(u'../ftplugin')
+sys.path.append('../ftplugin')
 from orgmode.liborgmode.orgdate import OrgTimeRange
 
 
@@ -20,7 +20,7 @@ class OrgTimeRangeTestCase(unittest.TestCase):
         self.textinactive = '[2011-08-29 Mon]'
 
     def test_OrgTimeRange_ctor_active(self):
-        u"""
+        """
         timerange should be created.
         """
         start = date(2011, 9 , 12)
@@ -30,7 +30,7 @@ class OrgTimeRangeTestCase(unittest.TestCase):
         self.assertTrue(timerange.active)
 
     def test_OrgTimeRange_ctor_inactive(self):
-        u"""
+        """
         timerange should be created.
         """
         start = date(2011, 9 , 12)
@@ -40,7 +40,7 @@ class OrgTimeRangeTestCase(unittest.TestCase):
         self.assertFalse(timerange.active)
 
     def test_OrdDate_str_active(self):
-        u"""Representation of OrgDates"""
+        """Representation of OrgDates"""
         start = date(2011, 9 , 12)
         end = date(2011, 9 , 13)
         timerange = OrgTimeRange(True, start, end)
@@ -60,7 +60,7 @@ class OrgTimeRangeTestCase(unittest.TestCase):
         self.assertEqual(str(timerange), expected)
 
     def test_OrdDate_str_inactive(self):
-        u"""Representation of OrgDates"""
+        """Representation of OrgDates"""
         start = date(2011, 9 , 12)
         end = date(2011, 9 , 13)
         timerange = OrgTimeRange(False, start, end)

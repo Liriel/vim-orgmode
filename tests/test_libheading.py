@@ -2,7 +2,7 @@
 
 import unittest
 import sys
-sys.path.append(u'../ftplugin')
+sys.path.append('../ftplugin')
 
 from orgmode.liborgmode.headings import Heading
 from orgmode.liborgmode.orgdate import OrgDate
@@ -169,9 +169,9 @@ class TestHeadingRecognizeDatesInHeading(unittest.TestCase):
 
 class TestHeadingChildrenSlicing(unittest.TestCase):
     def test_slicing_children_does_not_detach_them(self):
-        parent = Heading(level=1, title=u'parent')
-        child1 = Heading(level=2, title=u'child1')
-        child2 = Heading(level=2, title=u'child2')
+        parent = Heading(level=1, title='parent')
+        child1 = Heading(level=2, title='child1')
+        child2 = Heading(level=2, title='child2')
         parent.children.append(child1)
         parent.children.append(child2)
         child1._orig_start = 3

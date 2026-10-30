@@ -4,23 +4,21 @@ import vim
 from orgmode._vim import echo, echom, echoe, ORGMODE, apply_count, repeat, insert_at_cursor, indent_orgmode
 from orgmode import settings
 from orgmode.menu import Submenu, Separator, ActionEntry, add_cmd_mapping_menu
-from orgmode.keybinding import Keybinding, Plug, Command
+from orgmode.keybinding import Keybinding, Plug, Command, VIM_PY_CALL
 from orgmode.liborgmode.checkboxes import Checkbox
 from orgmode.liborgmode.dom_obj import OrderListType
 
-from orgmode.py3compat.py_py3_string import *
-from orgmode.py3compat.unicode_compatibility import *
 
 class EditCheckbox(object):
-    u"""
+    """
     Checkbox plugin.
     """
 
     def __init__(self):
-        u""" Initialize plugin """
+        """ Initialize plugin """
         object.__init__(self)
         # menu entries this plugin should create
-        self.menu = ORGMODE.orgmenu + Submenu(u'Edit Checkbox')
+        self.menu = ORGMODE.orgmenu + Submenu('Edit Checkbox')
 
         # key bindings for this plugin
         # key bindings are also registered through the menu so only additional
@@ -84,7 +82,7 @@ class EditCheckbox(object):
                     num = int(t[:-1]) + (1 if below else -1)
                     if num < 0:
                         # don't decrease to numbers below zero
-                        echom(u"Can't decrement further than '0'")
+                        echom("Can't decrement further than '0'")
                         return
                     t = '%d%s' % (num, t[-1])
                 except ValueError:
@@ -93,7 +91,7 @@ class EditCheckbox(object):
                         if below:
                             if char == 91:
                                 # stop incrementing at Z (90)
-                                echom(u"Can't increment further than 'Z'")
+                                echom("Can't increment further than 'Z'")
                                 return
                             elif char == 123:
                                 # increment from z (122) to A
@@ -101,12 +99,12 @@ class EditCheckbox(object):
                         else:
                             if char == 96:
                                 # stop decrementing at a (97)
-                                echom(u"Can't decrement further than 'a'")
+                                echom("Can't decrement further than 'a'")
                                 return
                             elif char == 64:
                                 # decrement from A (65) to z
                                 char = 122
-                        t = u'%s%s' % (chr(char), t[-1])
+                        t = '%s%s' % (chr(char), t[-1])
                     except ValueError:
                         pass
             nc.type = t
@@ -133,14 +131,14 @@ class EditCheckbox(object):
         cls.update_checkboxes_status()
 
         # do not start insert upon adding new checkbox, Issue #211
-        if int(settings.get(u'org_prefer_insert_mode', u'1')):
-            vim.command(u'exe "normal %dgg"|startinsert!' % (start + 1, ))
+        if int(settings.get('org_prefer_insert_mode', '1')):
+            vim.command('exe "normal %dgg"|startinsert!' % (start + 1, ))
         else:
-            vim.command(u'exe "normal %dgg$"' % (start + 1, ))
+            vim.command('exe "normal %dgg$"' % (start + 1, ))
 
     @classmethod
     def toggle(cls, checkbox=None):
-        u"""
+        """
         Toggle the checkbox given in the parameter.
         If the checkbox is not given, it will toggle the current checkbox.
         """
@@ -219,7 +217,7 @@ class EditCheckbox(object):
 
     @classmethod
     def _update_checkboxes_status(cls, checkbox=None):
-        u""" helper function for update checkboxes status
+        """ helper function for update checkboxes status
             :checkbox: The first checkbox of this indent level
             :return: The status of the parent checkbox
         """
@@ -274,7 +272,7 @@ class EditCheckbox(object):
         return parent_status
 
     def register(self):
-        u"""
+        """
         Registration of the plugin.
 
         Key bindings and other initialization should be done here.
@@ -284,44 +282,44 @@ class EditCheckbox(object):
 # checkbox related operation
         add_cmd_mapping_menu(
             self,
-            name=u'OrgCheckBoxNewAbove',
-            function=u'%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox()<CR>' % VIM_PY_CALL,
-            key_mapping=u'<localleader>cN',
-            menu_desrc=u'New CheckBox Above'
+            name='OrgCheckBoxNewAbove',
+            function='%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox()<CR>' % VIM_PY_CALL,
+            key_mapping='<localleader>cN',
+            menu_desrc='New CheckBox Above'
         )
         add_cmd_mapping_menu(
             self,
-            name=u'OrgCheckBoxNewBelow',
-            function=u'%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox(below=True)<CR>' % VIM_PY_CALL,
-            key_mapping=u'<localleader>cn',
-            menu_desrc=u'New CheckBox Below'
+            name='OrgCheckBoxNewBelow',
+            function='%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox(below=True)<CR>' % VIM_PY_CALL,
+            key_mapping='<localleader>cn',
+            menu_desrc='New CheckBox Below'
         )
         add_cmd_mapping_menu(
             self,
-            name=u'OrgCheckBoxToggle',
-            function=u':silent! %s ORGMODE.plugins[u"EditCheckbox"].toggle()<CR>' % VIM_PY_CALL,
-            key_mapping=u'<localleader>cc',
-            menu_desrc=u'Toggle Checkbox'
+            name='OrgCheckBoxToggle',
+            function=':silent! %s ORGMODE.plugins[u"EditCheckbox"].toggle()<CR>' % VIM_PY_CALL,
+            key_mapping='<localleader>cc',
+            menu_desrc='Toggle Checkbox'
         )
         add_cmd_mapping_menu(
             self,
-            name=u'OrgCheckBoxUpdate',
-            function=u':silent! %s ORGMODE.plugins[u"EditCheckbox"].update_checkboxes_status()<CR>' % VIM_PY_CALL,
-            key_mapping=u'<localleader>c#',
-            menu_desrc=u'Update Subtasks'
+            name='OrgCheckBoxUpdate',
+            function=':silent! %s ORGMODE.plugins[u"EditCheckbox"].update_checkboxes_status()<CR>' % VIM_PY_CALL,
+            key_mapping='<localleader>c#',
+            menu_desrc='Update Subtasks'
         )
 # plainlist related operation
         add_cmd_mapping_menu(
             self,
-            name=u'OrgPlainListItemNewAbove',
-            function=u'%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox(plain=True)<CR>' % VIM_PY_CALL,
-            key_mapping=u'<localleader>cL',
-            menu_desrc=u'New PlainList Item Above'
+            name='OrgPlainListItemNewAbove',
+            function='%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox(plain=True)<CR>' % VIM_PY_CALL,
+            key_mapping='<localleader>cL',
+            menu_desrc='New PlainList Item Above'
         )
         add_cmd_mapping_menu(
             self,
-            name=u'OrgPlainListItemNewBelow',
-            function=u'%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox(below=True, plain=True)<CR>' % VIM_PY_CALL,
-            key_mapping=u'<localleader>cl',
-            menu_desrc=u'New PlainList Item Below'
+            name='OrgPlainListItemNewBelow',
+            function='%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox(below=True, plain=True)<CR>' % VIM_PY_CALL,
+            key_mapping='<localleader>cl',
+            menu_desrc='New PlainList Item Below'
         )

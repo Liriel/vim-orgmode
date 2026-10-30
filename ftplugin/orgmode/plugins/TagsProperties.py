@@ -6,19 +6,18 @@ import vim
 
 from orgmode._vim import ORGMODE, repeat
 from orgmode.menu import Submenu, ActionEntry
-from orgmode.keybinding import Keybinding, Plug, Command
+from orgmode.keybinding import Keybinding, Plug, Command, VIM_PY_CALL
 from orgmode import settings
 
-from orgmode.py3compat.py_py3_string import *
 
 class TagsProperties(object):
-    u""" TagsProperties plugin """
+    """ TagsProperties plugin """
 
     def __init__(self):
-        u""" Initialize plugin """
+        """ Initialize plugin """
         object.__init__(self)
         # menu entries this plugin should create
-        self.menu = ORGMODE.orgmenu + Submenu(u'&TAGS and Properties')
+        self.menu = ORGMODE.orgmenu + Submenu('&TAGS and Properties')
 
         # key bindings for this plugin
         # key bindings are also registered through the menu so only additional
@@ -30,27 +29,27 @@ class TagsProperties(object):
 
     @classmethod
     def complete_tags(cls):
-        u""" build a list of tags and store it in variable b:org_tag_completion
+        """ build a list of tags and store it in variable b:org_tag_completion
         """
         d = ORGMODE.get_document()
         heading = d.current_heading()
         if not heading:
             return
 
-        leading_portion = vim.eval(u'a:ArgLead')
-        cursor = int(vim.eval(u'a:CursorPos'))
+        leading_portion = vim.eval('a:ArgLead')
+        cursor = int(vim.eval('a:CursorPos'))
 
         # extract currently completed tag
-        idx_orig = leading_portion.rfind(u':', 0, cursor)
+        idx_orig = leading_portion.rfind(':', 0, cursor)
         if idx_orig == -1:
             idx = 0
         else:
             idx = idx_orig
 
-        current_tag = leading_portion[idx: cursor].lstrip(u':')
+        current_tag = leading_portion[idx: cursor].lstrip(':')
         head = leading_portion[:idx + 1]
         if idx_orig == -1:
-            head = u''
+            head = ''
         tail = leading_portion[cursor:]
 
         # extract all tags of the current file
@@ -59,7 +58,7 @@ class TagsProperties(object):
             for t in h.tags:
                 all_tags.add(t)
 
-        ignorecase = bool(int(settings.get(u'org_tag_completion_ignorecase', int(vim.eval(u'&ignorecase')))))
+        ignorecase = bool(int(settings.get('org_tag_completion_ignorecase', int(vim.eval('&ignorecase')))))
         possible_tags = []
         # TODO current tags never used...
         current_tags = heading.tags
@@ -70,12 +69,12 @@ class TagsProperties(object):
             elif t.startswith(current_tag):
                 possible_tags.append(t)
 
-        vim.command(u'let b:org_complete_tags = [%s]' % u', '.join([u'"%s%s:%s"' % (head, i, tail) for i in possible_tags]))
+        vim.command('let b:org_complete_tags = [%s]' % ', '.join(['"%s%s:%s"' % (head, i, tail) for i in possible_tags]))
 
     @classmethod
     @repeat
     def set_tags(cls):
-        u""" Set tags for current heading
+        """ Set tags for current heading
         """
         d = ORGMODE.get_document()
         heading = d.current_heading()
@@ -85,53 +84,53 @@ class TagsProperties(object):
         # retrieve tags
         res = None
         if heading.tags:
-            res = vim.eval(u'input("Tags: ", ":%s:", "customlist,Org_complete_tags")' % u':'.join(heading.tags))
+            res = vim.eval('input("Tags: ", ":%s:", "customlist,Org_complete_tags")' % ':'.join(heading.tags))
         else:
-            res = vim.eval(u'input("Tags: ", "", "customlist,Org_complete_tags")')
+            res = vim.eval('input("Tags: ", "", "customlist,Org_complete_tags")')
 
         if res is None:
             # user pressed <Esc> abort any further processing
             return
 
         # remove empty tags
-        heading.tags = [x for x in res.strip().strip(u':').split(u':') if x.strip() != u'']
+        heading.tags = [x for x in res.strip().strip(':').split(':') if x.strip() != '']
 
         d.write()
 
-        return u'OrgSetTags'
+        return 'OrgSetTags'
 
     @classmethod
     def find_tags(cls):
         """ Find tags in current file
         """
-        tags = vim.eval(u'input("Find Tags: ", "", "customlist,Org_complete_tags")')
+        tags = vim.eval('input("Find Tags: ", "", "customlist,Org_complete_tags")')
         if tags is None:
             # user pressed <Esc> abort any further processing
             return
 
-        tags = [x for x in tags.strip().strip(u':').split(u':') if x.strip() != u'']
+        tags = [x for x in tags.strip().strip(':').split(':') if x.strip() != '']
         if tags:
-            searchstring = u'\\('
+            searchstring = '\\('
             first = True
             for t1 in tags:
                 if first:
                     first = False
-                    searchstring += u'%s' % t1
+                    searchstring += '%s' % t1
                 else:
-                    searchstring += u'\\|%s' % t1
+                    searchstring += '\\|%s' % t1
 
                 for t2 in tags:
                     if t1 == t2:
                         continue
-                    searchstring += u'\\(:[a-zA-Z:]*\\)\\?:%s' % t2
-            searchstring += u'\\)'
+                    searchstring += '\\(:[a-zA-Z:]*\\)\\?:%s' % t2
+            searchstring += '\\)'
 
-            vim.command(u'/\\zs:%s:\\ze' % searchstring)
-        return u'OrgFindTags'
+            vim.command('/\\zs:%s:\\ze' % searchstring)
+        return 'OrgFindTags'
 
     @classmethod
     def realign_tags(cls):
-        u"""
+        """
         Updates tags when user finished editing a heading
         """
         d = ORGMODE.get_document(allow_dirty=True)
@@ -145,7 +144,7 @@ class TagsProperties(object):
 
     @classmethod
     def realign_all_tags(cls):
-        u"""
+        """
         Updates tags when user finishes editing a heading
         """
         d = ORGMODE.get_document()
@@ -155,41 +154,41 @@ class TagsProperties(object):
         d.write()
 
     def register(self):
-        u"""
+        """
         Registration of plugin. Key bindings and other initialization should be done.
         """
         # an Action menu entry which binds "keybinding" to action ":action"
-        settings.set(u'org_tag_column', vim.eval(u'&textwidth'))
-        settings.set(u'org_tag_completion_ignorecase', int(vim.eval(u'&ignorecase')))
+        settings.set('org_tag_column', vim.eval('&textwidth'))
+        settings.set('org_tag_completion_ignorecase', int(vim.eval('&ignorecase')))
 
         cmd = Command(
-            u'OrgSetTags',
-            u'%s ORGMODE.plugins[u"TagsProperties"].set_tags()' % VIM_PY_CALL)
+            'OrgSetTags',
+            '%s ORGMODE.plugins[u"TagsProperties"].set_tags()' % VIM_PY_CALL)
         self.commands.append(cmd)
         keybinding = Keybinding(
-            u'<localleader>st',
-            Plug(u'OrgSetTags', cmd))
+            '<localleader>st',
+            Plug('OrgSetTags', cmd))
         self.keybindings.append(keybinding)
-        self.menu + ActionEntry(u'Set &Tags', keybinding)
+        self.menu + ActionEntry('Set &Tags', keybinding)
 
         cmd = Command(
-            u'OrgFindTags',
-            u'%s ORGMODE.plugins[u"TagsProperties"].find_tags()' % VIM_PY_CALL)
+            'OrgFindTags',
+            '%s ORGMODE.plugins[u"TagsProperties"].find_tags()' % VIM_PY_CALL)
         self.commands.append(cmd)
         keybinding = Keybinding(
-            u'<localleader>ft',
-            Plug(u'OrgFindTags', cmd))
+            '<localleader>ft',
+            Plug('OrgFindTags', cmd))
         self.keybindings.append(keybinding)
-        self.menu + ActionEntry(u'&Find Tags', keybinding)
+        self.menu + ActionEntry('&Find Tags', keybinding)
 
         cmd = Command(
-            u'OrgTagsRealign',
-            u"%s ORGMODE.plugins[u'TagsProperties'].realign_all_tags()" % VIM_PY_CALL)
+            'OrgTagsRealign',
+            "%s ORGMODE.plugins[u'TagsProperties'].realign_all_tags()" % VIM_PY_CALL)
         self.commands.append(cmd)
 
         # workaround to align tags when user is leaving insert mode
-        vim.command(u"function Org_complete_tags(ArgLead, CmdLine, CursorPos)\n"
-+ sys.executable.split('/')[-1] + u""" << EOF
+        vim.command("function Org_complete_tags(ArgLead, CmdLine, CursorPos)\n"
++ sys.executable.split('/')[-1] + """ << EOF
 ORGMODE.plugins[u'TagsProperties'].complete_tags()
 EOF
 if exists('b:org_complete_tags')
@@ -201,7 +200,7 @@ else
 endif
 endfunction""")
 
-        vim.command(u"""function Org_realign_tags_on_insert_leave()
+        vim.command("""function Org_realign_tags_on_insert_leave()
 if !exists('b:org_complete_tag_on_insertleave_au')
     :au orgmode InsertLeave <buffer> %s ORGMODE.plugins[u'TagsProperties'].realign_tags()
     let b:org_complete_tag_on_insertleave_au = 1
@@ -209,6 +208,6 @@ endif
 endfunction""" % VIM_PY_CALL)
 
         # this is for all org files opened after this file
-        vim.command(u"au orgmode FileType org call Org_realign_tags_on_insert_leave()")
+        vim.command("au orgmode FileType org call Org_realign_tags_on_insert_leave()")
         # this is for the current file
-        vim.command(u"call Org_realign_tags_on_insert_leave()")
+        vim.command("call Org_realign_tags_on_insert_leave()")

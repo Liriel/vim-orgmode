@@ -3,7 +3,7 @@
 from __future__ import print_function
 
 import sys
-sys.path.append(u'../ftplugin')
+sys.path.append('../ftplugin')
 
 import unittest
 import orgmode.settings
@@ -18,7 +18,7 @@ ORG_PLUGINS = ['ShowHide', '|', 'Navigator', 'EditStructure', '|', 'Hyperlinks',
 
 
 class MappingTestCase(unittest.TestCase):
-    u"""Tests all plugins for overlapping mappings."""
+    """Tests all plugins for overlapping mappings."""
     def test_non_overlapping_plug_mappings(self):
         def find_overlapping_mappings(kb, all_keybindings):
             found_overlapping_mapping = False
@@ -28,7 +28,7 @@ class MappingTestCase(unittest.TestCase):
                         akb = kb.action
                         atkb = tkb.action
                         if (akb.startswith(atkb) or atkb.startswith(akb)) and akb != atkb:
-                            print(u'\nERROR: Found overlapping mapping: %s (%s), %s (%s)' % (kb.key, akb, tkb.key, atkb))
+                            print('\nERROR: Found overlapping mapping: %s (%s), %s (%s)' % (kb.key, akb, tkb.key, atkb))
                             found_overlapping_mapping = True
 
             if all_keybindings:
@@ -44,13 +44,13 @@ class MappingTestCase(unittest.TestCase):
         self.keybindings = []
 
         vim.EVALRESULTS = {
-                u'exists("g:org_debug")': 0,
-                u'exists("b:org_debug")': 0,
-                u'exists("*repeat#set()")': 0,
-                u'b:changedtick': 0,
-                u'exists("b:org_plugins")': 0,
-                u'exists("g:org_plugins")': 1,
-                u'g:org_plugins': ORG_PLUGINS,
+                'exists("g:org_debug")': 0,
+                'exists("b:org_debug")': 0,
+                'exists("*repeat#set()")': 0,
+                'b:changedtick': 0,
+                'exists("b:org_plugins")': 0,
+                'exists("g:org_plugins")': 1,
+                'g:org_plugins': ORG_PLUGINS,
                 }
         for plugin in filter(lambda p: p != '|', ORG_PLUGINS):
             try:

@@ -27,12 +27,11 @@ from orgmode.exceptions import BufferNotFound, BufferNotInSync
 from orgmode.liborgmode.documents import Document, MultiPurposeList, Direction
 from orgmode.liborgmode.headings import Heading
 
-from orgmode.py3compat.unicode_compatibility import *
 
 
 class VimBuffer(Document):
     def __init__(self, bufnr=0):
-        u"""
+        """
         :bufnr:        0: current buffer, every other number refers to another buffer
         """
         Document.__init__(self)
@@ -49,7 +48,7 @@ class VimBuffer(Document):
                     break
 
             if not _buffer:
-                raise BufferNotFound(u'Unable to locate buffer number #%d' % self._bufnr)
+                raise BufferNotFound('Unable to locate buffer number #%d' % self._bufnr)
             self._content = VimBufferContent(_buffer)
 
         self.update_changedtick()
@@ -57,11 +56,11 @@ class VimBuffer(Document):
 
     @property
     def tabstop(self):
-        return int(vim.eval(u'&ts'))
+        return int(vim.eval('&ts'))
 
     @property
     def tag_column(self):
-        return int(settings.get(u'org_tag_column', u'77'))
+        return int(settings.get('org_tag_column', '77'))
 
     @property
     def is_insync(self):
@@ -71,14 +70,14 @@ class VimBuffer(Document):
 
     @property
     def bufnr(self):
-        u"""
+        """
         :returns:    The buffer's number for the current document
         """
         return self._bufnr
 
     @property
     def changedtick(self):
-        u""" Number of changes in vimbuffer """
+        """ Number of changes in vimbuffer """
         return self._changedtick
 
     @changedtick.setter
@@ -86,13 +85,13 @@ class VimBuffer(Document):
         self._changedtick = value
 
     def get_todo_states(self, strip_access_key=True):
-        u""" Returns a list containing a tuple of two lists of allowed todo
+        """ Returns a list containing a tuple of two lists of allowed todo
         states split by todo and done states. Multiple todo-done state
         sequences can be defined.
 
         :returns:    [([todo states], [done states]), ..]
         """
-        states = settings.get(u'org_todo_keywords', [])
+        states = settings.get('org_todo_keywords', [])
         # TODO this function gets called too many times when change of state of
         # one todo is triggered, check with:
         # print(states)
@@ -108,24 +107,24 @@ class VimBuffer(Document):
             res = []
             if not s:
                 return res
-            if type(s[0]) in (unicode, str):
+            if type(s[0]) is str:
                 r = []
                 for i in s:
                     _i = i
                     if type(_i) == str and _i:
-                        if strip_access_key and u'(' in _i:
-                            _i = _i[:_i.index(u'(')]
+                        if strip_access_key and '(' in _i:
+                            _i = _i[:_i.index('(')]
                             if _i:
                                 r.append(_i)
                         else:
                             r.append(_i)
-                if not u'|' in r:
+                if not '|' in r:
                     if not stop:
                         res.append((r[:-1], [r[-1]]))
                     else:
                         res = (r[:-1], [r[-1]])
                 else:
-                    seperator_pos = r.index(u'|')
+                    seperator_pos = r.index('|')
                     if not stop:
                         res.append((r[0:seperator_pos], r[seperator_pos + 1:]))
                     else:
@@ -141,17 +140,17 @@ class VimBuffer(Document):
 
     def update_changedtick(self):
         if self.bufnr == vim.current.buffer.number:
-            self._changedtick = int(vim.eval(u'b:changedtick'))
+            self._changedtick = int(vim.eval('b:changedtick'))
         else:
-            vim.command(u'unlet! g:org_changedtick | let g:org_lz = &lz | let g:org_hidden = &hidden | set lz hidden')
+            vim.command('unlet! g:org_changedtick | let g:org_lz = &lz | let g:org_hidden = &hidden | set lz hidden')
             # TODO is this likely to fail? maybe some error hangling should be added
-            vim.command(u'keepalt buffer %d | let g:org_changedtick = b:changedtick | buffer %d' % \
+            vim.command('keepalt buffer %d | let g:org_changedtick = b:changedtick | buffer %d' % \
                     (self.bufnr, vim.current.buffer.number))
-            vim.command(u'let &lz = g:org_lz | let &hidden = g:org_hidden | unlet! g:org_lz g:org_hidden | redraw')
-            self._changedtick = int(vim.eval(u'g:org_changedtick'))
+            vim.command('let &lz = g:org_lz | let &hidden = g:org_hidden | unlet! g:org_lz g:org_hidden | redraw')
+            self._changedtick = int(vim.eval('g:org_changedtick'))
 
     def write(self):
-        u""" write the changes to the vim buffer
+        """ write the changes to the vim buffer
 
         :returns:    True if something was written, otherwise False
         """
@@ -160,14 +159,14 @@ class VimBuffer(Document):
 
         self.update_changedtick()
         if not self.is_insync:
-            raise BufferNotInSync(u'Buffer is not in sync with vim!')
+            raise BufferNotInSync('Buffer is not in sync with vim!')
 
         # A start of None would turn the slice assignments below into
         # [None:None], replacing the whole buffer. Check before touching it.
         for h in self.all_headings():
             if h.is_dirty and h.start is None:
                 raise ValueError(
-                    u'Heading has no start position, refusing to write: %s' % h)
+                    'Heading has no start position, refusing to write: %s' % h)
 
         # write meta information
         if self.is_dirty_meta_information:
@@ -292,7 +291,7 @@ class VimBuffer(Document):
         pass
 
     def previous_heading(self, position=None):
-        u""" Find the next heading (search forward) and return the related object
+        """ Find the next heading (search forward) and return the related object
         :returns:    Heading object or None
         """
         h = self.current_heading(position=position)
@@ -300,7 +299,7 @@ class VimBuffer(Document):
             return h.previous_heading
 
     def current_heading(self, position=None):
-        u""" Find the current heading (search backward) and return the related object
+        """ Find the current heading (search backward) and return the related object
         :returns:    Heading object or None
         """
         if position is None:
@@ -351,7 +350,7 @@ class VimBuffer(Document):
         return self._cached_heading
 
     def next_heading(self, position=None):
-        u""" Find the next heading (search forward) and return the related object
+        """ Find the next heading (search forward) and return the related object
         :returns:    Heading object or None
         """
         h = self.current_heading(position=position)
@@ -359,7 +358,7 @@ class VimBuffer(Document):
             return h.next_heading
 
     def find_current_heading(self, position=None, heading=Heading):
-        u""" Find the next heading backwards from the position of the cursor.
+        """ Find the next heading backwards from the position of the cursor.
         The difference to the function current_heading is that the returned
         object is not built into the DOM. In case the DOM doesn't exist or is
         out of sync this function is much faster in fetching the current
@@ -378,7 +377,7 @@ class VimBuffer(Document):
 
 
 class VimBufferContent(MultiPurposeList):
-    u""" Vim Buffer Content wraps a vim buffer in a MultiPurposeList so that
+    """ Vim Buffer Content wraps a vim buffer in a MultiPurposeList so that
     changes made through it are written to the real buffer and trigger the
     on_change hook.
     """

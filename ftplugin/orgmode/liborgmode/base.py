@@ -12,7 +12,6 @@ from collections import UserList
 
 from collections.abc import Iterable
 
-from orgmode.py3compat.unicode_compatibility import *
 
 
 def flatten_list(lst):
@@ -26,7 +25,7 @@ def flatten_list(lst):
     """
     # TODO write tests
     def gen_lst(item):
-        if isinstance(item, basestring) or isinstance(item, bytes):
+        if isinstance(item, str) or isinstance(item, bytes):
             yield item
         elif isinstance(item, Iterable):
             # yield from would be so nice... but c'est la vie
@@ -39,7 +38,7 @@ def flatten_list(lst):
 
 
 class Direction():
-    u"""
+    """
     Direction is used to indicate the direction of certain actions.
 
     Example: it defines the direction headings get parted in.
@@ -49,7 +48,7 @@ class Direction():
 
 
 class MultiPurposeList(UserList):
-    u"""
+    """
     A Multi Purpose List is a list that calls a user defined hook on
     change. The implementation is very basic - the hook is called without any
     parameters. Otherwise the Multi Purpose List can be used like any other
@@ -64,7 +63,7 @@ class MultiPurposeList(UserList):
         self._on_change = on_change
 
     def _changed(self):
-        u""" Call hook """
+        """ Call hook """
         if callable(self._on_change):
             self._on_change()
 
@@ -124,7 +123,7 @@ class MultiPurposeList(UserList):
 
 
 def get_domobj_range(content=[], position=0, direction=Direction.FORWARD, identify_fun=None):
-    u"""
+    """
     Get the start and end line number of the dom obj lines from content.
 
     :content:        String to be recognized dom obj

@@ -28,29 +28,28 @@ TAGSPROPERTIES_EXISTS = False
 
 cache_heading = None
 
-from orgmode.py3compat.unicode_compatibility import *
 
 
 def realign_tags(f):
-    u"""
+    """
     Update tag alignment, dependency to TagsProperties plugin!
     """
     def r(*args, **kwargs):
         global TAGSPROPERTIES_EXISTS
         res = f(*args, **kwargs)
 
-        if not TAGSPROPERTIES_EXISTS and u'TagsProperties' in ORGMODE.plugins:
+        if not TAGSPROPERTIES_EXISTS and 'TagsProperties' in ORGMODE.plugins:
             TAGSPROPERTIES_EXISTS = True
 
         if TAGSPROPERTIES_EXISTS:
-            ORGMODE.plugins[u'TagsProperties'].realign_tags()
+            ORGMODE.plugins['TagsProperties'].realign_tags()
 
         return res
     return r
 
 
 def repeat(f):
-    u"""
+    """
     Integrate with the repeat plugin if available
 
     The decorated function must return the name of the <Plug> command to
@@ -58,14 +57,14 @@ def repeat(f):
     """
     def r(*args, **kwargs):
         res = f(*args, **kwargs)
-        if REPEAT_EXISTS and isinstance(res, basestring):
-            vim.command(u'silent! call repeat#set("\\<Plug>%s")' % res)
+        if REPEAT_EXISTS and isinstance(res, str):
+            vim.command('silent! call repeat#set("\\<Plug>%s")' % res)
         return res
     return r
 
 
 def apply_count(f):
-    u"""
+    """
     Decorator which executes function v:count or v:prevount (not implemented,
     yet) times. The decorated function must return a value that evaluates to
     True otherwise the function is not repeated.
@@ -73,7 +72,7 @@ def apply_count(f):
     def r(*args, **kwargs):
         count = 0
         try:
-            count = int(vim.eval(u'v:count'))
+            count = int(vim.eval('v:count'))
 
             # visual count is not implemented yet
             #if not count:
@@ -91,35 +90,35 @@ def apply_count(f):
 
 
 def echo(message):
-    u"""
+    """
     Print a regular message that will not be visible to the user when
     multiple lines are printed
     """
-    for m in message.split(u'\n'):
-        vim.command(u':echo "%s"' % m)
+    for m in message.split('\n'):
+        vim.command(':echo "%s"' % m)
 
 
 def echom(message):
-    u"""
+    """
     Print a regular message that will be visible to the user, even when
     multiple lines are printed
     """
     # probably some escaping is needed here
-    for m in message.split(u'\n'):
-        vim.command(u':echomsg "%s"' % m)
+    for m in message.split('\n'):
+        vim.command(':echomsg "%s"' % m)
 
 
 def echoe(message):
-    u"""
+    """
     Print an error message. This should only be used for serious errors!
     """
     # probably some escaping is needed here
-    for m in message.split(u'\n'):
-        vim.command(u':echoerr "%s"' % m)
+    for m in message.split('\n'):
+        vim.command(':echoerr "%s"' % m)
 
 
 def insert_at_cursor(text, move=True, start_insertmode=False):
-    u"""Insert text at the position of the cursor.
+    """Insert text at the position of the cursor.
 
     If move==True move the cursor with the inserted text.
     """
@@ -130,18 +129,18 @@ def insert_at_cursor(text, move=True, start_insertmode=False):
     if move:
         vim.current.window.cursor = (line, col + len(text))
     if start_insertmode:
-        vim.command(u'startinsert')
+        vim.command('startinsert')
 
 
 def get_user_input(message):
-    u"""Print the message and take input from the user.
+    """Print the message and take input from the user.
     Return the input or None if there is no input.
     """
     try:
-        vim.command(u'call inputsave()')
-        vim.command(u"let user_input = input('" + message + u": ')")
-        vim.command(u'call inputrestore()')
-        return vim.eval(u'user_input')
+        vim.command('call inputsave()')
+        vim.command("let user_input = input('" + message + ": ')")
+        vim.command('call inputrestore()')
+        return vim.eval('user_input')
     except:
         return None
 
@@ -166,7 +165,7 @@ def get_bufname(bufnr):
 
 
 def indent_orgmode():
-    u""" Set the indent value for the current line in the variable
+    """ Set the indent value for the current line in the variable
     b:indent_level
 
     Vim prerequisites:
@@ -174,7 +173,7 @@ def indent_orgmode():
 
     :returns: None
     """
-    line = int(vim.eval(u'v:lnum'))
+    line = int(vim.eval('v:lnum'))
     d = ORGMODE.get_document()
     heading = d.current_heading(line - 1)
     if heading and line != heading.start_vim:
@@ -188,17 +187,17 @@ def indent_orgmode():
                 # won't be indented either
                 level = checkbox.level + len(checkbox.type) + 1 + \
                         (4 if checkbox.status else 0)
-        vim.command(u"let b:indent_level = %d" % level)
+        vim.command("let b:indent_level = %d" % level)
 
 
 def fold_text(allow_dirty=False):
-    u""" Set the fold text
+    """ Set the fold text
         :setlocal foldtext=Method-which-calls-foldtext
 
     :allow_dirty:    Perform a query without (re)building the DOM if True
     :returns: None
     """
-    line = int(vim.eval(u'v:foldstart'))
+    line = int(vim.eval('v:foldstart'))
     d = ORGMODE.get_document(allow_dirty=allow_dirty)
     heading = None
     if allow_dirty:
@@ -209,20 +208,20 @@ def fold_text(allow_dirty=False):
         str_heading = str(heading)
 
         # expand tabs
-        ts = int(vim.eval(u'&ts'))
-        idx = str_heading.find(u'\t')
+        ts = int(vim.eval('&ts'))
+        idx = str_heading.find('\t')
         if idx != -1:
             tabs, spaces = divmod(idx, ts)
-            str_heading = str_heading.replace(u'\t', u' ' * (ts - spaces), 1)
-            str_heading = str_heading.replace(u'\t', u' ' * ts)
+            str_heading = str_heading.replace('\t', ' ' * (ts - spaces), 1)
+            str_heading = str_heading.replace('\t', ' ' * ts)
 
         # Workaround for vim.command seems to break the completion menu
-        vim.eval(u'SetOrgFoldtext("%s...")' % (re.sub(r'\[\[([^[\]]*\]\[)?([^[\]]+)\]\]', r'\2',
-                str_heading).replace( u'\\', u'\\\\').replace(u'"', u'\\"'), ))
+        vim.eval('SetOrgFoldtext("%s...")' % (re.sub(r'\[\[([^[\]]*\]\[)?([^[\]]+)\]\]', r'\2',
+                str_heading).replace( '\\', '\\\\').replace('"', '\\"'), ))
 
 
 def fold_orgmode(allow_dirty=False):
-    u""" Set the fold expression/value for the current line in the variable
+    """ Set the fold expression/value for the current line in the variable
     b:fold_expr
 
     Vim prerequisites:
@@ -232,7 +231,7 @@ def fold_orgmode(allow_dirty=False):
     :allow_dirty:    Perform a query without (re)building the DOM if True
     :returns: None
     """
-    line = int(vim.eval(u'v:lnum'))
+    line = int(vim.eval('v:lnum'))
     d = ORGMODE.get_document(allow_dirty=allow_dirty)
     heading = None
     if allow_dirty:
@@ -251,31 +250,31 @@ def fold_orgmode(allow_dirty=False):
         if 0:
             pass
         elif line == heading.start_vim:
-            vim.command(u'let b:fold_expr = ">%d"' % heading.level)
+            vim.command('let b:fold_expr = ">%d"' % heading.level)
         #elif line == heading.end_vim:
         #    vim.command((u'let b:fold_expr = "<%d"' % heading.level).encode(u'utf-8'))
         # end_of_last_child_vim is a performance junky and is actually not needed
         #elif line == heading.end_of_last_child_vim:
         #    vim.command((u'let b:fold_expr = "<%d"' % heading.level).encode(u'utf-8'))
         else:
-            vim.command(u'let b:fold_expr = %d' % heading.level)
+            vim.command('let b:fold_expr = %d' % heading.level)
 
 
 def date_to_str(date):
     if isinstance(date, datetime):
-        date = date.strftime(u'%Y-%m-%d %a %H:%M')
+        date = date.strftime('%Y-%m-%d %a %H:%M')
     else:
-        date = date.strftime(u'%Y-%m-%d %a')
+        date = date.strftime('%Y-%m-%d %a')
     return date
 
 class OrgMode(object):
-    u""" Vim Buffer """
+    """ Vim Buffer """
 
     def __init__(self):
         object.__init__(self)
-        self.debug = bool(int(orgmode.settings.get(u'org_debug', False)))
+        self.debug = bool(int(orgmode.settings.get('org_debug', False)))
 
-        self.orgmenu = orgmode.menu.Submenu(u'&Org')
+        self.orgmenu = orgmode.menu.Submenu('&Org')
         self._plugins = {}
         # list of vim buffer objects
         self._documents = {}
@@ -309,16 +308,16 @@ class OrgMode(object):
     @orgmode.keybinding.register_commands
     @orgmode.menu.register_menu
     def register_plugin(self, plugin):
-        if not isinstance(plugin, basestring):
-            raise ValueError(u'Parameter plugin is not of type string')
+        if not isinstance(plugin, str):
+            raise ValueError('Parameter plugin is not of type string')
 
-        if plugin == u'|':
+        if plugin == '|':
             self.orgmenu + orgmode.menu.Separator()
             self.orgmenu.children[-1].create()
             return
 
         if plugin in self._plugins:
-            raise PluginError(u'Plugin %s has already been loaded')
+            raise PluginError('Plugin %s has already been loaded')
 
         # a python module
         module = None
@@ -330,19 +329,19 @@ class OrgMode(object):
             module = importlib.import_module(".plugins." + plugin, "orgmode")
 
             if not hasattr(module, plugin):
-                echoe(u'Unable to find plugin: %s' % plugin)
+                echoe('Unable to find plugin: %s' % plugin)
                 if self.debug:
-                    raise PluginError(u'Unable to find class %s' % plugin)
+                    raise PluginError('Unable to find class %s' % plugin)
                 return
             _class = getattr(module, plugin)
             self._plugins[plugin] = _class()
             self._plugins[plugin].register()
             if self.debug:
-                echo(u'Plugin registered: %s' % plugin)
+                echo('Plugin registered: %s' % plugin)
             return self._plugins[plugin]
         except BaseException as e:
-            echoe(u'Unable to activate plugin: %s' % plugin)
-            echoe(u"%s" % e)
+            echoe('Unable to activate plugin: %s' % plugin)
+            echoe("%s" % e)
             if self.debug:
                 import traceback
                 echoe(traceback.format_exc())
@@ -359,17 +358,17 @@ class OrgMode(object):
         self.orgmenu.create()
 
     def unregister_menu(self):
-        vim.command(u'silent! aunmenu Org')
+        vim.command('silent! aunmenu Org')
 
     def start(self):
-        u""" Start orgmode and load all requested plugins
+        """ Start orgmode and load all requested plugins
         """
-        plugins = orgmode.settings.get(u"org_plugins")
+        plugins = orgmode.settings.get("org_plugins")
 
         if not plugins:
-            echom(u'orgmode: No plugins registered.')
+            echom('orgmode: No plugins registered.')
 
-        if isinstance(plugins, basestring):
+        if isinstance(plugins, str):
             try:
                 self.register_plugin(plugins)
             except BaseException as e:

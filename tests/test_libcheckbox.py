@@ -2,7 +2,7 @@
 
 import unittest
 import sys
-sys.path.append(u'../ftplugin')
+sys.path.append('../ftplugin')
 
 import vim
 from orgmode.liborgmode.checkboxes import Checkbox
@@ -26,20 +26,20 @@ class CheckboxTestCase(unittest.TestCase):
         vim.EVALHISTORY = []
         vim.EVALRESULTS = {
                 # no org_todo_keywords for b
-                u'exists("b:org_todo_keywords")': '0',
+                'exists("b:org_todo_keywords")': '0',
                 # global values for org_todo_keywords
-                u'exists("g:org_todo_keywords")': '1',
-                u'g:org_todo_keywords': [u'TODO', u'|', u'DONE'],
-                u'exists("g:org_improve_split_heading")': u'0',
-                u'exists("b:org_improve_split_heading")': u'0',
-                u'exists("g:org_debug")': u'0',
-                u'exists("b:org_debug")': u'0',
-                u'exists("*repeat#set()")': u'0',
-                u'b:changedtick': u'%d' % counter,
-                u'&ts': u'8',
-                u'exists("g:org_tag_column")': u'0',
-                u'exists("b:org_tag_column")': u'0',
-                u"v:count": u'0'}
+                'exists("g:org_todo_keywords")': '1',
+                'g:org_todo_keywords': ['TODO', '|', 'DONE'],
+                'exists("g:org_improve_split_heading")': '0',
+                'exists("b:org_improve_split_heading")': '0',
+                'exists("g:org_debug")': '0',
+                'exists("b:org_debug")': '0',
+                'exists("*repeat#set()")': '0',
+                'b:changedtick': '%d' % counter,
+                '&ts': '8',
+                'exists("g:org_tag_column")': '0',
+                'exists("b:org_tag_column")': '0',
+                "v:count": '0'}
 
         self.c1 = """
 * heading1 [/]

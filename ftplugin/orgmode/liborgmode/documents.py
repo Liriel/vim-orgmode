@@ -12,10 +12,9 @@ from collections import UserList
 from orgmode.liborgmode.base import MultiPurposeList, flatten_list, Direction, get_domobj_range
 from orgmode.liborgmode.headings import Heading, HeadingList
 
-from orgmode.py3compat.unicode_compatibility import *
 
 class Document(object):
-    u"""
+    """
     Representation of a whole org-mode document.
 
     A Document consists basically of headings (see Headings) and some metadata.
@@ -24,7 +23,7 @@ class Document(object):
     """
 
     def __init__(self):
-        u"""
+        """
         Don't call this constructor directly but use one of the concrete
         implementations.
 
@@ -47,15 +46,15 @@ class Document(object):
         self._tag_column = 77
 
         # TODO this doesn't differentiate between ACTIVE and FINISHED todo's
-        self.todo_states = [u'TODO', u'DONE']
+        self.todo_states = ['TODO', 'DONE']
 
     def __str__(self):
         if self.meta_information is None:
-            return u'\n'.join(self.all_headings())
-        return u'\n'.join(self.meta_information) + u'\n' + u'\n'.join([u'\n'.join([str(i)] + i.body) for i in self.all_headings()])
+            return '\n'.join(self.all_headings())
+        return '\n'.join(self.meta_information) + '\n' + '\n'.join(['\n'.join([str(i)] + i.body) for i in self.all_headings()])
 
     def get_all_todo_states(self):
-        u""" Convenience function that returns all todo and done states and
+        """ Convenience function that returns all todo and done states and
         sequences in one big list.
 
         Returns:
@@ -65,7 +64,7 @@ class Document(object):
         return flatten_list(self.get_todo_states())
 
     def get_todo_states(self):
-        u""" Returns a list containing a tuple of two lists of allowed todo
+        """ Returns a list containing a tuple of two lists of allowed todo
         states split by todo and done states. Multiple todo-done state
         sequences can be defined.
 
@@ -79,7 +78,7 @@ class Document(object):
 
     @property
     def tabstop(self):
-        u""" Tabstop for this document """
+        """ Tabstop for this document """
         return self._tabstop
 
     @tabstop.setter
@@ -88,7 +87,7 @@ class Document(object):
 
     @property
     def tag_column(self):
-        u""" The column all tags are right-aligned to """
+        """ The column all tags are right-aligned to """
         return self._tag_column
 
     @tag_column.setter
@@ -96,14 +95,14 @@ class Document(object):
         self._tag_column = value
 
     def init_dom(self, heading=Heading):
-        u""" Initialize all headings in document - build DOM. This method
+        """ Initialize all headings in document - build DOM. This method
         should be call prior to accessing the document.
 
         Returns:
             self
         """
         def init_heading(_h):
-            u"""
+            """
             :returns    the initialized heading
             """
             start = _h.end + 1
@@ -164,7 +163,7 @@ class Document(object):
 
     @property
     def meta_information(self):
-        u""" Meta information is text that precedes all headings in an org-mode
+        """ Meta information is text that precedes all headings in an org-mode
         document. It might contain additional information about the document,
         e.g. author
         """
@@ -177,18 +176,18 @@ class Document(object):
         if type(value) in (list, tuple) or isinstance(value, UserList):
             self._meta_information[:] = flatten_list(value)
         elif type(value) in (str, ):
-            self._meta_information[:] = value.split(u'\n')
-        elif type(value) in (unicode, ):
-            self._meta_information[:] = value.split(u'\n')
+            self._meta_information[:] = value.split('\n')
+        elif type(value) is str:
+            self._meta_information[:] = value.split('\n')
         self.set_dirty_meta_information()
 
     @meta_information.deleter
     def meta_information(self):
-        self.meta_information = u''
+        self.meta_information = ''
 
     @property
     def headings(self):
-        u""" List of top level headings """
+        """ List of top level headings """
         return self._headings
 
     @headings.setter
@@ -200,15 +199,15 @@ class Document(object):
         del self.headings[:]
 
     def write(self):
-        u""" Write the document
+        """ Write the document
 
         Returns:
             bool: True if something was written, otherwise False
         """
-        raise NotImplementedError(u'Abstract method, please use concrete implementation!')
+        raise NotImplementedError('Abstract method, please use concrete implementation!')
 
     def set_dirty_meta_information(self):
-        u""" Mark the meta information dirty.
+        """ Mark the meta information dirty.
 
         Note:
             Causes meta information to be rewritten when saving the document
@@ -216,7 +215,7 @@ class Document(object):
         self._dirty_meta_information = True
 
     def set_dirty_document(self):
-        u""" Mark the whole document dirty.
+        """ Mark the whole document dirty.
 
         Note:
             When changing a heading this method must be executed in order to
@@ -227,7 +226,7 @@ class Document(object):
 
     @property
     def is_dirty(self):
-        u""" Return information about unsaved changes for the document and all
+        """ Return information about unsaved changes for the document and all
         related headings.
 
         Returns:
@@ -246,16 +245,16 @@ class Document(object):
 
     @property
     def is_dirty_meta_information(self):
-        u""" Return True if the meta information is marked dirty """
+        """ Return True if the meta information is marked dirty """
         return self._dirty_meta_information
 
     @property
     def is_dirty_document(self):
-        u""" Return True if the document is marked dirty """
+        """ Return True if the document is marked dirty """
         return self._dirty_document
 
     def all_headings(self):
-        u""" Iterate over all headings of the current document in serialized
+        """ Iterate over all headings of the current document in serialized
         order
 
         :returns:    Returns an iterator object which returns all headings of
@@ -273,7 +272,7 @@ class Document(object):
     def find_heading(
         self, position=0, direction=Direction.FORWARD, heading=Heading,
         connect_with_document=True):
-        u""" Find heading in the given direction
+        """ Find heading in the given direction
 
         Args:
             position (int): starting line, counting from 0 (in vim you start

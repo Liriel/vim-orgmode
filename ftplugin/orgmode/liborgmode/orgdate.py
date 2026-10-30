@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-u"""
+"""
     OrgDate
     ~~~~~~~~~~~~~~~~~~
 
@@ -55,7 +55,7 @@ _DATETIMERANGE_SAME_DAY_REGEX = re.compile(
 
 
 def get_orgdate(data):
-    u"""
+    """
     Parse the given data (can be a string or list). Return an OrgDate if data
     contains a string representation of an OrgDate; otherwise return None.
 
@@ -72,7 +72,7 @@ def get_orgdate(data):
 
 
 def _findfirst(f, seq):
-    u"""
+    """
     Return first item in sequence seq where f(item) == True.
 
     TODO: this is a general help function and it should be moved somewhere
@@ -83,7 +83,7 @@ def _findfirst(f, seq):
 
 
 def _text2orgdate(string):
-    u"""
+    """
     Transform the given string into an OrgDate.
     Return an OrgDate if data contains a string representation of an OrgDate;
     otherwise return None.
@@ -162,7 +162,7 @@ def _text2orgdate(string):
 
 
 class OrgDate(datetime.date):
-    u"""
+    """
     OrgDate represents a normal date like '2011-08-29 Mon'.
 
     OrgDates can be active or inactive.
@@ -178,13 +178,13 @@ class OrgDate(datetime.date):
         return datetime.date.__new__(cls, year, month, day)
 
     def __str__(self):
-        u"""
+        """
         Return a string representation.
         """
         if self.active:
-            return self.strftime(u'<%Y-%m-%d %a>')
+            return self.strftime('<%Y-%m-%d %a>')
         else:
-            return self.strftime(u'[%Y-%m-%d %a]')
+            return self.strftime('[%Y-%m-%d %a]')
 
     def timestr(self):
         return '--:--'
@@ -197,7 +197,7 @@ class OrgDate(datetime.date):
 
 
 class OrgDateTime(datetime.datetime):
-    u"""
+    """
     OrgDateTime represents a normal date like '2011-08-29 Mon'.
 
     OrgDateTime can be active or inactive.
@@ -213,13 +213,13 @@ class OrgDateTime(datetime.datetime):
         return datetime.datetime.__new__(cls, year, month, day, hour, minute)
 
     def __str__(self):
-        u"""
+        """
         Return a string representation.
         """
         if self.active:
-            return self.strftime(u'<%Y-%m-%d %a %H:%M>')
+            return self.strftime('<%Y-%m-%d %a %H:%M>')
         else:
-            return self.strftime(u'[%Y-%m-%d %a %H:%M]')
+            return self.strftime('[%Y-%m-%d %a %H:%M]')
 
     def timestr(self):
         return self.strftime('%H:%M')
@@ -232,7 +232,7 @@ class OrgDateTime(datetime.datetime):
 
 
 class OrgTimeRange(object):
-    u"""
+    """
     OrgTimeRange objects have a start and an end. Start and ent can be date
     or datetime. Start and end have to be the same type.
 
@@ -243,7 +243,7 @@ class OrgTimeRange(object):
     """
 
     def __init__(self, active, start, end):
-        u"""
+        """
         stat and end must be datetime.date or datetime.datetime (both of the
         same type).
         """
@@ -253,7 +253,7 @@ class OrgTimeRange(object):
         self.active = active
 
     def __str__(self):
-        u"""
+        """
         Return a string representation.
         """
         # active
@@ -264,18 +264,18 @@ class OrgTimeRange(object):
                 if self.start.year == self.end.year and\
                     self.start.month == self.end.month and\
                     self.start.day == self.end.day:
-                    return u"<%s-%s>" % (
-                        self.start.strftime(u'%Y-%m-%d %a %H:%M'),
-                        self.end.strftime(u'%H:%M'))
+                    return "<%s-%s>" % (
+                        self.start.strftime('%Y-%m-%d %a %H:%M'),
+                        self.end.strftime('%H:%M'))
                 else:
-                    return u"<%s>--<%s>" % (
-                        self.start.strftime(u'%Y-%m-%d %a %H:%M'),
-                        self.end.strftime(u'%Y-%m-%d %a %H:%M'))
+                    return "<%s>--<%s>" % (
+                        self.start.strftime('%Y-%m-%d %a %H:%M'),
+                        self.end.strftime('%Y-%m-%d %a %H:%M'))
             # date
             if isinstance(self.start, datetime.date):
-                return u"<%s>--<%s>" % (
-                    self.start.strftime(u'%Y-%m-%d %a'),
-                    self.end.strftime(u'%Y-%m-%d %a'))
+                return "<%s>--<%s>" % (
+                    self.start.strftime('%Y-%m-%d %a'),
+                    self.end.strftime('%Y-%m-%d %a'))
         # inactive
         else:
             if isinstance(self.start, datetime.datetime):
@@ -283,24 +283,24 @@ class OrgTimeRange(object):
                 if self.start.year == self.end.year and\
                     self.start.month == self.end.month and\
                     self.start.day == self.end.day:
-                    return u"[%s-%s]" % (
-                        self.start.strftime(u'%Y-%m-%d %a %H:%M'),
-                        self.end.strftime(u'%H:%M'))
+                    return "[%s-%s]" % (
+                        self.start.strftime('%Y-%m-%d %a %H:%M'),
+                        self.end.strftime('%H:%M'))
                 else:
-                    return u"[%s]--[%s]" % (
-                        self.start.strftime(u'%Y-%m-%d %a %H:%M'),
-                        self.end.strftime(u'%Y-%m-%d %a %H:%M'))
+                    return "[%s]--[%s]" % (
+                        self.start.strftime('%Y-%m-%d %a %H:%M'),
+                        self.end.strftime('%Y-%m-%d %a %H:%M'))
             if isinstance(self.start, datetime.date):
-                return u"[%s]--[%s]" % (
-                    self.start.strftime(u'%Y-%m-%d %a'),
-                    self.end.strftime(u'%Y-%m-%d %a'))
+                return "[%s]--[%s]" % (
+                    self.start.strftime('%Y-%m-%d %a'),
+                    self.end.strftime('%Y-%m-%d %a'))
 
     def date(self):
         return OrgDate(self.active, self.start.year, self.start.month, self.start.day)
 
 
 def orgdate_to_datetime(orgtime, now=None):
-    u"""
+    """
     Convert an OrgDate, OrgDateTime or OrgTimeRange (its start) to a plain
     datetime so that all of them can be compared with each other. None stays
     None.

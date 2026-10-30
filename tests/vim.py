@@ -2,7 +2,7 @@
 
 
 class VimWindow(object):
-    u""" Docstring for VimWindow """
+    """ Docstring for VimWindow """
 
     def __init__(self, test):
         object.__init__(self)
@@ -28,7 +28,7 @@ class VimBuffer(list):
             list.__init__(self)
 
     def append(self, o):
-        u"""
+        """
         mimic the specific behavior of vim.current.buffer
         """
         if isinstance(o, list) or isinstance(o, tuple):
@@ -39,7 +39,7 @@ class VimBuffer(list):
 
 
 class VimTest(object):
-    u""" Replacement for vim API """
+    """ Replacement for vim API """
 
     def __init__(self):
         object.__init__(self)
@@ -58,17 +58,17 @@ class VimTest(object):
 
 EVALHISTORY = []
 EVALRESULTS = {
-        u'exists("g:org_debug")': 0,
-        u'exists("b:org_debug")': 0,
-        u'exists("*repeat#set()")': 0,
-        u'exists("b:org_plugins")': 0,
-        u'exists("g:org_plugins")': 0,
-        u'b:changedtick': 0,
+        'exists("g:org_debug")': 0,
+        'exists("b:org_debug")': 0,
+        'exists("*repeat#set()")': 0,
+        'exists("b:org_plugins")': 0,
+        'exists("g:org_plugins")': 0,
+        'b:changedtick': 0,
         }
 
 
 def eval(cmd):
-    u""" evaluate command
+    """ evaluate command
 
     :returns: results stored in EVALRESULTS
     """

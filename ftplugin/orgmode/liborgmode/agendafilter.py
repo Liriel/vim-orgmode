@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-u"""
+"""
     agendafilter
     ~~~~~~~~~~~~~~~~
 
@@ -21,7 +21,7 @@ from orgmode.liborgmode.orgdate import orgdate_to_datetime
 
 
 def filter_items(headings, filters):
-    u""" Filter the given headings.
+    """ Filter the given headings.
 
     Args:
         headings (list): Contains headings
@@ -42,7 +42,7 @@ def filter_items(headings, filters):
 
 
 def is_within_week(heading):
-    u""" Test if headings date is within a week
+    """ Test if headings date is within a week
 
     Returns:
         bool: True if the date in the deading is within a week in the future (or
@@ -55,7 +55,7 @@ def is_within_week(heading):
 
 
 def is_within_week_and_active_todo(heading):
-    u"""
+    """
     Returns:
         bool: True if heading contains an active TODO and the date is within a
             week.
@@ -64,7 +64,7 @@ def is_within_week_and_active_todo(heading):
 
 
 def contains_active_todo(heading):
-    u"""
+    """
 
     Returns:
         bool: True if heading contains an active TODO.
@@ -80,7 +80,7 @@ def contains_active_todo(heading):
 
 
 def contains_active_date(heading):
-    u"""
+    """
 
     Returns:
         bool: True if heading contains an active date.

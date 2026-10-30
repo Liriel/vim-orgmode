@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-u"""
+"""
     Agenda
     ~~~~~~~~~~~~~~~~~~
 
@@ -29,14 +29,14 @@ def agenda_sorting_key(heading):
     return (0, active)
 
 class AgendaManager(object):
-    u"""Simple parsing of Documents to create an agenda."""
+    """Simple parsing of Documents to create an agenda."""
     # TODO Move filters in this file, they do the same thing
 
     def __init__(self):
         super(AgendaManager, self).__init__()
 
     def get_todo(self, documents):
-        u"""
+        """
         Get the todo agenda for the given documents (list of document).
         """
         filtered = []
@@ -47,7 +47,7 @@ class AgendaManager(object):
         return sorted(filtered, key=agenda_sorting_key)
 
     def get_next_week_and_active_todo(self, documents):
-        u"""
+        """
         Get the agenda for next week for the given documents (list of
         document).
         """
@@ -59,7 +59,7 @@ class AgendaManager(object):
         return sorted(filtered, key=agenda_sorting_key)
 
     def get_timestamped_items(self, documents):
-        u"""
+        """
         Get all time-stamped items in a time-sorted way for the given
         documents (list of document).
         """

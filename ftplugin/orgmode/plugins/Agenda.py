@@ -3,19 +3,29 @@
 from datetime import date
 import os
 import glob
+from string import Formatter
 
 import vim
 
 from orgmode._vim import ORGMODE, get_bufnumber, get_bufname, echoe
 from orgmode import settings
-from orgmode.keybinding import Keybinding, Plug, Command
+from orgmode.keybinding import Keybinding, Plug, Command, VIM_PY_CALL
 from orgmode.menu import Submenu, ActionEntry, add_cmd_mapping_menu
 
-from orgmode.py3compat.unicode_compatibility import *
-from orgmode.py3compat.py_py3_string import *
+
+class NoneAsEmptyFormatter(Formatter):
+    """ Formatter that renders None values as empty strings """
+
+    def get_value(self, key, args, kwargs):
+        v = super().get_value(key, args, kwargs)
+        return '' if v is None else v
+
+
+fmt = NoneAsEmptyFormatter()
+
 
 class Agenda(object):
-    u"""
+    """
     The Agenda Plugin uses liborgmode.agenda to display the agenda views.
 
     The main task is to format the agenda from liborgmode.agenda.
@@ -23,10 +33,10 @@ class Agenda(object):
     """
 
     def __init__(self):
-        u""" Initialize plugin """
+        """ Initialize plugin """
         object.__init__(self)
         # menu entries this plugin should create
-        self.menu = ORGMODE.orgmenu + Submenu(u'Agenda')
+        self.menu = ORGMODE.orgmenu + Submenu('Agenda')
 
         # key bindings for this plugin
         # key bindings are also registered through the menu so only additional
@@ -38,7 +48,7 @@ class Agenda(object):
 
     @classmethod
     def _switch_to(cls, bufname, vim_commands=None):
-        u"""
+        """
         Swicht to the buffer with bufname.
 
         A list of vim.commands (if given) gets executed as well.
@@ -48,16 +58,16 @@ class Agenda(object):
         quite a few ways to open buffers in vimorgmode.
         """
         cmds = [
-            u'botright split org:%s' % bufname,
-            u'setlocal buftype=nofile',
-            u'setlocal modifiable',
-            u'setlocal nonumber',
+            'botright split org:%s' % bufname,
+            'setlocal buftype=nofile',
+            'setlocal modifiable',
+            'setlocal nonumber',
             # call opendoc() on enter the original todo item
-            u'nnoremap <silent> <buffer> <CR> :exec "%s ORGMODE.plugins[u\'Agenda\'].opendoc()"<CR>' % VIM_PY_CALL,
-            u'nnoremap <silent> <buffer> <TAB> :exec "%s ORGMODE.plugins[u\'Agenda\'].opendoc(switch=True)"<CR>' % VIM_PY_CALL,
-            u'nnoremap <silent> <buffer> <S-CR> :exec "%s ORGMODE.plugins[u\'Agenda\'].opendoc(split=True)"<CR>' % VIM_PY_CALL,
+            'nnoremap <silent> <buffer> <CR> :exec "%s ORGMODE.plugins[u\'Agenda\'].opendoc()"<CR>' % VIM_PY_CALL,
+            'nnoremap <silent> <buffer> <TAB> :exec "%s ORGMODE.plugins[u\'Agenda\'].opendoc(switch=True)"<CR>' % VIM_PY_CALL,
+            'nnoremap <silent> <buffer> <S-CR> :exec "%s ORGMODE.plugins[u\'Agenda\'].opendoc(split=True)"<CR>' % VIM_PY_CALL,
             # statusline
-            u'setlocal statusline=Org\\ %s' % bufname]
+            'setlocal statusline=Org\\ %s' % bufname]
         if vim_commands:
             cmds.extend(vim_commands)
         for cmd in cmds:
@@ -65,19 +75,19 @@ class Agenda(object):
 
     @classmethod
     def _get_agendadocuments(self):
-        u"""
+        """
         Return the org documents of the agenda files; return None if no
         agenda documents are defined.
 
         TODO: maybe turn this into an decorator?
         """
         # load org files of agenda
-        agenda_files = settings.get(u'org_agenda_files', u',')
+        agenda_files = settings.get('org_agenda_files', ',')
         if not agenda_files or agenda_files == ',':
             echoe(
-                u"No org_agenda_files defined. Use :let "
-                u"g:org_agenda_files=['~/org/index.org'] to add "
-                u"files to the agenda view.")
+                "No org_agenda_files defined. Use :let "
+                "g:org_agenda_files=['~/org/index.org'] to add "
+                "files to the agenda view.")
             return
         return self._load_agendafiles(agenda_files)
 
@@ -95,7 +105,7 @@ class Agenda(object):
 
         # load the agenda files into buffers
         for agenda_file in agenda_files:
-            vim.command(u'badd %s' % agenda_file.replace(" ", "\\ "))
+            vim.command('badd %s' % agenda_file.replace(" ", "\\ "))
 
         # determine the buffer nr of the agenda files
         agenda_nums = [get_bufnumber(fn) for fn in agenda_files]
@@ -105,7 +115,7 @@ class Agenda(object):
 
     @classmethod
     def opendoc(cls, split=False, switch=False):
-        u"""
+        """
         If you are in the agenda view jump to the document the item in the
         current line belongs to. cls.line2doc is used for that.
 
@@ -121,7 +131,7 @@ class Agenda(object):
 
         # reload source file if it is not loaded
         if get_bufname(bufnr) is None:
-            vim.command(u'badd %s' % bufname)
+            vim.command('badd %s' % bufname)
             bufnr = get_bufnumber(bufname)
             tmp = cls.line2doc[row]
             cls.line2doc[bufnr] = tmp
@@ -129,13 +139,13 @@ class Agenda(object):
             del cls.line2doc[row]
 
         if split:
-            vim.command(u"sbuffer %s" % bufnr)
+            vim.command("sbuffer %s" % bufnr)
         elif switch:
-            vim.command(u"wincmd w")
-            vim.command(u"buffer %d" % bufnr)
+            vim.command("wincmd w")
+            vim.command("buffer %d" % bufnr)
         else:
-            vim.command(u"buffer %s" % bufnr)
-        vim.command(u"normal! %dgg <CR>" % (destrow + 1))
+            vim.command("buffer %s" % bufnr)
+        vim.command("normal! %dgg <CR>" % (destrow + 1))
 
     @classmethod
     def list_next_week(cls):
@@ -162,8 +172,8 @@ class Agenda(object):
             return
 
         # create buffer at bottom
-        cmd = [u'setlocal filetype=orgagenda', ]
-        cls._switch_to(u'AGENDA', cmd)
+        cmd = ['setlocal filetype=orgagenda', ]
+        cls._switch_to('AGENDA', cmd)
 
         # line2doc is a dic with the mapping:
         #     line in agenda buffer --> source document
@@ -171,7 +181,7 @@ class Agenda(object):
         cls.line2doc = {}
         # format text for agenda
         last_date = None
-        final_agenda = [u'Week Agenda:']
+        final_agenda = ['Week Agenda:']
         for i, h in enumerate(raw_agenda):
             # insert date information for every new date (not datetime)
             active_date_no_time = h.active_date.date()
@@ -179,7 +189,7 @@ class Agenda(object):
                 today = date.today()
                 # insert additional "TODAY" string
                 if active_date_no_time == today:
-                    section = str(active_date_no_time) + u" TODAY"
+                    section = str(active_date_no_time) + " TODAY"
                     today_row = len(final_agenda) + 1
                 else:
                     section = str(active_date_no_time)
@@ -195,8 +205,8 @@ class Agenda(object):
                 p = p.parent
 
             bufname = os.path.basename(vim.buffers[h.document.bufnr].name)
-            bufname = bufname[:-4] if bufname.endswith(u'.org') else bufname
-            formatted = u"  %(bufname)s (%(bufnr)d)  %(todo)s  %(timestr)s  %(title)s %(tags)s" % {
+            bufname = bufname[:-4] if bufname.endswith('.org') else bufname
+            formatted = "  %(bufname)s (%(bufnr)d)  %(todo)s  %(timestr)s  %(title)s %(tags)s" % {
                 'bufname': bufname,
                 'bufnr': h.document.bufnr,
                 'todo': h.todo,
@@ -209,16 +219,16 @@ class Agenda(object):
 
         # show agenda
         vim.current.buffer[:] = [i for i in final_agenda]
-        vim.command(u'setlocal nomodifiable  conceallevel=2 concealcursor=nc')
+        vim.command('setlocal nomodifiable  conceallevel=2 concealcursor=nc')
         # try to jump to the position of today
         try:
-            vim.command(u'normal! %sgg<CR>' % today_row)
+            vim.command('normal! %sgg<CR>' % today_row)
         except:
             pass
 
     @classmethod
     def list_all_todos(cls, current_buffer=False):
-        u""" List all todos in one buffer.
+        """ List all todos in one buffer.
 
         Args:
             current_buffer (bool):
@@ -236,19 +246,19 @@ class Agenda(object):
 
         cls.line2doc = {}
         # create buffer at bottom
-        cmd = [u'setlocal filetype=orgagenda']
-        cls._switch_to(u'AGENDA', cmd)
+        cmd = ['setlocal filetype=orgagenda']
+        cls._switch_to('AGENDA', cmd)
 
         # format text of agenda
         final_agenda = []
         for i, h in enumerate(raw_agenda):
-            tmp = u"%s %s" % (h.todo, h.title)
+            tmp = "%s %s" % (h.todo, h.title)
             final_agenda.append(tmp)
             cls.line2doc[len(final_agenda)] = (get_bufname(h.document.bufnr), h.document.bufnr, h.start)
 
         # show agenda
         vim.current.buffer[:] = [i for i in final_agenda]
-        vim.command(u'setlocal nomodifiable  conceallevel=2 concealcursor=nc')
+        vim.command('setlocal nomodifiable  conceallevel=2 concealcursor=nc')
 
     @classmethod
     def list_timeline(cls):
@@ -260,8 +270,8 @@ class Agenda(object):
             [ORGMODE.get_document()])
 
         # create buffer at bottom
-        cmd = [u'setlocal filetype=orgagenda']
-        cls._switch_to(u'AGENDA', cmd)
+        cmd = ['setlocal filetype=orgagenda']
+        cls._switch_to('AGENDA', cmd)
 
         cls.line2doc = {}
         # format text of agenda
@@ -273,46 +283,46 @@ class Agenda(object):
 
         # show agenda
         vim.current.buffer[:] = [i for i in final_agenda]
-        vim.command(u'setlocal nomodifiable conceallevel=2 concealcursor=nc')
+        vim.command('setlocal nomodifiable conceallevel=2 concealcursor=nc')
 
     def register(self):
-        u"""
+        """
         Registration of the plugin.
 
         Key bindings and other initialization should be done here.
         """
         add_cmd_mapping_menu(
             self,
-            name=u"OrgAgendaTodo",
-            function=u'%s ORGMODE.plugins[u"Agenda"].list_all_todos()' % VIM_PY_CALL,
-            key_mapping=u'<localleader>cat',
-            menu_desrc=u'Agenda for all TODOs'
+            name="OrgAgendaTodo",
+            function='%s ORGMODE.plugins[u"Agenda"].list_all_todos()' % VIM_PY_CALL,
+            key_mapping='<localleader>cat',
+            menu_desrc='Agenda for all TODOs'
         )
         add_cmd_mapping_menu(
             self,
-            name=u"OrgBufferAgendaTodo",
-            function=u'%s ORGMODE.plugins[u"Agenda"].list_all_todos(current_buffer=True)' % VIM_PY_CALL,
-            key_mapping=u'<localleader>caT',
-            menu_desrc=u'Agenda for all TODOs based on current buffer'
+            name="OrgBufferAgendaTodo",
+            function='%s ORGMODE.plugins[u"Agenda"].list_all_todos(current_buffer=True)' % VIM_PY_CALL,
+            key_mapping='<localleader>caT',
+            menu_desrc='Agenda for all TODOs based on current buffer'
         )
         add_cmd_mapping_menu(
             self,
-            name=u"OrgAgendaWeek",
-            function=u'%s ORGMODE.plugins[u"Agenda"].list_next_week()' % VIM_PY_CALL,
-            key_mapping=u'<localleader>caa',
-            menu_desrc=u'Agenda for the week'
+            name="OrgAgendaWeek",
+            function='%s ORGMODE.plugins[u"Agenda"].list_next_week()' % VIM_PY_CALL,
+            key_mapping='<localleader>caa',
+            menu_desrc='Agenda for the week'
         )
         add_cmd_mapping_menu(
             self,
-            name=u"OrgBufferAgendaWeek",
-            function=u'%s ORGMODE.plugins[u"Agenda"].list_next_week_for_buffer()' % VIM_PY_CALL,
-            key_mapping=u'<localleader>caA',
-            menu_desrc=u'Agenda for the week based on current buffer'
+            name="OrgBufferAgendaWeek",
+            function='%s ORGMODE.plugins[u"Agenda"].list_next_week_for_buffer()' % VIM_PY_CALL,
+            key_mapping='<localleader>caA',
+            menu_desrc='Agenda for the week based on current buffer'
         )
         add_cmd_mapping_menu(
             self,
-            name=u'OrgAgendaTimeline',
-            function=u'%s ORGMODE.plugins[u"Agenda"].list_timeline()' % VIM_PY_CALL,
-            key_mapping=u'<localleader>caL',
-            menu_desrc=u'Timeline for this buffer'
+            name='OrgAgendaTimeline',
+            function='%s ORGMODE.plugins[u"Agenda"].list_timeline()' % VIM_PY_CALL,
+            key_mapping='<localleader>caL',
+            menu_desrc='Timeline for this buffer'
         )

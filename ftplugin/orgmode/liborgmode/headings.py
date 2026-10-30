@@ -17,16 +17,14 @@ from orgmode.liborgmode.orgdate import get_orgdate
 from orgmode.liborgmode.checkboxes import Checkbox, CheckboxList
 from orgmode.liborgmode.dom_obj import DomObj, DomObjList, REGEX_SUBTASK, REGEX_SUBTASK_PERCENT, REGEX_HEADING, REGEX_TAG, REGEX_TODO
 
-from orgmode.py3compat.xrange_compatibility import *
-from orgmode.py3compat.unicode_compatibility import *
 
 from collections import UserList
 
 class Heading(DomObj):
-    u""" Structural heading object """
+    """ Structural heading object """
 
-    def __init__(self, level=1, title=u'', tags=None, todo=None, body=None, active_date=None):
-        u"""
+    def __init__(self, level=1, title='', tags=None, todo=None, body=None, active_date=None):
+        """
         :level:        Level of the heading
         :title:        Title of the heading
         :tags:        Tags of the heading
@@ -59,17 +57,17 @@ class Heading(DomObj):
         self._cached_checkbox = None
 
     def __str__(self):
-        res = u'*' * self.level
+        res = '*' * self.level
         if self.todo:
-            res = u' '.join((res, self.todo))
+            res = ' '.join((res, self.todo))
         if self.title:
-            res = u' '.join((res, self.title))
+            res = ' '.join((res, self.title))
 
         # compute position of tags
         if self.tags:
             tabs = 0
             spaces = 2
-            tags = u':%s:' % (u':'.join(self.tags), )
+            tags = ':%s:' % (':'.join(self.tags), )
 
             # FIXME this is broken because of missing associations for headings
             ts = 6
@@ -93,11 +91,11 @@ class Heading(DomObj):
                 else:
                     spaces = tag_column - (len_heading + len_tags)
 
-            res += u'\t' * tabs + u' ' * spaces + tags
+            res += '\t' * tabs + ' ' * spaces + tags
 
         # append a trailing space when there are just * and no text
         if len(res) == self.level:
-            res += u' '
+            res += ' '
         return res
 
     def __len__(self):
@@ -105,7 +103,7 @@ class Heading(DomObj):
         return 1 + len(self.body)
 
     def _compare_dates(self, other):
-        u""" Compare headings by active date: negative, zero or positive.
+        """ Compare headings by active date: negative, zero or positive.
 
         Headings without an active date are placed after all headings with
         one. Dates are compared by day. Only when both are datetimes is the
@@ -148,7 +146,7 @@ class Heading(DomObj):
         return self._compare_dates(other) > 0
 
     def copy(self, including_children=True, parent=None):
-        u"""
+        """
         Create a copy of the current heading. The heading will be completely
         detached and not even belong to a document anymore.
 
@@ -176,7 +174,7 @@ class Heading(DomObj):
         return heading
 
     def all_checkboxes(self):
-        u""" Iterate over all checkboxes of the current heading in serialized
+        """ Iterate over all checkboxes of the current heading in serialized
         order
 
         :returns:    Returns an iterator object which returns all checkboxes of
@@ -192,7 +190,7 @@ class Heading(DomObj):
         return
 
     def all_toplevel_checkboxes(self):
-        u""" return all top level checkboxes for current heading """
+        """ return all top level checkboxes for current heading """
         if not self.checkboxes:
             return
 
@@ -204,7 +202,7 @@ class Heading(DomObj):
 
     def find_checkbox(self, position=0, direction=Direction.FORWARD,
         checkbox=Checkbox, connect_with_heading=True):
-        u""" Find checkbox in the given direction
+        """ Find checkbox in the given direction
 
         :position: starting line, counting from 0 (in vim you start
                     counting from 1, don't forget)
@@ -235,12 +233,12 @@ class Heading(DomObj):
                 heading=self if connect_with_heading else None, orig_start=start)
 
     def init_checkboxes(self, checkbox=Checkbox):
-        u""" Initialize all checkboxes in current heading - build DOM.
+        """ Initialize all checkboxes in current heading - build DOM.
 
         :returns:    self
         """
         def init_checkbox(_c):
-            u"""
+            """
             :returns    the initialized checkbox
             """
             start = _c.end + 1
@@ -294,7 +292,7 @@ class Heading(DomObj):
         return self
 
     def current_checkbox(self, position=None):
-        u""" Find the current checkbox (search backward) and return the related object
+        """ Find the current checkbox (search backward) and return the related object
         :returns:    Checkbox object or None
         """
         if position is None:
@@ -346,7 +344,7 @@ class Heading(DomObj):
 
     @property
     def first_checkbox(self):
-        u""" Access to the first child checkbox or None if no children exist """
+        """ Access to the first child checkbox or None if no children exist """
         if self.checkboxes:
             return self.checkboxes[0]
 
@@ -354,7 +352,7 @@ class Heading(DomObj):
     def parse_heading_from_data(
         cls, data, allowed_todo_states, document=None,
         orig_start=None):
-        u""" Construct a new heading from the provided data
+        """ Construct a new heading from the provided data
 
         :data:            List of lines
         :allowed_todo_states: TODO???
@@ -365,7 +363,7 @@ class Heading(DomObj):
 
         :returns:    The newly created heading
         """
-        test_not_empty = lambda x: x != u''
+        test_not_empty = lambda x: x != ''
 
         def parse_title(heading_line):
             # WARNING this regular expression fails if there is just one or no
@@ -373,32 +371,32 @@ class Heading(DomObj):
             m = REGEX_HEADING.match(heading_line)
             if m:
                 r = m.groupdict()
-                level = len(r[u'level'])
+                level = len(r['level'])
                 todo = None
-                title = u''
-                tags = filter(test_not_empty, r[u'tags'].split(u':')) if r[u'tags'] else []
+                title = ''
+                tags = filter(test_not_empty, r['tags'].split(':')) if r['tags'] else []
                 tags = list(tags)
 
                 # if there is just one or no word in the heading, redo the parsing
-                mt = REGEX_TAG.match(r[u'title'])
+                mt = REGEX_TAG.match(r['title'])
                 if not tags and mt:
                     r = mt.groupdict()
-                    tags = filter(test_not_empty, r[u'tags'].split(u':')) if r[u'tags'] else []
+                    tags = filter(test_not_empty, r['tags'].split(':')) if r['tags'] else []
                     tags = list(tags)
-                if r[u'title'] is not None:
-                    _todo_title = [i.strip() for i in r[u'title'].split(None, 1)]
+                if r['title'] is not None:
+                    _todo_title = [i.strip() for i in r['title'].split(None, 1)]
                     if _todo_title and _todo_title[0] in allowed_todo_states:
                         todo = _todo_title[0]
                         if len(_todo_title) > 1:
                             title = _todo_title[1]
                     else:
-                        title = r[u'title'].strip()
+                        title = r['title'].strip()
 
                 return (level, todo, title, tags)
-            raise ValueError(u'Data doesn\'t start with a heading definition.')
+            raise ValueError('Data doesn\'t start with a heading definition.')
 
         if not data:
-            raise ValueError(u'Unable to create heading, no data provided.')
+            raise ValueError('Unable to create heading, no data provided.')
 
         # create new heaing
         new_heading = cls()
@@ -423,7 +421,7 @@ class Heading(DomObj):
         return new_heading
 
     def update_subtasks(self, total=0, on=0):
-        u""" Update subtask information for current heading
+        """ Update subtask information for current heading
         :total:    total # of top level checkboxes
         :on:    # of top level checkboxes which are on
         """
@@ -439,7 +437,7 @@ class Heading(DomObj):
 
     @staticmethod
     def identify_heading(line):
-        u""" Test if a certain line is a heading or not.
+        """ Test if a certain line is a heading or not.
 
         Args:
             line (str): the line to check
@@ -459,12 +457,12 @@ class Heading(DomObj):
 
     @property
     def is_dirty(self):
-        u""" Return True if the heading's body is marked dirty """
+        """ Return True if the heading's body is marked dirty """
         return self._dirty_heading or self._dirty_body
 
     @property
     def is_dirty_heading(self):
-        u""" Return True if the heading is marked dirty """
+        """ Return True if the heading is marked dirty """
         return self._dirty_heading
 
     def get_index_in_parent_list(self):
@@ -495,7 +493,7 @@ class Heading(DomObj):
                 return self.document.headings
 
     def set_dirty(self):
-        u""" Mark the heading and body dirty so that it will be rewritten when
+        """ Mark the heading and body dirty so that it will be rewritten when
         saving the document """
         self._dirty_heading = True
         self._dirty_body = True
@@ -503,7 +501,7 @@ class Heading(DomObj):
             self._document.set_dirty_document()
 
     def set_dirty_heading(self):
-        u""" Mark the heading dirty so that it will be rewritten when saving the
+        """ Mark the heading dirty so that it will be rewritten when saving the
         document """
         self._dirty_heading = True
         if self._document:
@@ -511,17 +509,17 @@ class Heading(DomObj):
 
     @property
     def previous_heading(self):
-        u""" Serialized access to the previous heading """
+        """ Serialized access to the previous heading """
         return super(Heading, self).previous_item
 
     @property
     def next_heading(self):
-        u""" Serialized access to the next heading """
+        """ Serialized access to the next heading """
         return super(Heading, self).next_item
 
     @property
     def start(self):
-        u""" Access to the starting line of the heading """
+        """ Access to the starting line of the heading """
         if self.document is None or not self.document.is_dirty:
             return self._orig_start
 
@@ -531,23 +529,23 @@ class Heading(DomObj):
 
     @DomObj.level.setter
     def level(self, value):
-        u""" Set the heading level and mark the heading and the document dirty """
+        """ Set the heading level and mark the heading and the document dirty """
         self._level = int(value)
         self.set_dirty_heading()
 
     @property
     def todo(self):
-        u""" Todo state of current heading. When todo state is set"""
+        """ Todo state of current heading. When todo state is set"""
         # extract todo state from heading
         return self._todo
 
     @todo.setter
     def todo(self, value):
         # update todo state
-        if type(value) not in (unicode, str, type(None)):
-            raise ValueError(u'Todo state must be a string or None.')
+        if type(value) not in (str, type(None)):
+            raise ValueError('Todo state must be a string or None.')
         if value and not REGEX_TODO.match(value):
-            raise ValueError(u'Found non allowed character in todo state! %s' % value)
+            raise ValueError('Found non allowed character in todo state! %s' % value)
         if not value:
             self._todo = None
         else:
@@ -560,7 +558,7 @@ class Heading(DomObj):
 
     @property
     def active_date(self):
-        u"""
+        """
         active date of the hearing.
 
         active dates are used in the agenda view. they can be part of the
@@ -578,32 +576,32 @@ class Heading(DomObj):
 
     @DomObj.title.setter
     def title(self, value):
-        u""" Set the title and mark the document and the heading dirty """
+        """ Set the title and mark the document and the heading dirty """
         # TODO these setter should be rewritten to also reuse code from DOM OBJ
-        if type(value) not in (unicode, str):
-            raise ValueError(u'Title must be a string.')
+        if type(value) is not str:
+            raise ValueError('Title must be a string.')
         self._title = value.strip()
         self.set_dirty_heading()
 
     @property
     def tags(self):
-        u""" Tags of the current heading """
+        """ Tags of the current heading """
         return self._tags
 
     @tags.setter
     def tags(self, value):
         v = value
-        if type(v) in (unicode, str):
+        if type(v) is str:
             v = list(str(v))
         if type(v) not in (list, tuple) and not isinstance(v, UserList):
             v = list(str(v))
         v = flatten_list(v)
         v_decoded = []
         for i in v:
-            if type(i) not in (unicode, str):
-                raise ValueError(u'Found non string value in tags! %s' % str(i))
-            if u':' in i:
-                raise ValueError(u'Found non allowed character in tag! %s' % i)
+            if type(i) is not str:
+                raise ValueError('Found non string value in tags! %s' % str(i))
+            if ':' in i:
+                raise ValueError('Found non allowed character in tag! %s' % i)
             v_decoded.append(i)
 
         self._tags[:] = v_decoded
@@ -614,7 +612,7 @@ class Heading(DomObj):
 
     @property
     def checkboxes(self):
-        u""" All checkboxes in current heading """
+        """ All checkboxes in current heading """
         return self._checkboxes
 
     @checkboxes.setter
@@ -627,7 +625,7 @@ class Heading(DomObj):
 
 
 class HeadingList(DomObjList):
-    u"""
+    """
     A Heading List just contains headings. It's used for documents to store top
     level headings and for headings to store subheadings.
 
@@ -656,7 +654,7 @@ class HeadingList(DomObjList):
         return self._obj
 
     def _add_to_deleted_headings(self, item):
-        u"""
+        """
         Serialize headings so that all subheadings are also marked for deletion
         """
         if not self._get_document():
@@ -748,7 +746,7 @@ class HeadingList(DomObjList):
             items = flatten_list(items)
             for head in items:
                 if not self.__class__.is_heading(head):
-                    raise ValueError(u'List contains items that are not a heading!')
+                    raise ValueError('List contains items that are not a heading!')
 
             self._add_to_deleted_headings(self[i])
             self._associate_heading(
@@ -758,9 +756,9 @@ class HeadingList(DomObjList):
             MultiPurposeList.__setitem__(self, i, items)
         else:
             if not self.__class__.is_heading(item):
-                raise ValueError(u'Item is not a heading!')
+                raise ValueError('Item is not a heading!')
             if item in self:
-                raise ValueError(u'Heading is already part of this list!')
+                raise ValueError('Heading is already part of this list!')
             self._add_to_deleted_headings(self[i])
             self._associate_heading(
                 item,
@@ -799,15 +797,15 @@ class HeadingList(DomObjList):
             o = (o, )
         for item in flatten_list(o):
             if not self.__class__.is_heading(item):
-                raise ValueError(u'List contains items that are not a heading!')
+                raise ValueError('List contains items that are not a heading!')
         self._associate_heading(o, self[-1] if len(self) > 0 else None, None)
         return MultiPurposeList.__iadd__(self, o)
 
     def append(self, item, taint=True):
         if not self.__class__.is_heading(item):
-            raise ValueError(u'Item is not a heading!')
+            raise ValueError('Item is not a heading!')
         if item in self:
-            raise ValueError(u'Heading is already part of this list!')
+            raise ValueError('Heading is already part of this list!')
         self._associate_heading(
             item, self[-1] if len(self) > 0 else None,
             None, taint=taint)
@@ -832,6 +830,6 @@ class HeadingList(DomObjList):
             o = (o, )
         for item in o:
             if not self.__class__.is_heading(item):
-                raise ValueError(u'List contains items that are not a heading!')
+                raise ValueError('List contains items that are not a heading!')
         self._associate_heading(o, self[-1] if len(self) > 0 else None, None)
         MultiPurposeList.extend(self, o)

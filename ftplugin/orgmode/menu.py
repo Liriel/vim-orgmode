@@ -14,7 +14,7 @@ def register_menu(f):
                     or isinstance(entry, ActionEntry):
                 entry.create()
 
-        if hasattr(p, u'menu'):
+        if hasattr(p, 'menu'):
             if isinstance(p.menu, list) or isinstance(p.menu, tuple):
                 for e in p.menu:
                     create(e)
@@ -25,7 +25,7 @@ def register_menu(f):
 
 
 def add_cmd_mapping_menu(plugin, name, function, key_mapping, menu_desrc):
-    u"""A helper function to create a vim command and keybinding and add these
+    """A helper function to create a vim command and keybinding and add these
     to the menu for a given plugin.
 
     :plugin: the plugin to operate on.
@@ -44,7 +44,7 @@ def add_cmd_mapping_menu(plugin, name, function, key_mapping, menu_desrc):
 
 
 class Submenu(object):
-    u""" Submenu entry """
+    """ Submenu entry """
 
     def __init__(self, name, parent=None):
         object.__init__(self)
@@ -68,9 +68,9 @@ class Submenu(object):
         return self._children[:]
 
     def get_menu(self):
-        n = self.name.replace(u' ', u'\\ ')
+        n = self.name.replace(' ', '\\ ')
         if self.parent:
-            return u'%s.%s' % (self.parent.get_menu(), n)
+            return '%s.%s' % (self.parent.get_menu(), n)
         return n
 
     def create(self):
@@ -84,25 +84,25 @@ class Submenu(object):
         return res
 
 class Separator(object):
-    u""" Menu entry for a Separator """
+    """ Menu entry for a Separator """
 
     def __init__(self, parent=None):
         object.__init__(self)
         self.parent = parent
 
     def __str__(self):
-        return u'-----'
+        return '-----'
 
     def create(self):
         if self.parent:
             menu = self.parent.get_menu()
-            vim.command(u'menu %s.-%s- :' % (menu, id(self)))
+            vim.command('menu %s.-%s- :' % (menu, id(self)))
 
 class ActionEntry(object):
-    u""" ActionEntry entry """
+    """ ActionEntry entry """
 
     def __init__(self, lname, action, rname=None, mode=MODE_NORMAL, parent=None):
-        u"""
+        """
         :lname: menu title on the left hand side of the menu entry
         :action: could be a vim command sequence or an actual Keybinding
         :rname: menu title that appears on the right hand side of the menu
@@ -116,16 +116,16 @@ class ActionEntry(object):
         self._action = action
         self._rname = rname
         if mode not in (MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT):
-            raise ValueError(u'Parameter mode not in MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT')
+            raise ValueError('Parameter mode not in MODE_ALL, MODE_NORMAL, MODE_VISUAL, MODE_INSERT')
         self._mode = mode
         self.parent = parent
 
     def __str__(self):
-        return u'%s\t%s' % (self.lname, self.rname)
+        return '%s\t%s' % (self.lname, self.rname)
 
     @property
     def lname(self):
-        return self._lname.replace(u' ', u'\\ ')
+        return self._lname.replace(' ', '\\ ')
 
     @property
     def action(self):
@@ -136,7 +136,7 @@ class ActionEntry(object):
     @property
     def rname(self):
         if isinstance(self._action, Keybinding):
-            return self._action.key.replace(u'<Tab>', u'Tab')
+            return self._action.key.replace('<Tab>', 'Tab')
         return self._rname
 
     @property
@@ -146,18 +146,18 @@ class ActionEntry(object):
         return self._mode
 
     def create(self):
-        menucmd = u':%smenu ' % self.mode
-        menu = u''
-        cmd = u''
+        menucmd = ':%smenu ' % self.mode
+        menu = ''
+        cmd = ''
 
         if self.parent:
             menu = self.parent.get_menu()
-        menu += u'.%s' % self.lname
+        menu += '.%s' % self.lname
 
         if self.rname:
-            cmd = u'%s %s<Tab>%s %s' % (menucmd, menu, self.rname, self.action)
+            cmd = '%s %s<Tab>%s %s' % (menucmd, menu, self.rname, self.action)
         else:
-            cmd = u'%s %s %s' % (menucmd, menu, self.action)
+            cmd = '%s %s %s' % (menucmd, menu, self.action)
 
         vim.command(cmd)
 
