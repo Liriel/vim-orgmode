@@ -83,7 +83,7 @@ class DomObj(object):
             self.body = body
 
     def __str__(self):
-        return '<dom obj level=%s, title=%s>' % (level, title)
+        return '<dom obj level=%s, title=%s>' % (self.level, self.title)
 
     def __len__(self):
         # 1 is for the heading's title
