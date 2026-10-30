@@ -307,3 +307,35 @@ class OrgTimeRange(object):
 
     def date(self):
         return OrgDate(self.active, self.start.year, self.start.month, self.start.day)
+
+
+def orgdate_to_datetime(orgtime, now=None):
+    u"""
+    Convert an OrgDate, OrgDateTime or OrgTimeRange (its start) to a plain
+    datetime so that all of them can be compared with each other. None stays
+    None.
+
+    OrgDate cannot be compared with datetime-based values, so a date is
+    converted in such a way that:
+    * an OrgDate of _today_ is placed after today's passed events and before
+      today's upcoming scheduled events.
+    * an OrgDate of a past day is placed after all other items of the same day.
+    * an OrgDate of a future day is placed before all other items of the same
+      day.
+    """
+    if orgtime is None:
+        return None
+    if isinstance(orgtime, OrgTimeRange):
+        orgtime = orgtime.start
+    if isinstance(orgtime, datetime.datetime):
+        return orgtime
+    if now is None:
+        now = datetime.datetime.now()
+    today = now.date()
+    if today == orgtime:
+        time_to_add = now.time()
+    elif today < orgtime:
+        time_to_add = datetime.time(0, 0)
+    else:
+        time_to_add = datetime.time(23, 59)
+    return datetime.datetime.combine(orgtime, time_to_add)

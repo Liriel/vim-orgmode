@@ -17,6 +17,8 @@ u"""
 from datetime import datetime
 from datetime import timedelta
 
+from orgmode.liborgmode.orgdate import orgdate_to_datetime
+
 try:
     from itertools import ifilter as filter
 except:
@@ -53,7 +55,7 @@ def is_within_week(heading):
     """
     if contains_active_date(heading):
         next_week = datetime.today() + timedelta(days=7)
-        if heading.active_date < next_week:
+        if orgdate_to_datetime(heading.active_date) < next_week:
             return True
 
 
