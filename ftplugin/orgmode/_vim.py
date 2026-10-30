@@ -207,7 +207,7 @@ def fold_text(allow_dirty=False):
     else:
         heading = d.current_heading(line - 1)
     if heading:
-        str_heading = unicode(heading)
+        str_heading = str(heading)
 
         # expand tabs
         ts = int(vim.eval(u_encode(u'&ts')))

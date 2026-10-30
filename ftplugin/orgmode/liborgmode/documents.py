@@ -50,13 +50,10 @@ class Document(object):
         # TODO this doesn't differentiate between ACTIVE and FINISHED todo's
         self.todo_states = [u'TODO', u'DONE']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.meta_information is None:
             return u'\n'.join(self.all_headings())
-        return u'\n'.join(self.meta_information) + u'\n' + u'\n'.join([u'\n'.join([unicode(i)] + i.body) for i in self.all_headings()])
-
-    def __str__(self):
-        return u_encode(self.__unicode__())
+        return u'\n'.join(self.meta_information) + u'\n' + u'\n'.join([u'\n'.join([str(i)] + i.body) for i in self.all_headings()])
 
     def get_all_todo_states(self):
         u""" Convenience function that returns all todo and done states and

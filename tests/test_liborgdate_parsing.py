@@ -66,21 +66,21 @@ class OrgDateParsingTestCase(unittest.TestCase):
         result = get_orgdate(daterangestr)
         self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgTimeRange))
-        self.assertEqual(unicode(result), daterangestr)
+        self.assertEqual(str(result), daterangestr)
         self.assertTrue(result.active)
 
         daterangestr = u"<2011-09-12 Mon 10:20>--<2011-09-13 Tue 13:20>"
         result = get_orgdate(daterangestr)
         self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgTimeRange))
-        self.assertEqual(unicode(result), daterangestr)
+        self.assertEqual(str(result), daterangestr)
         self.assertTrue(result.active)
 
         daterangestr = u"<2011-09-12 Mon 10:20-13:20>"
         result = get_orgdate(daterangestr)
         self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgTimeRange))
-        self.assertEqual(unicode(result), daterangestr)
+        self.assertEqual(str(result), daterangestr)
         self.assertTrue(result.active)
 
     def test_get_orgdate_parsing_inactive(self):

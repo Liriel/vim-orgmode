@@ -178,7 +178,7 @@ class OrgDate(datetime.date):
     def __new__(cls, active, year, month, day):
         return datetime.date.__new__(cls, year, month, day)
 
-    def __unicode__(self):
+    def __str__(self):
         u"""
         Return a string representation.
         """
@@ -186,9 +186,6 @@ class OrgDate(datetime.date):
             return self.strftime(u'<%Y-%m-%d %a>')
         else:
             return self.strftime(u'[%Y-%m-%d %a]')
-
-    def __str__(self):
-        return u_encode(self.__unicode__())
 
     def timestr(self):
         return '--:--'
@@ -216,7 +213,7 @@ class OrgDateTime(datetime.datetime):
     def __new__(cls, active, year, month, day, hour, minute):
         return datetime.datetime.__new__(cls, year, month, day, hour, minute)
 
-    def __unicode__(self):
+    def __str__(self):
         u"""
         Return a string representation.
         """
@@ -224,9 +221,6 @@ class OrgDateTime(datetime.datetime):
             return self.strftime(u'<%Y-%m-%d %a %H:%M>')
         else:
             return self.strftime(u'[%Y-%m-%d %a %H:%M]')
-
-    def __str__(self):
-        return u_encode(self.__unicode__())
 
     def timestr(self):
         return self.strftime('%H:%M')
@@ -259,7 +253,7 @@ class OrgTimeRange(object):
         self.end = end
         self.active = active
 
-    def __unicode__(self):
+    def __str__(self):
         u"""
         Return a string representation.
         """
@@ -301,9 +295,6 @@ class OrgTimeRange(object):
                 return u"[%s]--[%s]" % (
                     self.start.strftime(u'%Y-%m-%d %a'),
                     self.end.strftime(u'%Y-%m-%d %a'))
-
-    def __str__(self):
-        return u_encode(self.__unicode__())
 
     def date(self):
         return OrgDate(self.active, self.start.year, self.start.month, self.start.day)

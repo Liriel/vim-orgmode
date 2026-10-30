@@ -1022,12 +1022,12 @@ Bla Bla bla bla
     def test_tag_read_one(self):
         self.assertEqual(len(self.document.headings[0].tags), 1)
         self.assertEqual(self.document.headings[0].tags[0], u'testtag')
-        self.assertEqual(unicode(self.document.headings[0]), u'* Überschrift 1							    :testtag:')
+        self.assertEqual(str(self.document.headings[0]), u'* Überschrift 1							    :testtag:')
 
     def test_tag_read_multiple(self):
         self.assertEqual(len(self.document.headings[0].children[0].tags), 2)
         self.assertEqual(self.document.headings[0].children[0].tags, [u'multi', 'tags'])
-        self.assertEqual(unicode(self.document.headings[0].children[0]), u'** Überschrift 1.1						 :multi:tags:')
+        self.assertEqual(str(self.document.headings[0].children[0]), u'** Überschrift 1.1						 :multi:tags:')
 
     def test_tag_no_tags(self):
         self.assertEqual(len(self.document.headings[0].children[1].children), 3)
@@ -1050,7 +1050,7 @@ Bla Bla bla bla
         self.assertEqual(len(self.document.headings[3].children), 0)
         self.assertEqual(len(self.document.headings[3].tags), 2)
         self.assertEqual(self.document.headings[3].tags, [u'title', u'long'])
-        self.assertEqual(unicode(self.document.headings[3]), u'* Überschrift 4 super long long long long long long long long extremely long title  :title:long:')
+        self.assertEqual(str(self.document.headings[3]), u'* Überschrift 4 super long long long long long long long long extremely long title  :title:long:')
 
     def test_tag_read_long_title_plus_todo_state(self):
         self.assertEqual(len(self.document.headings[4].children), 0)
@@ -1059,7 +1059,7 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[4].todo, u'TODO')
         self.assertEqual(self.document.headings[4].title, u'Überschrift 5 super long long long long long long long long extremely long title')
         self.assertEqual(self.document.headings[4].tags, [u'title_with_todo'])
-        self.assertEqual(unicode(self.document.headings[4]), u'* TODO Überschrift 5 super long long long long long long long long extremely long title  :title_with_todo:')
+        self.assertEqual(str(self.document.headings[4]), u'* TODO Überschrift 5 super long long long long long long long long extremely long title  :title_with_todo:')
 
     def test_tag_del_tags(self):
         self.assertEqual(len(self.document.headings[0].tags), 1)
@@ -1067,14 +1067,14 @@ Bla Bla bla bla
         self.assertEqual(len(self.document.headings[0].tags), 0)
         self.assertEqual(self.document.headings[0].is_dirty_heading, True)
         self.assertEqual(self.document.headings[0].is_dirty_body, False)
-        self.assertEqual(unicode(self.document.headings[0]), u'* Überschrift 1')
+        self.assertEqual(str(self.document.headings[0]), u'* Überschrift 1')
         self.assertEqual(self.document.write(), True)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(len(d.headings[0].tags), 0)
         self.assertEqual(d.headings[0].title, u'Überschrift 1')
-        self.assertEqual(unicode(d.headings[0]), u'* Überschrift 1')
+        self.assertEqual(str(d.headings[0]), u'* Überschrift 1')
 
     def test_tag_replace_one_tag(self):
         self.assertEqual(len(self.document.headings[0].tags), 1)
@@ -1082,7 +1082,7 @@ Bla Bla bla bla
         self.assertEqual(len(self.document.headings[0].tags), 1)
         self.assertEqual(self.document.headings[0].is_dirty_heading, True)
         self.assertEqual(self.document.headings[0].is_dirty_body, False)
-        self.assertEqual(unicode(self.document.headings[0]), u'* Überschrift 1							 :justonetag:')
+        self.assertEqual(str(self.document.headings[0]), u'* Überschrift 1							 :justonetag:')
         self.assertEqual(self.document.write(), True)
 
         # sanity check
@@ -1090,7 +1090,7 @@ Bla Bla bla bla
         self.assertEqual(len(d.headings[0].tags), 1)
         self.assertEqual(d.headings[0].tags, [u'justonetag'])
         self.assertEqual(d.headings[0].title, u'Überschrift 1')
-        self.assertEqual(unicode(d.headings[0]), u'* Überschrift 1							 :justonetag:')
+        self.assertEqual(str(d.headings[0]), u'* Überschrift 1							 :justonetag:')
 
     def test_tag_replace_multiple_tags(self):
         self.assertEqual(len(self.document.headings[1].tags), 2)
@@ -1098,7 +1098,7 @@ Bla Bla bla bla
         self.assertEqual(len(self.document.headings[1].tags), 3)
         self.assertEqual(self.document.headings[1].is_dirty_heading, True)
         self.assertEqual(self.document.headings[1].is_dirty_body, False)
-        self.assertEqual(unicode(self.document.headings[1]), u'* Überschrift 2				       :justonetag:moretags:lesstags:')
+        self.assertEqual(str(self.document.headings[1]), u'* Überschrift 2				       :justonetag:moretags:lesstags:')
         self.assertEqual(self.document.write(), True)
 
         # sanity check
@@ -1106,7 +1106,7 @@ Bla Bla bla bla
         self.assertEqual(len(d.headings[1].tags), 3)
         self.assertEqual(d.headings[1].tags, [u'justonetag', u'moretags', u'lesstags'])
         self.assertEqual(d.headings[1].title, u'Überschrift 2')
-        self.assertEqual(unicode(d.headings[1]), u'* Überschrift 2				       :justonetag:moretags:lesstags:')
+        self.assertEqual(str(d.headings[1]), u'* Überschrift 2				       :justonetag:moretags:lesstags:')
 
 class VimBufferTodoTestCase(unittest.TestCase):
     def setUp(self):
@@ -1172,27 +1172,27 @@ Bla Bla bla bla
 
 """.split(u'\n') ]
         d = VimBuffer().init_dom()
-        self.assertEqual(unicode(d.headings[0]), u'* TEST')
+        self.assertEqual(str(d.headings[0]), u'* TEST')
 
     def test_todo_read_TODO(self):
         self.assertEqual(self.document.headings[0].todo, u'TODO')
         self.assertEqual(self.document.headings[0].title, u'Überschrift 1')
-        self.assertEqual(unicode(self.document.headings[0]), u'* TODO Überschrift 1						    :testtag:')
+        self.assertEqual(str(self.document.headings[0]), u'* TODO Überschrift 1						    :testtag:')
 
     def test_todo_read_TODO_NOTODO(self):
         self.assertEqual(self.document.headings[0].children[0].todo, u'TODO')
         self.assertEqual(self.document.headings[0].children[0].title, u'NOTODO Überschrift 1.1')
-        self.assertEqual(unicode(self.document.headings[0].children[0]), u'** TODO NOTODO Überschrift 1.1					 :multi:tags:')
+        self.assertEqual(str(self.document.headings[0].children[0]), u'** TODO NOTODO Überschrift 1.1					 :multi:tags:')
 
     def test_todo_read_WAITING(self):
         self.assertEqual(self.document.headings[1].todo, u'WAITING')
         self.assertEqual(self.document.headings[1].title, u'Überschrift 2')
-        self.assertEqual(unicode(self.document.headings[1]), u'* WAITING Überschrift 2						  :more:tags:')
+        self.assertEqual(str(self.document.headings[1]), u'* WAITING Überschrift 2						  :more:tags:')
 
     def test_todo_read_DONE(self):
         self.assertEqual(self.document.headings[2].todo, u'DONE')
         self.assertEqual(self.document.headings[2].title, u'Überschrift 3')
-        self.assertEqual(unicode(self.document.headings[2]), u'* DONE Überschrift 3						 :lesser:tag:')
+        self.assertEqual(str(self.document.headings[2]), u'* DONE Überschrift 3						 :lesser:tag:')
 
     def test_todo_read_special(self):
         self.assertEqual(self.document.headings[3].todo, u'DÖNE')
@@ -1214,14 +1214,14 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0].is_dirty_heading, True)
         self.assertEqual(self.document.headings[0].todo, None)
         self.assertEqual(self.document.headings[0].title, u'Überschrift 1')
-        self.assertEqual(unicode(self.document.headings[0]), u'* Überschrift 1							    :testtag:')
+        self.assertEqual(str(self.document.headings[0]), u'* Überschrift 1							    :testtag:')
         self.assertEqual(self.document.write(), True)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(d.headings[0].todo, None)
         self.assertEqual(d.headings[0].title, u'Überschrift 1')
-        self.assertEqual(unicode(d.headings[0]), u'* Überschrift 1							    :testtag:')
+        self.assertEqual(str(d.headings[0]), u'* Überschrift 1							    :testtag:')
 
     def test_todo_write_todo_uppercase(self):
         self.assertEqual(self.document.headings[0].todo, u'TODO')
@@ -1230,14 +1230,14 @@ Bla Bla bla bla
         self.assertEqual(self.document.headings[0].is_dirty_heading, True)
         self.assertEqual(self.document.headings[0].todo, u'DONE')
         self.assertEqual(self.document.headings[0].title, u'Überschrift 1')
-        self.assertEqual(unicode(self.document.headings[0]), u'* DONE Überschrift 1						    :testtag:')
+        self.assertEqual(str(self.document.headings[0]), u'* DONE Überschrift 1						    :testtag:')
         self.assertEqual(self.document.write(), True)
 
         # sanity check
         d = VimBuffer().init_dom()
         self.assertEqual(d.headings[0].todo, u'DONE')
         self.assertEqual(d.headings[0].title, u'Überschrift 1')
-        self.assertEqual(unicode(d.headings[0]), u'* DONE Überschrift 1						    :testtag:')
+        self.assertEqual(str(d.headings[0]), u'* DONE Überschrift 1						    :testtag:')
 
     def test_todo_set_illegal_todo(self):
         def set_todo(todo):

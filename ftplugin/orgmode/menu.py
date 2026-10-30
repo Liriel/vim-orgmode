@@ -91,11 +91,8 @@ class Separator(object):
         object.__init__(self)
         self.parent = parent
 
-    def __unicode__(self):
-        return u'-----'
-
     def __str__(self):
-        return u_encode(self.__unicode__())
+        return u'-----'
 
     def create(self):
         if self.parent:

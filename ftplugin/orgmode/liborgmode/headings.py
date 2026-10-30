@@ -59,7 +59,7 @@ class Heading(DomObj):
         self._checkboxes = CheckboxList(obj=self)
         self._cached_checkbox = None
 
-    def __unicode__(self):
+    def __str__(self):
         res = u'*' * self.level
         if self.todo:
             res = u' '.join((res, self.todo))
@@ -100,9 +100,6 @@ class Heading(DomObj):
         if len(res) == self.level:
             res += u' '
         return res
-
-    def __str__(self):
-        return u_encode(self.__unicode__())
 
     def __len__(self):
         # 1 is for the heading's title
@@ -604,14 +601,14 @@ class Heading(DomObj):
     def tags(self, value):
         v = value
         if type(v) in (unicode, str):
-            v = list(unicode(v))
+            v = list(str(v))
         if type(v) not in (list, tuple) and not isinstance(v, UserList):
-            v = list(unicode(v))
+            v = list(str(v))
         v = flatten_list(v)
         v_decoded = []
         for i in v:
             if type(i) not in (unicode, str):
-                raise ValueError(u'Found non string value in tags! %s' % unicode(i))
+                raise ValueError(u'Found non string value in tags! %s' % str(i))
             if u':' in i:
                 raise ValueError(u'Found non allowed character in tag! %s' % i)
             i_tmp = i.strip().replace(' ', '_').replace('\t', '_')

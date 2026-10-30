@@ -49,11 +49,8 @@ class Command(object):
         self._complete            = complete
         self._overwrite_exisiting = overwrite_exisiting
 
-    def __unicode__(self):
-        return u':%s<CR>' % self.name
-
     def __str__(self):
-        return u_encode(self.__unicode__())
+        return u':%s<CR>' % self.name
 
     @property
     def name(self):
@@ -105,11 +102,8 @@ class Plug(object):
         self.command = command
         self.created = False
 
-    def __unicode__(self):
-        return u'<Plug>%s' % self.name
-
     def __str__(self):
-        return u_encode(self.__unicode__())
+        return u'<Plug>%s' % self.name
 
     def create(self):
         if not self.created:

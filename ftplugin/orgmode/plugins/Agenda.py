@@ -180,10 +180,10 @@ class Agenda(object):
                 today = date.today()
                 # insert additional "TODAY" string
                 if active_date_no_time == today:
-                    section = unicode(active_date_no_time) + u" TODAY"
+                    section = str(active_date_no_time) + u" TODAY"
                     today_row = len(final_agenda) + 1
                 else:
-                    section = unicode(active_date_no_time)
+                    section = str(active_date_no_time)
                 final_agenda.append(section)
 
                 # update last_date

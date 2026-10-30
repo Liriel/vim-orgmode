@@ -199,12 +199,12 @@ class VimBuffer(Document):
                     # this is a heading that existed before and was changed. It
                     # needs to be replaced
                     if h.is_dirty_heading:
-                        self._content[h.start:h.start + 1] = [unicode(h)]
+                        self._content[h.start:h.start + 1] = [str(h)]
                     if h.is_dirty_body:
                         self._content[h.start + 1:h.start + h._orig_len] = h.body
                 else:
                     # this is a new heading. It needs to be inserted
-                    self._content[h.start:h.start] = [unicode(h)] + h.body
+                    self._content[h.start:h.start] = [str(h)] + h.body
                 del vim.current.buffer[-1] # restore workaround for neovim bug
                 h._dirty_heading = False
                 h._dirty_body = False
@@ -253,7 +253,7 @@ class VimBuffer(Document):
                 # this is a heading that existed before and was changed. It
                 # needs to be replaced
                 if heading.is_dirty_heading:
-                    self._content[heading._orig_start:heading._orig_start + 1] = [unicode(heading)]
+                    self._content[heading._orig_start:heading._orig_start + 1] = [str(heading)]
                 if heading.is_dirty_body:
                     self._content[heading._orig_start + 1:heading._orig_start + heading._orig_len] = heading.body
             else:
@@ -278,7 +278,7 @@ class VimBuffer(Document):
                 # print "checkbox is dirty? " + str(checkbox.is_dirty_checkbox)
                 # print checkbox
                 if checkbox.is_dirty_checkbox:
-                    self._content[checkbox._orig_start:checkbox._orig_start + 1] = [unicode(checkbox)]
+                    self._content[checkbox._orig_start:checkbox._orig_start + 1] = [str(checkbox)]
                 if checkbox.is_dirty_body:
                     self._content[checkbox._orig_start + 1:checkbox._orig_start + checkbox._orig_len] = checkbox.body
             else:

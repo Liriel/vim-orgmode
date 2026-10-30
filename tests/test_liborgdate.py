@@ -40,11 +40,11 @@ class OrgDateTestCase(unittest.TestCase):
     def test_OrdDate_str_active(self):
         u"""Representation of OrgDates"""
         od = OrgDate(True, self.year, self.month, self.day)
-        self.assertEqual(self.text, unicode(od))
+        self.assertEqual(self.text, str(od))
 
     def test_OrdDate_str_inactive(self):
         od = OrgDate(False, self.year, self.month, self.day)
-        self.assertEqual(self.textinactive, unicode(od))
+        self.assertEqual(self.textinactive, str(od))
 
 
 def suite():

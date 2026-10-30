@@ -84,11 +84,8 @@ class DomObj(object):
         if body:
             self.body = body
 
-    def __unicode__(self):
-        return u'<dom obj level=%s, title=%s>' % (level, title)
-
     def __str__(self):
-        return u_encode(self.__unicode__())
+        return u'<dom obj level=%s, title=%s>' % (level, title)
 
     def __len__(self):
         # 1 is for the heading's title
@@ -325,7 +322,7 @@ class DomObj(object):
         elif type(value) in (unicode, ):
             self._body[:] = value.split(u'\n')
         else:
-            self.body = list(unicode(value))
+            self.body = list(str(value))
 
     @body.deleter
     def body(self):

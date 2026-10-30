@@ -43,12 +43,12 @@ class OrgDateUtf8TestCase(unittest.TestCase):
     def test_OrdDate_str_unicode_active(self):
         with self.setlocale(self.UTF8_LOCALE):
             od = OrgDate(True, self.year, self.month, self.day)
-            self.assertEqual(self.text, unicode(od))
+            self.assertEqual(self.text, str(od))
 
     def test_OrdDate_str_unicode_inactive(self):
         with self.setlocale(self.UTF8_LOCALE):
             od = OrgDate(False, self.year, self.month, self.day)
-            self.assertEqual(self.textinactive, unicode(od))
+            self.assertEqual(self.textinactive, str(od))
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(OrgDateUtf8TestCase)
