@@ -163,7 +163,7 @@ class TagsProperties(object):
 
         cmd = Command(
             'OrgSetTags',
-            '%s ORGMODE.plugins[u"TagsProperties"].set_tags()' % VIM_PY_CALL)
+            '%s ORGMODE.plugins["TagsProperties"].set_tags()' % VIM_PY_CALL)
         self.commands.append(cmd)
         keybinding = Keybinding(
             '<localleader>st',
@@ -173,7 +173,7 @@ class TagsProperties(object):
 
         cmd = Command(
             'OrgFindTags',
-            '%s ORGMODE.plugins[u"TagsProperties"].find_tags()' % VIM_PY_CALL)
+            '%s ORGMODE.plugins["TagsProperties"].find_tags()' % VIM_PY_CALL)
         self.commands.append(cmd)
         keybinding = Keybinding(
             '<localleader>ft',
@@ -183,13 +183,13 @@ class TagsProperties(object):
 
         cmd = Command(
             'OrgTagsRealign',
-            "%s ORGMODE.plugins[u'TagsProperties'].realign_all_tags()" % VIM_PY_CALL)
+            "%s ORGMODE.plugins['TagsProperties'].realign_all_tags()" % VIM_PY_CALL)
         self.commands.append(cmd)
 
         # workaround to align tags when user is leaving insert mode
         vim.command("""function Org_complete_tags(ArgLead, CmdLine, CursorPos)
 python3 << EOF
-ORGMODE.plugins[u'TagsProperties'].complete_tags()
+ORGMODE.plugins['TagsProperties'].complete_tags()
 EOF
 if exists('b:org_complete_tags')
     let tmp = b:org_complete_tags
@@ -202,7 +202,7 @@ endfunction""")
 
         vim.command("""function Org_realign_tags_on_insert_leave()
 if !exists('b:org_complete_tag_on_insertleave_au')
-    :au orgmode InsertLeave <buffer> %s ORGMODE.plugins[u'TagsProperties'].realign_tags()
+    :au orgmode InsertLeave <buffer> %s ORGMODE.plugins['TagsProperties'].realign_tags()
     let b:org_complete_tag_on_insertleave_au = 1
 endif
 endfunction""" % VIM_PY_CALL)

@@ -37,5 +37,5 @@ class LoggingWork(object):
         Registration of plugin. Key bindings and other initialization should be done.
         """
         # an Action menu entry which binds "keybinding" to action ":action"
-        self.commands.append(Command('OrgLoggingRecordDoneTime', '%s ORGMODE.plugins[u"LoggingWork"].action()' % VIM_PY_CALL))
+        self.commands.append(Command('OrgLoggingRecordDoneTime', '%s ORGMODE.plugins["LoggingWork"].action()' % VIM_PY_CALL))
         self.menu + ActionEntry('&Record DONE time', self.commands[-1])

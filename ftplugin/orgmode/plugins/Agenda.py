@@ -294,35 +294,35 @@ class Agenda(object):
         add_cmd_mapping_menu(
             self,
             name="OrgAgendaTodo",
-            function='%s ORGMODE.plugins[u"Agenda"].list_all_todos()' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["Agenda"].list_all_todos()' % VIM_PY_CALL,
             key_mapping='<localleader>cat',
             menu_desrc='Agenda for all TODOs'
         )
         add_cmd_mapping_menu(
             self,
             name="OrgBufferAgendaTodo",
-            function='%s ORGMODE.plugins[u"Agenda"].list_all_todos(current_buffer=True)' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["Agenda"].list_all_todos(current_buffer=True)' % VIM_PY_CALL,
             key_mapping='<localleader>caT',
             menu_desrc='Agenda for all TODOs based on current buffer'
         )
         add_cmd_mapping_menu(
             self,
             name="OrgAgendaWeek",
-            function='%s ORGMODE.plugins[u"Agenda"].list_next_week()' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["Agenda"].list_next_week()' % VIM_PY_CALL,
             key_mapping='<localleader>caa',
             menu_desrc='Agenda for the week'
         )
         add_cmd_mapping_menu(
             self,
             name="OrgBufferAgendaWeek",
-            function='%s ORGMODE.plugins[u"Agenda"].list_next_week_for_buffer()' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["Agenda"].list_next_week_for_buffer()' % VIM_PY_CALL,
             key_mapping='<localleader>caA',
             menu_desrc='Agenda for the week based on current buffer'
         )
         add_cmd_mapping_menu(
             self,
             name='OrgAgendaTimeline',
-            function='%s ORGMODE.plugins[u"Agenda"].list_timeline()' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["Agenda"].list_timeline()' % VIM_PY_CALL,
             key_mapping='<localleader>caL',
             menu_desrc='Timeline for this buffer'
         )

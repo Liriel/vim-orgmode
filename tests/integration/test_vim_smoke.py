@@ -142,10 +142,10 @@ def test_vimbuffercontent_writes_through_to_real_buffer(tmp_path):
         from collections import UserList
         from orgmode.vimbuffer import VimBufferContent
         c = VimBufferContent(vim.current.buffer)
-        c[0] = u'* Überschrift'
-        c[1:2] = UserList([u'body ä', u'more'])
-        c[0:0] = (u'first',)
-        c.append(u'last')
+        c[0] = '* Überschrift'
+        c[1:2] = UserList(['body ä', 'more'])
+        c[0:0] = ('first',)
+        c.append('last')
         result['popped'] = c.pop()
         result['item'] = c[1]
         result['slice'] = c[0:2]

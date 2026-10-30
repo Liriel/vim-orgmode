@@ -144,26 +144,26 @@ class Misc(object):
         Registration of plugin. Key bindings and other initialization should be done.
         """
         self.keybindings.append(Keybinding('^',
-                                     Plug('OrgJumpToFirstCharacter', '%s ORGMODE.plugins[u"Misc"].jump_to_first_character()<CR>' % VIM_PY_CALL)))
+                                     Plug('OrgJumpToFirstCharacter', '%s ORGMODE.plugins["Misc"].jump_to_first_character()<CR>' % VIM_PY_CALL)))
         self.keybindings.append(Keybinding('I',
-                                     Plug('OrgEditAtFirstCharacter', '%s ORGMODE.plugins[u"Misc"].edit_at_first_character()<CR>' % VIM_PY_CALL)))
+                                     Plug('OrgEditAtFirstCharacter', '%s ORGMODE.plugins["Misc"].edit_at_first_character()<CR>' % VIM_PY_CALL)))
 
-        self.keybindings.append(Keybinding('ih', Plug('OrgInnerHeadingVisual', ':<C-u>%s ORGMODE.plugins[u"Misc"].i_heading()<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding('ah', Plug('OrgAInnerHeadingVisual', ':<C-u>%s ORGMODE.plugins[u"Misc"].a_heading()<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding('Oh', Plug('OrgOuterHeadingVisual', ':<C-u>%s ORGMODE.plugins[u"Misc"].i_heading(selection=u"outer")<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding('OH', Plug('OrgAOuterHeadingVisual', ':<C-u>%s ORGMODE.plugins[u"Misc"].a_heading(selection=u"outer")<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(Keybinding('ih', Plug('OrgInnerHeadingVisual', ':<C-u>%s ORGMODE.plugins["Misc"].i_heading()<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(Keybinding('ah', Plug('OrgAInnerHeadingVisual', ':<C-u>%s ORGMODE.plugins["Misc"].a_heading()<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(Keybinding('Oh', Plug('OrgOuterHeadingVisual', ':<C-u>%s ORGMODE.plugins["Misc"].i_heading(selection="outer")<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(Keybinding('OH', Plug('OrgAOuterHeadingVisual', ':<C-u>%s ORGMODE.plugins["Misc"].a_heading(selection="outer")<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
 
-        self.keybindings.append(Keybinding('ih', Plug('OrgInnerHeadingOperator', ':<C-u>%s ORGMODE.plugins[u"Misc"].i_heading(mode=u"operator")<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
+        self.keybindings.append(Keybinding('ih', Plug('OrgInnerHeadingOperator', ':<C-u>%s ORGMODE.plugins["Misc"].i_heading(mode="operator")<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
         self.keybindings.append(Keybinding('ah', ':normal Vah<CR>', mode=MODE_OPERATOR))
-        self.keybindings.append(Keybinding('Oh', Plug('OrgOuterHeadingOperator', ':<C-u>%s ORGMODE.plugins[u"Misc"].i_heading(mode=u"operator", selection=u"outer")<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
+        self.keybindings.append(Keybinding('Oh', Plug('OrgOuterHeadingOperator', ':<C-u>%s ORGMODE.plugins["Misc"].i_heading(mode="operator", selection="outer")<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
         self.keybindings.append(Keybinding('OH', ':normal VOH<CR>', mode=MODE_OPERATOR))
 
-        self.keybindings.append(Keybinding('ir', Plug('OrgInnerTreeVisual', ':<C-u>%s ORGMODE.plugins[u"Misc"].i_heading(skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding('ar', Plug('OrgAInnerTreeVisual', ':<C-u>%s ORGMODE.plugins[u"Misc"].a_heading(skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding('Or', Plug('OrgOuterTreeVisual', '<:<C-u>%s ORGMODE.plugins[u"Misc"].i_heading(selection=u"outer", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
-        self.keybindings.append(Keybinding('OR', Plug('OrgAOuterTreeVisual', ':<C-u>%s ORGMODE.plugins[u"Misc"].a_heading(selection=u"outer", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(Keybinding('ir', Plug('OrgInnerTreeVisual', ':<C-u>%s ORGMODE.plugins["Misc"].i_heading(skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(Keybinding('ar', Plug('OrgAInnerTreeVisual', ':<C-u>%s ORGMODE.plugins["Misc"].a_heading(skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(Keybinding('Or', Plug('OrgOuterTreeVisual', '<:<C-u>%s ORGMODE.plugins["Misc"].i_heading(selection="outer", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
+        self.keybindings.append(Keybinding('OR', Plug('OrgAOuterTreeVisual', ':<C-u>%s ORGMODE.plugins["Misc"].a_heading(selection="outer", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_VISUAL)))
 
-        self.keybindings.append(Keybinding('ir', Plug('OrgInnerTreeOperator', ':<C-u>%s ORGMODE.plugins[u"Misc"].i_heading(mode=u"operator", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
+        self.keybindings.append(Keybinding('ir', Plug('OrgInnerTreeOperator', ':<C-u>%s ORGMODE.plugins["Misc"].i_heading(mode="operator", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
         self.keybindings.append(Keybinding('ar', ':normal Var<CR>', mode=MODE_OPERATOR))
-        self.keybindings.append(Keybinding('Or', Plug('OrgOuterTreeOperator', ':<C-u>%s ORGMODE.plugins[u"Misc"].i_heading(mode=u"operator", selection=u"outer", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
+        self.keybindings.append(Keybinding('Or', Plug('OrgOuterTreeOperator', ':<C-u>%s ORGMODE.plugins["Misc"].i_heading(mode="operator", selection="outer", skip_children=True)<CR>' % VIM_PY_CALL, mode=MODE_OPERATOR)))
         self.keybindings.append(Keybinding('OR', ':normal VOR<CR>', mode=MODE_OPERATOR))

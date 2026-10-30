@@ -159,7 +159,7 @@ class Hyperlinks(object):
         """
         cmd = Command(
             'OrgHyperlinkFollow',
-            '%s ORGMODE.plugins[u"Hyperlinks"].follow()' % VIM_PY_CALL)
+            '%s ORGMODE.plugins["Hyperlinks"].follow()' % VIM_PY_CALL)
         self.commands.append(cmd)
         self.keybindings.append(
             Keybinding('gl', Plug('OrgHyperlinkFollow', self.commands[-1])))
@@ -167,7 +167,7 @@ class Hyperlinks(object):
 
         cmd = Command(
             'OrgHyperlinkCopy',
-            '%s ORGMODE.plugins[u"Hyperlinks"].follow(action=u"copy")' % VIM_PY_CALL)
+            '%s ORGMODE.plugins["Hyperlinks"].follow(action="copy")' % VIM_PY_CALL)
         self.commands.append(cmd)
         self.keybindings.append(
             Keybinding('gyl', Plug('OrgHyperlinkCopy', self.commands[-1])))
@@ -175,7 +175,7 @@ class Hyperlinks(object):
 
         cmd = Command(
             'OrgHyperlinkInsert',
-            '%s ORGMODE.plugins[u"Hyperlinks"].insert(<f-args>)' % VIM_PY_CALL,
+            '%s ORGMODE.plugins["Hyperlinks"].insert(<f-args>)' % VIM_PY_CALL,
             arguments='*')
         self.commands.append(cmd)
         self.keybindings.append(

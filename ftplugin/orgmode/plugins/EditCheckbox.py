@@ -283,28 +283,28 @@ class EditCheckbox(object):
         add_cmd_mapping_menu(
             self,
             name='OrgCheckBoxNewAbove',
-            function='%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox()<CR>' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["EditCheckbox"].new_checkbox()<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>cN',
             menu_desrc='New CheckBox Above'
         )
         add_cmd_mapping_menu(
             self,
             name='OrgCheckBoxNewBelow',
-            function='%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox(below=True)<CR>' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["EditCheckbox"].new_checkbox(below=True)<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>cn',
             menu_desrc='New CheckBox Below'
         )
         add_cmd_mapping_menu(
             self,
             name='OrgCheckBoxToggle',
-            function=':silent! %s ORGMODE.plugins[u"EditCheckbox"].toggle()<CR>' % VIM_PY_CALL,
+            function=':silent! %s ORGMODE.plugins["EditCheckbox"].toggle()<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>cc',
             menu_desrc='Toggle Checkbox'
         )
         add_cmd_mapping_menu(
             self,
             name='OrgCheckBoxUpdate',
-            function=':silent! %s ORGMODE.plugins[u"EditCheckbox"].update_checkboxes_status()<CR>' % VIM_PY_CALL,
+            function=':silent! %s ORGMODE.plugins["EditCheckbox"].update_checkboxes_status()<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>c#',
             menu_desrc='Update Subtasks'
         )
@@ -312,14 +312,14 @@ class EditCheckbox(object):
         add_cmd_mapping_menu(
             self,
             name='OrgPlainListItemNewAbove',
-            function='%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox(plain=True)<CR>' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["EditCheckbox"].new_checkbox(plain=True)<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>cL',
             menu_desrc='New PlainList Item Above'
         )
         add_cmd_mapping_menu(
             self,
             name='OrgPlainListItemNewBelow',
-            function='%s ORGMODE.plugins[u"EditCheckbox"].new_checkbox(below=True, plain=True)<CR>' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["EditCheckbox"].new_checkbox(below=True, plain=True)<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>cl',
             menu_desrc='New PlainList Item Below'
         )

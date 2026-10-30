@@ -283,28 +283,28 @@ class Date(object):
             self,
             name='OrgDateInsertTimestampActiveCmdLine',
             key_mapping='<localleader>sa',
-            function='%s ORGMODE.plugins[u"Date"].insert_timestamp()' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["Date"].insert_timestamp()' % VIM_PY_CALL,
             menu_desrc='Timest&amp'
         )
         add_cmd_mapping_menu(
             self,
             name='OrgDateInsertTimestampInactiveCmdLine',
             key_mapping='<localleader>si',
-            function='%s ORGMODE.plugins[u"Date"].insert_timestamp(False)' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["Date"].insert_timestamp(False)' % VIM_PY_CALL,
             menu_desrc='Timestamp (&inactive)'
         )
         add_cmd_mapping_menu(
             self,
             name='OrgDateInsertTimestampActiveWithCalendar',
             key_mapping='<localleader>pa',
-            function='%s ORGMODE.plugins[u"Date"].insert_timestamp_with_calendar()' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["Date"].insert_timestamp_with_calendar()' % VIM_PY_CALL,
             menu_desrc='Timestamp with Calendar'
         )
         add_cmd_mapping_menu(
             self,
             name='OrgDateInsertTimestampInactiveWithCalendar',
             key_mapping='<localleader>pi',
-            function='%s ORGMODE.plugins[u"Date"].insert_timestamp_with_calendar(False)' % VIM_PY_CALL,
+            function='%s ORGMODE.plugins["Date"].insert_timestamp_with_calendar(False)' % VIM_PY_CALL,
             menu_desrc='Timestamp with Calendar(inactive)'
         )
 

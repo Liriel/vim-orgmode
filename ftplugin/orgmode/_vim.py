@@ -76,7 +76,7 @@ def apply_count(f):
 
             # visual count is not implemented yet
             #if not count:
-            #    count = int(vim.eval(u'v:prevcount'.encode(u'utf-8')))
+            #    count = int(vim.eval('v:prevcount'.encode('utf-8')))
         except BaseException as e:
             pass
 
@@ -246,16 +246,16 @@ def fold_orgmode(allow_dirty=False):
     # cache_heading = heading
     if heading:
         # if checkbox:
-            # vim.command((u'let b:fold_expr = ">%d"' % heading.level + checkbox.level).encode(u'utf-8'))
+            # vim.command(('let b:fold_expr = ">%d"' % heading.level + checkbox.level).encode('utf-8'))
         if 0:
             pass
         elif line == heading.start_vim:
             vim.command('let b:fold_expr = ">%d"' % heading.level)
         #elif line == heading.end_vim:
-        #    vim.command((u'let b:fold_expr = "<%d"' % heading.level).encode(u'utf-8'))
+        #    vim.command(('let b:fold_expr = "<%d"' % heading.level).encode('utf-8'))
         # end_of_last_child_vim is a performance junky and is actually not needed
         #elif line == heading.end_of_last_child_vim:
-        #    vim.command((u'let b:fold_expr = "<%d"' % heading.level).encode(u'utf-8'))
+        #    vim.command(('let b:fold_expr = "<%d"' % heading.level).encode('utf-8'))
         else:
             vim.command('let b:fold_expr = %d' % heading.level)
 

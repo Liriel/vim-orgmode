@@ -273,7 +273,7 @@ class Todo(object):
             vim.current.buffer.append(line)
             for todo, key in pairs:
                 # FIXME if double key is used for access modified this doesn't work
-                vim.command('nnoremap <silent> <buffer> %s :bw<CR><c-w><c-p>%s ORGMODE.plugins[u"Todo"].set_todo_state("%s")<CR>' % (key, VIM_PY_CALL, todo))
+                vim.command('nnoremap <silent> <buffer> %s :bw<CR><c-w><c-p>%s ORGMODE.plugins["Todo"].set_todo_state("%s")<CR>' % (key, VIM_PY_CALL, todo))
 
         # position the cursor of the current todo item
         vim.command('normal! G')
@@ -300,12 +300,12 @@ class Todo(object):
         """
         self.keybindings.append(Keybinding('<localleader>ct', Plug(
             'OrgTodoToggleNonInteractive',
-            '%s ORGMODE.plugins[u"Todo"].toggle_todo_state(interactive=False)<CR>' % VIM_PY_CALL)))
+            '%s ORGMODE.plugins["Todo"].toggle_todo_state(interactive=False)<CR>' % VIM_PY_CALL)))
         self.menu + ActionEntry('&TODO/DONE/-', self.keybindings[-1])
 
         self.keybindings.append(Keybinding('<localleader>d', Plug(
             'OrgTodoToggleInteractive',
-            '%s ORGMODE.plugins[u"Todo"].toggle_todo_state(interactive=True)<CR>' % VIM_PY_CALL)))
+            '%s ORGMODE.plugins["Todo"].toggle_todo_state(interactive=True)<CR>' % VIM_PY_CALL)))
         self.menu + ActionEntry('&TODO/DONE/- (interactive)', self.keybindings[-1])
 
         # add submenu
@@ -313,26 +313,26 @@ class Todo(object):
 
         self.keybindings.append(Keybinding('<S-Right>', Plug(
             'OrgTodoForward',
-            '%s ORGMODE.plugins[u"Todo"].toggle_todo_state()<CR>' % VIM_PY_CALL)))
+            '%s ORGMODE.plugins["Todo"].toggle_todo_state()<CR>' % VIM_PY_CALL)))
         submenu + ActionEntry('&Next keyword', self.keybindings[-1])
 
         self.keybindings.append(Keybinding('<S-Left>', Plug(
             'OrgTodoBackward',
-            '%s ORGMODE.plugins[u"Todo"].toggle_todo_state(direction=2)<CR>' % VIM_PY_CALL)))
+            '%s ORGMODE.plugins["Todo"].toggle_todo_state(direction=2)<CR>' % VIM_PY_CALL)))
         submenu + ActionEntry('&Previous keyword', self.keybindings[-1])
 
         self.keybindings.append(Keybinding('<C-S-Right>', Plug(
             'OrgTodoSetForward',
-            '%s ORGMODE.plugins[u"Todo"].toggle_todo_state(next_set=True)<CR>' % VIM_PY_CALL)))
+            '%s ORGMODE.plugins["Todo"].toggle_todo_state(next_set=True)<CR>' % VIM_PY_CALL)))
         submenu + ActionEntry('Next keyword &set', self.keybindings[-1])
 
         self.keybindings.append(Keybinding('<C-S-Left>', Plug(
             'OrgTodoSetBackward',
-            '%s ORGMODE.plugins[u"Todo"].toggle_todo_state(direction=2, next_set=True)<CR>' % VIM_PY_CALL)))
+            '%s ORGMODE.plugins["Todo"].toggle_todo_state(direction=2, next_set=True)<CR>' % VIM_PY_CALL)))
         submenu + ActionEntry('Previous &keyword set', self.keybindings[-1])
 
         settings.set('org_todo_keywords', ['TODO', '|', 'DONE'])
 
         settings.set('org_todo_prompt_position', 'botright')
 
-        vim.command('au orgmode BufReadCmd org:todo/* %s ORGMODE.plugins[u"Todo"].init_org_todo()' % VIM_PY_CALL)
+        vim.command('au orgmode BufReadCmd org:todo/* %s ORGMODE.plugins["Todo"].init_org_todo()' % VIM_PY_CALL)

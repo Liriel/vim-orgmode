@@ -142,7 +142,7 @@ class Export(object):
         add_cmd_mapping_menu(
             self,
             name='OrgExportToPDF',
-            function=':%s ORGMODE.plugins[u"Export"].topdf()<CR>' % VIM_PY_CALL,
+            function=':%s ORGMODE.plugins["Export"].topdf()<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>ep',
             menu_desrc='To PDF (via Emacs)'
         )
@@ -150,7 +150,7 @@ class Export(object):
         add_cmd_mapping_menu(
             self,
             name='OrgExportToBeamerPDF',
-            function=':%s ORGMODE.plugins[u"Export"].tobeamer()<CR>' % VIM_PY_CALL,
+            function=':%s ORGMODE.plugins["Export"].tobeamer()<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>eb',
             menu_desrc='To Beamer PDF (via Emacs)'
         )
@@ -158,7 +158,7 @@ class Export(object):
         add_cmd_mapping_menu(
             self,
             name='OrgExportToLaTeX',
-            function=':%s ORGMODE.plugins[u"Export"].tolatex()<CR>' % VIM_PY_CALL,
+            function=':%s ORGMODE.plugins["Export"].tolatex()<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>el',
             menu_desrc='To LaTeX (via Emacs)'
         )
@@ -166,7 +166,7 @@ class Export(object):
         add_cmd_mapping_menu(
             self,
             name='OrgExportToHTML',
-            function=':%s ORGMODE.plugins[u"Export"].tohtml()<CR>' % VIM_PY_CALL,
+            function=':%s ORGMODE.plugins["Export"].tohtml()<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>eh',
             menu_desrc='To HTML (via Emacs)'
         )
@@ -174,7 +174,7 @@ class Export(object):
         add_cmd_mapping_menu(
             self,
             name='OrgExportToMarkdown',
-            function=':%s ORGMODE.plugins[u"Export"].tomarkdown()<CR>' % VIM_PY_CALL,
+            function=':%s ORGMODE.plugins["Export"].tomarkdown()<CR>' % VIM_PY_CALL,
             key_mapping='<localleader>em',
             menu_desrc='To Markdown (via Emacs)'
         )
