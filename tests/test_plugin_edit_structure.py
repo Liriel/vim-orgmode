@@ -358,7 +358,8 @@ Bla Bla bla bla
     def test_promote_parent_heading(self):
         vim.current.window.cursor = (10, 0)
         self.assertNotEqual(self.editstructure.promote_heading(), None)
-        self.assertEqual(vim.CMDHISTORY[-1], 'normal 10ggV16gg=')
+        # promoting no longer re-indents through a normal-mode command (f773605)
+        self.assertEqual(vim.CMDHISTORY, [])
         self.assertEqual(vim.current.buffer[5], '** Überschrift 1.1')
         self.assertEqual(vim.current.buffer[9], '* Überschrift 1.2')
         self.assertEqual(vim.current.buffer[12], '*** Überschrift 1.2.1.falsch')
@@ -380,7 +381,7 @@ Bla Bla bla bla
         self.assertEqual(vim.current.buffer[16], '* Überschrift 2')
         self.assertEqual(vim.current.window.cursor, (2, 3))
 
-    def test_promote_parent_heading(self):
+    def test_promote_parent_heading_count(self):
         vim.current.window.cursor = (13, 0)
         vim.EVALRESULTS["v:count"] = '3'
         self.assertNotEqual(self.editstructure.promote_heading(), None)
