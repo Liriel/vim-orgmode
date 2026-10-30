@@ -1,6 +1,8 @@
 PLUGIN = orgmode
 PREFIX = /usr/local
 VIMDIR = $(PREFIX)/share/vim
+PYTHON = python3
+DOCDIR = ftplugin/orgmode/docs
 
 all: build
 
@@ -9,83 +11,39 @@ build:
 # install plugin at destination
 install: doc indent ftdetect ftplugin syntax
 	for i in doc indent ftdetect ftplugin syntax; do \
-		find $$i -type f -name \*.txt -o -type f -name \*.cnf -o -type f -name \*.py -o -type f -name \*.vim | while read f; do \
+		find $$i -type f \( -name \*.txt -o -name \*.cnf -o -name \*.py -o -name \*.vim \) \
+				-not -path '*/__pycache__/*' -not -path '$(DOCDIR)/*' | while read f; do \
 			install -m 0755 -d $(DESTDIR)$(VIMDIR)/$$(dirname "$$f"); \
 			install -m 0644 $$f $(DESTDIR)$(VIMDIR)/$$f; \
 		done; \
 	done
 
-# cleanup
-clean: documentation
-	@find . -name \*.pyc -o -name \*.py,cover -exec rm {} \;
-	@rm -rf ${PLUGIN}.vmb ${PLUGIN}.vmb.gz tmp files
-	cd $< && $(MAKE) $@
+# remove generated files (caches, coverage data, built documentation)
+clean:
+	@find . \( -name .git -o -name .venv \) -prune -o -name __pycache__ -type d -prune -exec rm -rf {} +
+	@rm -rf .pytest_cache .ruff_cache .coverage htmlcov $(DOCDIR)/_build
 
-# generate the vim ball package
-${PLUGIN}.vmb: check build_vmb.vim clean
-	$(MAKE) DESTDIR=$(PWD)/tmp VIMDIR= install
-	find tmp -type f  | sed -e 's/^tmp\///' > files
-	cp build_vmb.vim tmp
-	cd tmp && vim --cmd 'let g:plugin_name="${PLUGIN}"' -s build_vmb.vim
-	[ -e tmp/${PLUGIN}.vba ] && mv tmp/${PLUGIN}.vba tmp/$@ || true
-	mv tmp/$@ .
-
-${PLUGIN}.vmb.gz: ${PLUGIN}.vmb
-	@rm -f ${PLUGIN}.vmb.gz
-	gzip $<
-
-vmb: ${PLUGIN}.vmb
-
-vmb.gz: ${PLUGIN}.vmb.gz
-
-${PLUGIN}.vba: ${PLUGIN}.vmb
-	mv $< $@
-
-${PLUGIN}.vba.gz: ${PLUGIN}.vba
-	@rm -f ${PLUGIN}.vba.gz
-	gzip $<
-
-vba: ${PLUGIN}.vba
-
-vba.gz: ${PLUGIN}.vba.gz
-
-# run unit tests
-test: check
-
-check: tests/run_tests.py
-	cd tests && python2 run_tests.py
+# run the unit tests and, if a Vim with +python3 is installed, the integration tests
+test:
+	$(PYTHON) -m pytest
 
 # generate documentation
-docs: documentation
-	cd $< && $(MAKE)
+docs:
+	$(PYTHON) -m sphinx -W --keep-going -b html $(DOCDIR) $(DOCDIR)/_build/html
 
 # generate a test coverage report for all python files
 coverage:
-	@echo ">>> Coverage depends on the package python-nose and python-coverage, make sure they are installed!"
-	cd tests && nosetests2 --with-coverage --cover-html .
+	$(PYTHON) -m coverage run -m pytest
+	$(PYTHON) -m coverage report
+	$(PYTHON) -m coverage html
 
-# run a static code checker
+# run the static code checker and check the formatting
 lint:
-	@echo ">>> Lint depends on the package pylint make sure it's installed!"
-	pylint --rcfile .pylintrc --disable=C0301,C0103,C0111,C0322,C0323,C0324,W0703,W0612,W0603 orgmode
+	$(PYTHON) -m ruff check .
+	$(PYTHON) -m ruff format --check .
 
-lintall:
-	@echo ">>> Lint depends on the package pylint make sure it's installed!"
-	pylint --rcfile .pylintrc orgmode
+# format the python code
+format:
+	$(PYTHON) -m ruff format .
 
-# install vim-orgmode in the .vim/bundle directory for test purposes
-VIMPLUGINDIR = $(HOME)/.vim/bundle/orgmode
-
-installvmb: ${PLUGIN}.vmb install_vmb.vim
-	rm -rvf ${VIMPLUGINDIR}
-	mkdir -p "${VIMPLUGINDIR}"
-	vim --cmd "let g:installdir='${VIMPLUGINDIR}'" -s install_vmb.vim $<
-	@echo "Plugin was installed in ${VIMPLUGINDIR}. Make sure you are using a plugin loader like pathegon, otherwise the ${PLUGIN} might not work properly."
-
-installvba: ${PLUGIN}.vba install_vba.vim
-	rm -rvf ${VIMPLUGINDIR}
-	mkdir -p "${VIMPLUGINDIR}"
-	vim --cmd "let g:installdir='${VIMPLUGINDIR}'" -s install_vba.vim $<
-	@echo "Plugin was installed in ${VIMPLUGINDIR}. Make sure you are using a plugin loader like pathegon, otherwise the ${PLUGIN} might not work properly."
-
-.PHONY: all build test check install clean vmb vmb.gz docs installvmb
+.PHONY: all build test install clean docs coverage lint format
