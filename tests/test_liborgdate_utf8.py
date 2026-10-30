@@ -25,7 +25,11 @@ class OrgDateUtf8TestCase(unittest.TestCase):
         with self.LOCALE_LOCK:
             saved = locale.setlocale(locale.LC_ALL)
             try:
-                yield locale.setlocale(locale.LC_ALL, name)
+                try:
+                    new = locale.setlocale(locale.LC_ALL, name)
+                except locale.Error:
+                    self.skipTest(u'locale %s is not available' % name)
+                yield new
             finally:
                 locale.setlocale(locale.LC_ALL, saved)
 

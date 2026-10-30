@@ -229,193 +229,193 @@ class TodoTestCase(unittest.TestCase):
     def test_get_next_state_with_no_current_state(self):
         states = [((u'TODO', ), (u'DONE', ))]
         current_state = u''
-        self.assertEquals(Todo._get_next_state(current_state, states), u'TODO')
+        self.assertEqual(Todo._get_next_state(current_state, states), u'TODO')
 
         states = [((u'TODO', u'NEXT'), (u'DELEGATED', u'DONE'))]
-        self.assertEquals(Todo._get_next_state(current_state, states), u'TODO')
+        self.assertEqual(Todo._get_next_state(current_state, states), u'TODO')
 
         states = [((u'NEXT', ), (u'DELEGATED', u'DONE'))]
-        self.assertEquals(Todo._get_next_state(current_state, states), u'NEXT')
+        self.assertEqual(Todo._get_next_state(current_state, states), u'NEXT')
 
     def test_get_next_state_backward_with_no_current_state(self):
         states = [((u'TODO', ), (u'DONE', ))]
         current_state = u''
-        self.assertEquals(Todo._get_next_state(current_state, states,
+        self.assertEqual(Todo._get_next_state(current_state, states,
                 Direction.BACKWARD), u'DONE')
 
         states = [((u'TODO', u'NEXT'), (u'DELEGATED', u'DONE'))]
-        self.assertEquals(Todo._get_next_state(current_state, states,
+        self.assertEqual(Todo._get_next_state(current_state, states,
                 Direction.BACKWARD), u'DONE')
 
         states = [((u'NEXT', ), (u'DELEGATED', u'DONE'))]
-        self.assertEquals(Todo._get_next_state(current_state, states,
+        self.assertEqual(Todo._get_next_state(current_state, states,
                 Direction.BACKWARD), u'DONE')
 
     def test_get_next_state_with_invalid_current_state(self):
         states = [((u'TODO', ), (u'DONE', ))]
         current_state = u'STI'
-        self.assertEquals(Todo._get_next_state(current_state, states), u'TODO')
+        self.assertEqual(Todo._get_next_state(current_state, states), u'TODO')
 
         states = [((u'TODO', u'NEXT'), (u'DELEGATED', u'DONE'))]
-        self.assertEquals(Todo._get_next_state(current_state, states), u'TODO')
+        self.assertEqual(Todo._get_next_state(current_state, states), u'TODO')
 
         states = [((u'NEXT', ), (u'DELEGATED', u'DONE'))]
-        self.assertEquals(Todo._get_next_state(current_state, states), u'NEXT')
+        self.assertEqual(Todo._get_next_state(current_state, states), u'NEXT')
 
     def test_get_next_state_backward_with_invalid_current_state(self):
         states = [((u'TODO', ), (u'DONE', ))]
         current_state = u'STI'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, u'DONE')
+        self.assertEqual(result, u'DONE')
 
         states = [((u'TODO', u'NEXT'), (u'DELEGATED', u'DONE'))]
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, u'DONE')
+        self.assertEqual(result, u'DONE')
 
         states = [((u'NEXT', ), (u'DELEGATED', u'DONE'))]
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, u'DONE')
+        self.assertEqual(result, u'DONE')
 
     def test_get_next_state_with_current_state_equals_todo_state(self):
         states = [((u'TODO', u'NEXT', u'NOW'), (u'DELEGATED', u'DONE'))]
         current_state = u'TODO'
-        self.assertEquals(Todo._get_next_state(current_state, states), u'NEXT')
+        self.assertEqual(Todo._get_next_state(current_state, states), u'NEXT')
 
         current_state = u'NEXT'
-        self.assertEquals(Todo._get_next_state(current_state, states), u'NOW')
+        self.assertEqual(Todo._get_next_state(current_state, states), u'NOW')
 
     def test_get_next_state_backward_with_current_state_equals_todo_state(self):
         states = [((u'TODO', u'NEXT', u'NOW'), (u'DELEGATED', u'DONE'))]
         current_state = u'TODO'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, None)
+        self.assertEqual(result, None)
 
     def test_get_next_state_backward_misc(self):
         states = [((u'TODO', u'NEXT', u'NOW'), (u'DELEGATED', u'DONE'))]
         current_state = u'DONE'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, u'DELEGATED')
+        self.assertEqual(result, u'DELEGATED')
 
         current_state = u'DELEGATED'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, u'NOW')
+        self.assertEqual(result, u'NOW')
 
         current_state = u'NOW'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, u'NEXT')
+        self.assertEqual(result, u'NEXT')
 
         current_state = u'NEXT'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, u'TODO')
+        self.assertEqual(result, u'TODO')
 
         current_state = u'TODO'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, None)
+        self.assertEqual(result, None)
 
         current_state = None
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, u'DONE')
+        self.assertEqual(result, u'DONE')
 
     def test_get_next_state_with_jump_from_todo_to_done(self):
         states = [((u'TODO', u'NEXT', u'NOW'), (u'DELEGATED', u'DONE'))]
         current_state = u'NOW'
-        self.assertEquals(Todo._get_next_state(current_state, states), u'DELEGATED')
+        self.assertEqual(Todo._get_next_state(current_state, states), u'DELEGATED')
 
     def test_get_next_state_with_jump_from_done_to_todo(self):
         states = [((u'TODO', u'NEXT', u'NOW'), (u'DELEGATED', u'DONE'))]
         current_state = u'DONE'
-        self.assertEquals(Todo._get_next_state(current_state, states), None)
+        self.assertEqual(Todo._get_next_state(current_state, states), None)
 
     def test_get_next_state_in_current_sequence(self):
         states = [((u'TODO', u'NEXT', u'NOW'), (u'DELEGATED', u'DONE')), ((u'QA', ), (u'RELEASED', ))]
         current_state = u'QA'
         result = Todo._get_next_state(current_state, states,
                 Direction.FORWARD)
-        self.assertEquals(result, u'RELEASED')
+        self.assertEqual(result, u'RELEASED')
 
     def test_get_next_state_in_current_sequence_with_access_keys(self):
         states = [((u'TODO(t)', u'NEXT(n)', u'NOW(w)'), (u'DELEGATED(g)', u'DONE(d)')), ((u'QA(q)', ), (u'RELEASED(r)', ))]
         current_state = u'QA'
         result = Todo._get_next_state(current_state, states,
                 Direction.FORWARD)
-        self.assertEquals(result, u'RELEASED')
+        self.assertEqual(result, u'RELEASED')
 
         current_state = u'NEXT'
         result = Todo._get_next_state(current_state, states,
                 Direction.FORWARD)
-        self.assertEquals(result, u'NOW')
+        self.assertEqual(result, u'NOW')
 
         current_state = u'TODO'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, None)
+        self.assertEqual(result, None)
 
         current_state = None
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD)
-        self.assertEquals(result, u'RELEASED')
+        self.assertEqual(result, u'RELEASED')
 
     def test_get_next_keyword_sequence(self):
         states = [((u'TODO(t)', u'NEXT(n)', u'NOW(w)'), (u'DELEGATED(g)', u'DONE(d)')), ((u'QA(q)', ), (u'RELEASED(r)', ))]
         current_state = None
         result = Todo._get_next_state(current_state, states,
                 Direction.FORWARD, next_set=True)
-        self.assertEquals(result, u'TODO')
+        self.assertEqual(result, u'TODO')
 
         current_state = None
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD, next_set=True)
-        self.assertEquals(result, u'QA')
+        self.assertEqual(result, u'QA')
 
         current_state = u'TODO'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD, next_set=True)
-        self.assertEquals(result, None)
+        self.assertEqual(result, None)
 
         current_state = u'TODO'
         result = Todo._get_next_state(current_state, states,
                 Direction.FORWARD, next_set=True)
-        self.assertEquals(result, u'QA')
+        self.assertEqual(result, u'QA')
 
         current_state = u'NOW'
         result = Todo._get_next_state(current_state, states,
                 Direction.FORWARD, next_set=True)
-        self.assertEquals(result, u'QA')
+        self.assertEqual(result, u'QA')
 
         current_state = u'DELEGATED'
         result = Todo._get_next_state(current_state, states,
                 Direction.FORWARD, next_set=True)
-        self.assertEquals(result, u'QA')
+        self.assertEqual(result, u'QA')
 
         current_state = u'QA'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD, next_set=True)
-        self.assertEquals(result, u'TODO')
+        self.assertEqual(result, u'TODO')
 
         current_state = u'QA'
         result = Todo._get_next_state(current_state, states,
                 Direction.FORWARD, next_set=True)
-        self.assertEquals(result, None)
+        self.assertEqual(result, None)
 
         current_state = u'RELEASED'
         result = Todo._get_next_state(current_state, states,
                 Direction.FORWARD, next_set=True)
-        self.assertEquals(result, None)
+        self.assertEqual(result, None)
 
         current_state = u'RELEASED'
         result = Todo._get_next_state(current_state, states,
                 Direction.BACKWARD, next_set=True)
-        self.assertEquals(result, u'TODO')
+        self.assertEqual(result, u'TODO')
 
 
 def suite():

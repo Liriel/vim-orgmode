@@ -122,7 +122,7 @@ class OrgDateParsingTestCase(unittest.TestCase):
         """
         datelist = [u"<2011-08-29 Mon>"]
         result = get_orgdate(datelist)
-        self.assertNotEquals(result, None)
+        self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDate))
         self.assertEqual(result.year, 2011)
         self.assertEqual(result.month, 8)
@@ -131,7 +131,7 @@ class OrgDateParsingTestCase(unittest.TestCase):
         datelist = [u"<2011-08-29 Mon>",
                 u"<2012-03-30 Fri>"]
         result = get_orgdate(datelist)
-        self.assertNotEquals(result, None)
+        self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDate))
         self.assertEqual(result.year, 2011)
         self.assertEqual(result.month, 8)
@@ -140,7 +140,7 @@ class OrgDateParsingTestCase(unittest.TestCase):
         datelist = [u"some <2011-08-29 Mon>text",
                 u"<2012-03-30 Fri> is here"]
         result = get_orgdate(datelist)
-        self.assertNotEquals(result, None)
+        self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDate))
         self.assertEqual(result.year, 2011)
         self.assertEqual(result.month, 8)
@@ -150,7 +150,7 @@ class OrgDateParsingTestCase(unittest.TestCase):
                 u"some <2011-08-29 Mon>text",
                 u"<2012-03-30 Fri> is here"]
         result = get_orgdate(datelist)
-        self.assertNotEquals(result, None)
+        self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDate))
         self.assertEqual(result.year, 2011)
         self.assertEqual(result.month, 8)
@@ -160,7 +160,7 @@ class OrgDateParsingTestCase(unittest.TestCase):
                 u"some <2011-08-29 Mon 20:10> text",
                 u"<2012-03-30 Fri> is here"]
         result = get_orgdate(datelist)
-        self.assertNotEquals(result, None)
+        self.assertNotEqual(result, None)
         self.assertTrue(isinstance(result, OrgDateTime))
         self.assertEqual(result.year, 2011)
         self.assertEqual(result.month, 8)
@@ -169,18 +169,18 @@ class OrgDateParsingTestCase(unittest.TestCase):
         self.assertEqual(result.minute, 10)
 
     def test_get_orgdate_parsing_with_invalid_input(self):
-        self.assertEquals(get_orgdate(u"NONSENSE"), None)
-        self.assertEquals(get_orgdate(u"No D<2011- Date 08-29 Mon>"), None)
-        self.assertEquals(get_orgdate(u"2011-08-r9 Mon]"), None)
-        self.assertEquals(get_orgdate(u"<2011-08-29 Mon"), None)
-        self.assertEquals(get_orgdate(u"<2011-08-29 Mon]"), None)
-        self.assertEquals(get_orgdate(u"2011-08-29 Mon"), None)
-        self.assertEquals(get_orgdate(u"2011-08-29"), None)
-        self.assertEquals(get_orgdate(u"2011-08-29 mon"), None)
-        self.assertEquals(get_orgdate(u"<2011-08-29 mon>"), None)
+        self.assertEqual(get_orgdate(u"NONSENSE"), None)
+        self.assertEqual(get_orgdate(u"No D<2011- Date 08-29 Mon>"), None)
+        self.assertEqual(get_orgdate(u"2011-08-r9 Mon]"), None)
+        self.assertEqual(get_orgdate(u"<2011-08-29 Mon"), None)
+        self.assertEqual(get_orgdate(u"<2011-08-29 Mon]"), None)
+        self.assertEqual(get_orgdate(u"2011-08-29 Mon"), None)
+        self.assertEqual(get_orgdate(u"2011-08-29"), None)
+        self.assertEqual(get_orgdate(u"2011-08-29 mon"), None)
+        self.assertEqual(get_orgdate(u"<2011-08-29 mon>"), None)
 
-        self.assertEquals(get_orgdate(u"wrong date embedded <2011-08-29 mon>"), None)
-        self.assertEquals(get_orgdate(u"wrong date <2011-08-29 mon>embedded "), None)
+        self.assertEqual(get_orgdate(u"wrong date embedded <2011-08-29 mon>"), None)
+        self.assertEqual(get_orgdate(u"wrong date <2011-08-29 mon>embedded "), None)
 
     def test_get_orgdate_parsing_with_invalid_dates(self):
         u"""
