@@ -5,7 +5,40 @@
 ** 0.7.0									     :unreleased:
 *** Added
     - Subtracting when entering dates (PR #276)
+    - Integration tests that run the plugin in a real Vim.
+*** Changed
+    - CI moved from Travis to GitHub Actions: lint, unit tests on Python
+      3.10-3.14, integration tests in a real Vim and the Sphinx docs build.
+    - Tests run with pytest (=make test=); new test modules are discovered
+      automatically and =tests/run_tests.py= is gone.
+    - Linting and formatting use ruff instead of pylint.
+    - Python 3.10 or newer is required.
+    - Makefile targets =test=, =coverage=, =lint=, =format=, =docs= and
+      =clean= work again; =install= no longer copies =__pycache__= or the
+      Sphinx sources.
+*** Removed
+    - Python 2 support, including the =py3compat= package, =u_encode= and
+      =u_decode=.
+    - Support for Vim < 8.2; Vim 8.2 with =+python3= is required.
+    - The vimball targets of the Makefile.
+    - Travis CI configuration.
 *** Fixed
+    - Data loss: =new_heading= replaced the whole buffer on Python 3 when the
+      heading had children. Slicing a heading list returned a new list that
+      detached its headings from the document; slices now return plain lists
+      as on Python 2. =VimBuffer.write()= also refuses to write headings
+      without a start position.
+    - Crash when deleting headings that had not been written yet.
+    - Agenda crash from comparing =OrgDate= with =datetime= (seen on Python
+      3.14) and when sorting TODOs without a date together with dated ones;
+      undated headings now sort last.
+    - Heading ordering (the comparison operators) returned =None= when comparing a
+      date with a datetime.
+    - Tag completion started =sys.executable= instead of =python3=, which is
+      the host binary (e.g. vim) in an embedded interpreter.
+    - =str()= of =DomObj= raised =NameError=; =str()= of =Document= started
+      with an empty line when there was no meta information.
+    - The Sphinx documentation builds without warnings.
     - =ir= text object now works with most operations (PR #284, closes #273)
 ** 0.6.0 <2017-11-06 Mon>							 :released:
 *** Added
