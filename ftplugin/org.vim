@@ -6,21 +6,12 @@
 " @Revision     : 0.4
 " vi: ft=vim:tw=80:sw=4:ts=4:fdm=marker
 
-if v:version > 702
-	if has('python3')
-		let s:py_version = 'python3 '
-		let s:py_env = 'python3 << EOF'
-	elseif has('python')
-		let s:py_version = 'python '
-		let s:py_env = 'python << EOF'
-	else
-		echoerr "Unable to start orgmode. Orgmode depends on Vim >= 7.3 with Python support complied in."
-		finish
-	endif
-else
-	echoerr "Unable to start orgmode. Orgmode depends on Vim >= 7.3 with Python support complied in."
+if v:version < 802 || !has('python3')
+	echoerr "Unable to start orgmode. Orgmode depends on Vim >= 8.2 with Python 3 support (+python3) compiled in."
 	finish
 endif
+let s:py_version = 'python3 '
+let s:py_env = 'python3 << EOF'
 
 " Init buffer for file {{{1
 if ! exists('b:did_ftplugin')

@@ -1,3 +1,8 @@
+if v:version < 802 || !has('python3')
+	" ftplugin/org.vim reports the missing requirements
+	finish
+endif
+
 " Delete the next line to avoid the special indention of items
 if !exists("g:org_indent")
   let g:org_indent = 0
@@ -13,11 +18,7 @@ setlocal nolisp
 setlocal nosmartindent
 setlocal autoindent
 
-if has('python3')
-	let s:py_env = 'python3 << EOF'
-else
-	let s:py_env = 'python << EOF'
-endif
+let s:py_env = 'python3 << EOF'
 
 function! GetOrgIndent()
 	if g:org_indent == 0

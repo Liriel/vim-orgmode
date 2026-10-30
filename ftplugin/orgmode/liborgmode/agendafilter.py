@@ -19,11 +19,6 @@ from datetime import timedelta
 
 from orgmode.liborgmode.orgdate import orgdate_to_datetime
 
-try:
-    from itertools import ifilter as filter
-except:
-    pass
-
 
 def filter_items(headings, filters):
     u""" Filter the given headings.

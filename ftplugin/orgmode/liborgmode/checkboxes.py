@@ -8,10 +8,7 @@
 """
 
 import re
-try:
-    from collections import UserList
-except:
-    from UserList import UserList
+from collections import UserList
 
 import vim
 from orgmode.liborgmode.base import MultiPurposeList, flatten_list

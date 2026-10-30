@@ -18,10 +18,7 @@
     is UTF-8.
 """
 
-try:
-    from collections import UserList
-except:
-    from UserList import UserList
+from collections import UserList
 
 import vim
 
@@ -437,7 +434,7 @@ class VimBufferContent(MultiPurposeList):
             # UserList.__setitem__() but if it is changed in debuggr in __setitem__
             # like item[0] = '* ' it works, hence this is some quirk with unicode
             # stuff but very likely vim 7.4 BUG too.
-            if isinstance(_i, UserList) and sys.version_info > (3, ):
+            if isinstance(_i, UserList):
                 _i = [s.encode('utf8').decode('utf8') for s in _i]
 
             MultiPurposeList.__setitem__(self, i, _i)

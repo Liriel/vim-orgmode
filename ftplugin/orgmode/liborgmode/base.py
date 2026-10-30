@@ -8,18 +8,10 @@
     the liborgmode.
 """
 
-try:
-    from collections import UserList
-except:
-    from UserList import UserList
+from collections import UserList
 
-try:
-    from collections.abc import Iterable
-except ImportError:
-    # preserve compatibility with python < 3.10
-    from collections import Iterable
+from collections.abc import Iterable
 
-import sys
 from orgmode.py3compat.unicode_compatibility import *
 
 
@@ -77,19 +69,11 @@ class MultiPurposeList(UserList):
             self._on_change()
 
     def __setitem__(self, i, item):
-        if sys.version_info < (3, ) and isinstance(i, slice):
-            start, stop, _ = i.indices(len(self))
-            UserList.__setslice__(self, start, stop, item)
-        else:
-            UserList.__setitem__(self, i, item)
+        UserList.__setitem__(self, i, item)
         self._changed()
 
     def __delitem__(self, i):
-        if sys.version_info < (3, ) and isinstance(i, slice):
-            start, stop, _ = i.indices(len(self))
-            UserList.__delslice__(self, start, stop)
-        else:
-            UserList.__delitem__(self, i)
+        UserList.__delitem__(self, i)
         self._changed()
 
     def __getitem__(self, i):
@@ -99,16 +83,6 @@ class MultiPurposeList(UserList):
             # (and thereby detaches and untaints) the items of the slice.
             return [self[j] for j in range(*i.indices(len(self)))]
         return UserList.__getitem__(self, i)
-
-    # NOTE: These wrappers are necessary because of python 2
-    def __setslice__(self, i, j, other):
-        self.__setitem__(slice(i, j), other)
-
-    def __delslice__(self, i, j):
-        self.__delitem__(slice(i, j))
-
-    def __getslice__(self, i, j):
-        return self.__getitem__(slice(i, j))
 
     def __iadd__(self, other):
         res = UserList.__iadd__(self, other)

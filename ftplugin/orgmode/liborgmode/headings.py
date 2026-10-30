@@ -21,11 +21,7 @@ from orgmode.py3compat.xrange_compatibility import *
 from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.unicode_compatibility import *
 
-try:
-    from collections import UserList
-except:
-    from UserList import UserList
-    from itertools import ifilter as filter
+from collections import UserList
 
 class Heading(DomObj):
     u""" Structural heading object """

@@ -13,10 +13,7 @@ from orgmode.liborgmode.base import MultiPurposeList, flatten_list
 from orgmode.py3compat.encode_compatibility import *
 from orgmode.py3compat.unicode_compatibility import *
 
-try:
-    from collections import UserList
-except:
-    from UserList import UserList
+from collections import UserList
 
 # breaking down tasks regex
 REGEX_SUBTASK = re.compile(r'\[(\d*)/(\d*)\]')
@@ -421,12 +418,6 @@ class DomObjList(MultiPurposeList):
             # if taint:
                 # self._add_to_deleted_domobjs(item)
         MultiPurposeList.__delitem__(self, i)
-
-    def __setslice__(self, i, j, other):
-        self.__setitem__(slice(i, j), other)
-
-    def __delslice__(self, i, j, taint=True):
-        self.__delitem__(slice(i, j), taint=taint)
 
     def __iadd__(self, other):
         o = other

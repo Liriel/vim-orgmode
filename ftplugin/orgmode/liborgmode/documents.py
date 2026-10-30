@@ -7,10 +7,7 @@
     TODO: explain this :)
 """
 
-try:
-    from collections import UserList
-except:
-    from UserList import UserList
+from collections import UserList
 
 from orgmode.liborgmode.base import MultiPurposeList, flatten_list, Direction, get_domobj_range
 from orgmode.liborgmode.headings import Heading, HeadingList

@@ -73,9 +73,6 @@ def set(setting, value, scope=SCOPE_GLOBAL, overwrite=False):
             return u_decode(res)
         return res
     v = repr(value)
-    if type(value) == unicode and sys.version_info < (3,):
-        # strip leading u of unicode string representations
-        v = v[1:]
 
     cmd = u'let %s:%s = %s' % (VARIABLE_LEADER[scope], setting, v)
     vim.command(u_encode(cmd))
